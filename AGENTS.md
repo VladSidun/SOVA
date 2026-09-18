@@ -15,7 +15,8 @@ the requested phase. Current implementation is Phase 0, not a finished MVP.
 - `src/lib`: public/server environment boundaries; future integration logic.
 - `src/styles`, `public/brand`, `public/images`, `public/video`: styles/assets.
 - `tests`, `e2e`, `.github/workflows`: unit/component, browser smoke tests, CI.
-- `PROGRESS_CODEX.md`: dated phase reports; preserve existing history.
+- `PROGRESS_CODEX.md`: current handoff, implementation map and phase history;
+  read it at the start of work to avoid retrieving previous chats.
 
 ## Commands
 Node 24, npm, committed `package-lock.json`. Setup: `npm ci`.
@@ -51,4 +52,6 @@ tests and all required checks pass. A phase is not the whole MVP: real lead
 delivery, fallback, production SEO and launch materials belong to later phases.
 Before the final phase response, automatically update `PROGRESS_CODEX.md` as
 required by Guide section 38.1. Record actual checks/Git status and end both the
-entry and final phase response with a `❌` list of fixed/remaining problems.
+entry and final phase response with outcomes: `✅` succeeded/resolved;
+`❌` failed/unresolved. Keep the handoff concise and current, with key files,
+implementation decisions and next scope; preserve completed-phase facts.
