@@ -1,0 +1,32 @@
+import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider, useTranslations } from "next-intl";
+import { describe, expect, it } from "vitest";
+import { routing } from "@/i18n/routing";
+import uk from "@/i18n/messages/uk.json";
+import en from "@/i18n/messages/en.json";
+
+function TranslationSmokeTarget() {
+  const t = useTranslations("Foundation");
+  return <p>{t("status")}</p>;
+}
+
+describe("UA/EN scaffolding", () => {
+  it("uses the Ukrainian URL locale code and deterministic default", () => {
+    expect(routing.locales).toEqual(["uk", "en"]);
+    expect(routing.defaultLocale).toBe("uk");
+    expect(routing.localeDetection).toBe(false);
+    expect(Object.keys(uk.Foundation)).toEqual(Object.keys(en.Foundation));
+  });
+
+  it.each([
+    { locale: "uk", messages: uk },
+    { locale: "en", messages: en },
+  ])("renders the $locale dictionary using next-intl", ({ locale, messages }) => {
+    render(
+      <NextIntlClientProvider locale={locale} messages={messages} timeZone="Europe/Kyiv">
+        <TranslationSmokeTarget />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText(messages.Foundation.status)).toBeInTheDocument();
+  });
+});

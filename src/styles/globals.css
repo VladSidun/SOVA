@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  /* Exact colors from the supplied SOVA_LOGO.svg. */
+  --brand-red: #d32f2f;
+  --brand-black: #1a1a1a;
+  --brand-white: #ffffff;
+  --surface-soft: #f7f7f7;
+  --border-soft: #e7e7e7;
+  --text-muted: #686868;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-manrope);
+  --color-brand-red: var(--brand-red);
+  --color-brand-black: var(--brand-black);
+  --color-brand-white: var(--brand-white);
+}
+
+body {
+  background: var(--brand-white);
+  color: var(--brand-black);
+  font-family: var(--font-inter), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-manrope), sans-serif;
+}
