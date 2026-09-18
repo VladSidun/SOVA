@@ -93,7 +93,7 @@ no mixed language; locale privacy routes/redirect. Не вирішуйте бі�
 | Foundation | 4636cb0 — framework/config; 7599eab — quality/tests; 79ad9a0 — README/AGENTS. |
 | Compatibility | b0c8238 — CI Node 24 actions; b34c555 — ESLint 10/plugins/axe. PR #1 merged: f97bdb5. |
 | Reporting / warning fix | a04dbb3 — Playwright color fix; 26c6f57 — report/rules; a33905d — verified CI evidence. PR #2 merged: d754752. |
-| Поточне уточнення | docs/phase-0-handoff: цей журнал переформатовано для нового агента; Guide §38.1 і AGENTS узгоджують ✅/❌. Documentation-only; git diff --check passed. Git delivery ще не виконано на момент запису. Остаточний статус цієї правки — у її PR та Git history. |
+| Формат handoff · 2026-09-18 | [PR #3](https://github.com/VladSidun/SOVA/pull/3), docs/phase-0-handoff: стислий контекст нового агента та правильні ✅/❌ у Guide §38.1/AGENTS. Documentation-only, git diff --check passed. Delivery status — у PR/Git history; ця правка не змінює завершений scope Phase 0. |
 
 Після кожної фази оновлюйте sections 1–4 до актуального стану, додавайте короткий
 рядок delivery у section 5 та актуальні outcomes нижче. Зберігайте факти виконаних
