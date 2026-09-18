@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.tsbuildinfo
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vercel/
