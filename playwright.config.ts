@@ -1,5 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Playwright forces color in its workers and web server. Avoid conflicting
+// NO_COLOR inherited from the local runner; this does not alter the host shell.
+delete process.env.NO_COLOR;
+
 export default defineConfig({
   testDir: "./e2e",
   forbidOnly: Boolean(process.env.CI),

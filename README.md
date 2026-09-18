@@ -10,6 +10,7 @@ target; `/` redirects to `/uk` regardless of browser language.
 - [Website specification](./SOVA_WEBSITE_SPEC_v2.md): business, content, UX.
 - [Implementation guide](./SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md): technical contract.
 - [Agent instructions](./AGENTS.md): short repository workflow.
+- [Phase progress](./PROGRESS_CODEX.md): delivered scope, checks and limitations.
 
 Current user instructions take precedence over those documents.
 
@@ -101,6 +102,8 @@ npm run e2e
 
 On Linux, browser installation may need `npx playwright install --with-deps
 chromium`. Playwright starts/stops `next start`; no existing server is reused.
+The Playwright runner clears inherited `NO_COLOR` because Playwright forces
+color in workers/server processes; the host shell environment is unchanged.
 Smoke coverage: root redirect, both locales, HTML language, Tailwind utility,
 no navigation/unverified eight-year claim, unsupported-locale 404, automated
 accessibility scans of both locale pages. Unit tests
@@ -161,6 +164,7 @@ eight-year claim with the owner before publishing them.
 
 `main` is the release branch; `develop` is integration. Phase 0 uses
 `feature/phase-0-foundation`, opened as a PR into `develop`, without auto-merge.
+PR #1 was merged into `develop` after passing CI and explicit user authorization.
 Because the remote was empty, `main`/`develop` start from a documentation and
 ignore-rules bootstrap commit, not an existing deployed application. Future
 phases branch from updated `develop`. Do not force push or erase user changes.
