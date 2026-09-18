@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { AxeBuilder } from "@axe-core/playwright";
 
 test("root redirects to Ukrainian", async ({ page }) => {
   await page.goto("/");
@@ -23,6 +24,10 @@ for (const { locale, status } of [
     // Confirms that Tailwind's .p-6 utility is compiled and loaded.
     await expect(page.getByRole("main")).toHaveCSS("padding-top", "24px");
     expect(pageErrors).toEqual([]);
+    const accessibility = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+    expect(accessibility.violations).toEqual([]);
   });
 }
 

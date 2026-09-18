@@ -24,18 +24,23 @@ Current user instructions take precedence over those documents.
   Cyrillic subsets. Next downloads/self-hosts fonts at build time: clean builds
   need network access to the font provider.
 - Zod 4 for environment validation; `server-only` for private env access.
-- ESLint **9.39.5** with Next flat config, Vitest **5.0.1** + Testing Library/jsdom,
-  Playwright **1.63.0** with Chromium smoke scaffolding.
+- ESLint **10.10.0** with explicit Next/TypeScript/React/Hooks/import-x flat
+  configs, Vitest **5.0.1** + Testing Library/jsdom, Playwright **1.63.0**
+  with Chromium and axe accessibility smoke scaffolding.
 
 `package-lock.json` fixes the resolved dependency graph. Use `npm ci` for
 reproducible installs. Motion, React Hook Form, phone normalization and delivery
 SDKs are deferred until their phases; no database or hosting-specific APIs.
 
-ESLint 9 is marked unsupported by npm, but the React/import/accessibility
-plugins bundled with `eslint-config-next@16.3.5` still declare ESLint 9 peer
-ranges. ESLint 10 produced invalid peers, so this foundation deliberately pins
-the compatible ESLint 9 version without force/legacy-peer-deps or overrides.
-Upgrade the lint stack together once those plugins support ESLint 10.
+The bundled `eslint-config-next` React/import/accessibility plugins still
+declare ESLint 9 peer ranges. Instead of forcing incompatible peers, this
+foundation uses the official Next plugin directly, typescript-eslint,
+eslint-react, React Hooks and import-x with a TypeScript-aware resolver.
+Their rulesets differ from the old preset; this is not a claim of identical
+static rule coverage. The legacy JSX accessibility plugin is removed, and
+axe checks both rendered locale pages for WCAG 2/2.1 A/AA violations. Continue
+adding keyboard/focus/interaction tests when implementing UI; axe does not
+replace manual accessibility review. No force/legacy-peer-deps or overrides.
 
 ## Setup and development
 
@@ -97,7 +102,8 @@ npm run e2e
 On Linux, browser installation may need `npx playwright install --with-deps
 chromium`. Playwright starts/stops `next start`; no existing server is reused.
 Smoke coverage: root redirect, both locales, HTML language, Tailwind utility,
-no navigation/unverified eight-year claim, unsupported-locale 404. Unit tests
+no navigation/unverified eight-year claim, unsupported-locale 404, automated
+accessibility scans of both locale pages. Unit tests
 cover business/pricing/flags, empty real-content collections, env boundaries
 and next-intl dictionary rendering. Later lead/UI/SEO tests are not included.
 
