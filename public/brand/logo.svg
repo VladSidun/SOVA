@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- Drop Shadow for Text -->
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Main Logo Group -->
+  <g id="Logo">
+    <!-- Outer Red Circle Frame -->
+    <circle cx="400" cy="400" r="370" fill="none" stroke="#D32F2F" stroke-width="24"/>
+
+    <!-- GRADUATION CAP (MORTARBOARD) -->
+    <!-- Cap Top Diamond -->
+    <polygon points="400,105 605,205 400,285 195,205" fill="#1A1A1A"/>
+
+    <!-- Skull Cap Bands/Arches -->
+    <path d="M 285,225 Q 400,190 515,225 L 515,260 Q 400,225 285,260 Z" fill="#1A1A1A"/>
+    <path d="M 298,260 Q 400,230 502,260 L 502,278 Q 400,248 298,278 Z" fill="#1A1A1A"/>
+
+    <!-- Red Forehead Area beneath cap -->
+    <path d="M 295,273 Q 400,230 505,273 Q 400,360 295,273 Z" fill="#D32F2F"/>
+
+    <!-- Red Side Ears/Tufts -->
+    <polygon points="185,310 250,310 218,338" fill="#D32F2F"/>
+    <polygon points="615,310 550,310 582,338" fill="#D32F2F"/>
+
+    <!-- EYE GLASSES / RINGS -->
+    <!-- Left Eye Ring -->
+    <circle cx="295" cy="405" r="95" fill="none" stroke="#1A1A1A" stroke-width="26"/>
+    <!-- Right Eye Ring -->
+    <circle cx="505" cy="405" r="95" fill="none" stroke="#1A1A1A" stroke-width="26"/>
+
+    <!-- Pupils (Square Rotated/Aligned) -->
+    <rect x="272" y="382" width="46" height="46" rx="4" fill="#1A1A1A"/>
+    <rect x="482" y="382" width="46" height="46" rx="4" fill="#1A1A1A"/>
+
+    <!-- Red Beak / Diamond -->
+    <polygon points="400,455 422,488 400,522 378,488" fill="#D32F2F"/>
+
+    <!-- TEXT SECTION (SOVA) WITH DROP SHADOW -->
+    <g filter="url(#softShadow)" id="Text-SOVA">
+      <!-- S -->
+      <path d="M 270,555 C 220,535 180,560 180,600 C 180,648 268,642 268,690 C 268,735 220,735 178,710"
+            fill="none" stroke="#1A1A1A" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 270,555 C 220,535 180,560 180,600 C 180,648 268,642 268,690 C 268,735 220,735 178,710"
+            fill="none" stroke="#D32F2F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- O -->
+      <circle cx="335" cy="636" r="48" fill="none" stroke="#1A1A1A" stroke-width="22"/>
+      <circle cx="335" cy="636" r="48" fill="none" stroke="#D32F2F" stroke-width="10"/>
+
+      <!-- V -->
+      <polyline points="415,550 460,720 505,550"
+                fill="none" stroke="#1A1A1A" stroke-width="22" stroke-linecap="round" stroke-linejoin="miter"/>
+      <polyline points="415,550 460,720 505,550"
+                fill="none" stroke="#D32F2F" stroke-width="10" stroke-linecap="round" stroke-linejoin="miter"/>
+
+      <!-- A -->
+      <polyline points="525,720 575,550 625,720"
+                fill="none" stroke="#1A1A1A" stroke-width="22" stroke-linecap="round" stroke-linejoin="miter"/>
+      <polyline points="525,720 575,550 625,720"
+                fill="none" stroke="#D32F2F" stroke-width="10" stroke-linecap="round" stroke-linejoin="miter"/>
+      <line x1="542" y1="668" x2="608" y2="668" stroke="#1A1A1A" stroke-width="20" stroke-linecap="round"/>
+      <line x1="542" y1="668" x2="608" y2="668" stroke="#D32F2F" stroke-width="8" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
