@@ -1,161 +1,109 @@
-# SOVA — журнал виконання фаз
+# SOVA — передача контексту Codex
 
-Цей файл містить фактичні результати роботи, а не бізнес-вимоги.
-Source of truth: `SOVA_WEBSITE_SPEC_v2.md` та
-`SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md`. Попередні записи зберігаються;
-доповнення до завершеної фази оформлюються окремим датованим записом.
+Оновлено: 2026-09-18. Мета: продовжити роботу в іншому чаті без пошуку
+попередніх розмов. Це стан реалізації, не заміна ТЗ.
 
-## Phase 0 — Foundation · 2026-09-18
+## 1. Почніть звідси
 
-**Статус:** Phase 0 виконано; основний PR #1 merged у `develop`.
-Phase 1 не розпочато. Це фундамент для розробки, а не готовий до launch сайт.
+- Прочитайте `AGENTS.md`, цей файл і обидва source-of-truth документи перед
+  змінами: user instruction → `SOVA_WEBSITE_SPEC_v2.md` (бізнес/UX) →
+  `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md` (техніка) → код.
+- Phase 0 **виконано**. Phase 1 **не розпочато**; Phase 2–9 теж не розпочато.
+  Подальшу фазу реалізовуйте лише за прямим завданням користувача.
+- Origin: `https://github.com/VladSidun/SOVA.git`. Integration: `develop`;
+  release: `main`. Перевірений integration commit: `d754752` (PR #2).
+  Main залишається на `e645b78`, documentation bootstrap, не реліз сайту.
+- [PR #1](https://github.com/VladSidun/SOVA/pull/1) і
+  [PR #2](https://github.com/VladSidun/SOVA/pull/2) **merged у develop**.
+  [CI develop на d754752](https://github.com/VladSidun/SOVA/actions/runs/35368778828)
+  **passed**. Перед новою роботою перевірте status/branch/log/remotes,
+  отримайте актуальний develop, збережіть user changes.
+- Це development foundation з `noindex, nofollow`, а не production MVP.
 
-### Що створено
+## 2. Що реалізовано і як використовувати
 
-- Next.js App Router із TypeScript strict та Tailwind CSS; мінімальні
-  локалізовані сторінки без маркетингових секцій.
-- next-intl: `/uk`, `/en`, редирект `/` → `/uk`, navigation/request/routing
-  scaffolding і словники. Непідтримувана локаль повертає 404.
-- Inter для body/UI та Manrope для headings через `next/font/google`,
-  потрібні ваги й кириличні subsets.
-- Структура `src/app`, `components`, `config`, `content`, `types`, `i18n`,
-  `lib`, `styles`, `public`, `tests`, `e2e`; майбутні модулі резервуються
-  через `.gitkeep`, без фіктивних endpoint-ів.
-- `src/config/business.ts`: лише підтверджені назва, адреса, телефон,
-  соцмережі, графік, рік заснування, показники студентів, тривалість занять
-  та пробного уроку.
-- `src/config/pricing.ts`: група 1500 грн/місяць, пара 350 грн/заняття,
-  індивідуально 500 грн/заняття; група 3–5 людей.
-- `src/config/features.ts`: `showTeachers`, `showReviews`, `showResults`,
-  `showHeroVideo`, `showEightYearsStat` — `false`; analytics flags теж `false`.
-- Базові типи контенту й заявки; порожні типізовані колекції без вигаданих
-  людей, відгуків, результатів чи бізнес-даних.
-- Zod env validation: розділення public/server змінних, `server-only`,
-  `.env.example` без secrets; локальні env, залежності та artifacts ignored.
-- Існуючий SVG у `public/brand/logo.svg` без редизайну; видалено лише trailing
-  whitespace. Кольори з SVG: red `#D32F2F`, black `#1A1A1A`.
-- Vitest, Testing Library/jsdom, Playwright Chromium; конфігураційні,
-  локалізаційні, env та browser smoke tests; axe scans UA/EN.
-- Scripts `dev`, `start`, `build`, `lint`, `typecheck`, `test`, `test:watch`,
-  `e2e`; README із setup/dev/test instructions і короткий кореневий AGENTS.md.
-- GitHub Actions: Node 24, Ubuntu 24.04, install/typecheck/lint/unit/build/
-  Chromium E2E/whitespace checks для PR і push у `develop`/`main`.
-
-### Dependency decisions
-
-- npm та committed `package-lock.json`; Node 24.x. Використовуйте `npm ci`.
-- Next 16.3.5, React 19.3.0, Tailwind 4.3.3, next-intl 4.14.5, Zod 4.
-- ESLint 10.10.0 з сумісними TypeScript/React/Hooks/Next/import-x plugins;
-  без `--force`, `legacy-peer-deps` або peer overrides.
-- Static rule coverage відрізняється від `eslint-config-next`; це описано
-  в README. Axe доповнює перевірки, але не замінює manual accessibility QA.
-- Vitest 5.0.1, Testing Library, Playwright 1.63.0, axe 4.13.0.
-- Motion, React Hook Form і phone/integration libraries відкладено до
-  відповідних фаз. Clean font builds потребують доступу до Google Fonts.
-
-### Перевірки основного implementation
-
-| Перевірка | Фактичний результат |
+| Частина | Реалізація / точки входу |
 | --- | --- |
-| `npm run typecheck` | Passed |
-| `npm run lint` | Passed, без lint warnings |
-| `npm test` | 10 passed, 3 test files |
-| `npm run build` | Passed; `/uk` і `/en` prerendered |
-| `npm run e2e` | 4 passed; axe UA/EN — 0 violations |
-| `git diff --check` | Passed |
-| Targeted lint smoke | Виявляються explicit any, conditional Hooks, async client component, unresolved import |
-| GitHub PR CI | [Passed на b34c555](https://github.com/VladSidun/SOVA/actions/runs/35366998777) |
-| GitHub develop CI | [Passed на f97bdb5](https://github.com/VladSidun/SOVA/actions/runs/35367188740) |
+| Runtime | Node 24.x, npm, committed `package-lock.json`; setup `npm ci`. Next 16.3.5, React 19.3.0, TS strict; alias `@/` → `src/`. |
+| Маршрути | `src/app/[locale]/layout.tsx`, `page.tsx`: static `/uk`, `/en`, лише H1 SOVA та локалізований launch status. Немає landing UI. |
+| i18n | next-intl 4.14.5; `src/i18n/routing.ts`: uk/en, default uk, prefix always, detection false. `src/proxy.ts` redirects `/` → `/uk`; unsupported locale → 404. |
+| Переклади / navigation | `src/i18n/messages/{uk,en}.json`; `request.ts` через `next/root-params`, timezone Europe/Kyiv. `navigation.ts` exports localized `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` — повторно використовуйте для Phase 1. |
+| Styles / fonts | Tailwind 4.3.3 через PostCSS; tokens у `src/styles/globals.css`. Inter 400/500/600 body та Manrope 600/700 headings через next/font у locale layout, latin+cyrillic; `font-sans`, `font-heading`, brand color utilities. Clean font build потребує network. |
+| Бізнес / ціни | `src/config/business.ts`, `pricing.ts`, `social.ts` — єдині конфігурації підтверджених даних; не дублюйте constants у компонентах. Ціни: group 1500/month, pair 350/lesson, individual 500/lesson (UAH). |
+| Flags | `src/config/features.ts`: showTeachers/showReviews/showResults/showHeroVideo/showEightYearsStat=false; enableGA/enableMetaPixel/enableTikTokPixel=false. «8 років» не рендериться. |
+| Content / types | `src/types/content.ts`: Locale, LocalizedString, Direction, FormatContent, Teacher, Review, StudentCase, FAQItem; `lead.ts`: контракти заявки, не runtime validation. `src/content/*.ts` — типізовані порожні колекції, без sample records. |
+| Public env | `src/lib/public-env.ts`: `parsePublicEnv`, `getPublicEnv`, whitelist NEXT_PUBLIC_*; Zod 4, blank optional values допустимі. `next.config.ts` перевіряє public env; SITE_URL default localhost, production canonical ще не генерується. |
+| Private env | `src/lib/env.ts`: lazy `getServerEnv()` за server-only; `env-schema.ts` вимагає Telegram token/chat ID разом або жодного. Credentials необов’язкові у Phase 0; errors містять лише key names. Secrets ніколи не передавати client/analytics/logs. |
+| Assets / reserved modules | `public/brand/logo.svg` — існуючий SVG без редизайну, лише whitespace normalized; red #D32F2F, black #1A1A1A. `src/components/{layout,sections,lead,ui,analytics}`, privacy/API directories та media dirs лише reserved `.gitkeep`. |
+| Lint | ESLint 10.10.0, flat config: Next plugin + typescript-eslint + eslint-react + Hooks + import-x/TS resolver. Legacy eslint-config-next видалений через несумісні peers; rule coverage відрізняється, див. README. Без force/peer overrides. |
+| Tests / CI | Vitest 5.0.1 + Testing Library/jsdom (`tests/`); Playwright 1.63.0 + axe 4.13.0 (`e2e/`). `playwright.config.ts` production server 127.0.0.1:3100, reuse=false, CI retries=2; очищає NO_COLOR лише в runner для сумісності з forced color workers. CI: Ubuntu 24.04, Node 24, install→typecheck→lint→unit→build→Chromium E2E→diff check. |
 
-### Git delivery
+## 3. Перевірки та команди
 
-Origin перевірено: `https://github.com/VladSidun/SOVA.git`.
-Основа `main`/`develop`: `e645b78` — documentation/source-of-truth bootstrap.
-Implementation branch: `feature/phase-0-foundation`, pushed.
+Остання повна перевірка: 2026-09-18, integration `d754752`, CI за посиланням вище.
+Typecheck, lint (0 warnings), 10 unit tests/3 files, build, 4 Chromium E2E та
+whitespace check — passed. Axe UA/EN: 0 WCAG 2/2.1 A/AA violations.
+Unit coverage: business/pricing/flags, empty collections, env boundaries, i18n.
+E2E: root redirect, UA/EN lang/status/Tailwind/no marketing/no 8 years/noindex,
+unsupported locale 404. Targeted lint smoke підтвердив any/Hooks/async client/
+unresolved imports rules. API/form/mobile menu/landing tests ще не існують.
 
-- `4636cb0` — `chore: initialize SOVA web foundation`
-- `7599eab` — `chore: configure quality and test tooling`
-- `79ad9a0` — `docs: add repository instructions for Codex`
-- `b0c8238` — `chore: update CI actions to Node 24 runtime`
-- `b34c555` — `chore: upgrade ESLint to v10 and refresh lint plugins`
-- `f97bdb5` — merge [PR #1](https://github.com/VladSidun/SOVA/pull/1)
-  у `develop`, після CI й прямого дозволу користувача. `main` не змінено.
+```text
+npm ci
+npm run dev
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npx playwright install chromium
+npm run e2e
+git diff --check
+```
 
-### Межі фази та наступні кроки
+E2E потребує попереднього build; Linux: browser install з `--with-deps`.
+`npm run start` — production server; `npm run test:watch` — watch mode.
+`.env.example` можна скопіювати в `.env.local`, лише якщо його ще немає.
+Secrets/local env ignored; єдиний tracked env файл — `.env.example`.
 
-Для Phase 1 готові routing/helpers, fonts/tokens, конфігурації, типи й tooling.
-Header/mobile menu/Footer/anchors/language switch UI та Hero/інші секції ще
-не реалізовано. Немає форми, API lead delivery, Telegram/Turnstile runtime,
-analytics, production SEO, privacy content, БД, Sova Hub чи deployment.
-Сторінки мають `noindex, nofollow`. Favicon/OG image ще не створено.
+## 4. Наступний scope та відкладені рішення
 
-Не блокують Phase 1: Telegram bot token/chat ID, Turnstile keys, domain/DNS/
-hosting/HTTPS, analytics/pixel IDs, Search Console/Google Business доступи,
-перевірені messenger links та реальні media/reviews/cases/teacher profiles.
-Secrets вносити лише в локальне/hosting environment, не в цей журнал.
+Phase 1 за Guide: Header, mobile menu, Footer, container, anchors, language
+switch. Використовуйте locale navigation helpers, fonts/tokens, config та
+існуючі tests. Hero/trust/directions/matcher/pricing UI належать Phase 2.
+Не додавайте dead CTA/anchors; приховані секції не повинні мати nav links.
 
-До публікації: підтвердити «8 років», правила перенесення за форматами,
-public messenger links, privacy consent і дозволи на media. У майбутньому
-приховувати Reviews navigation разом із секцією; узгодити English hero eyebrow
-із правилом no mixed language та locale privacy routes.
+Ще не реалізовано: landing sections, form/server lead schema, API/Telegram/
+Turnstile runtime, attribution, analytics, production SEO/JSON-LD/sitemap/
+robots, privacy content, favicon/OG image, motion, deployment, DB чи Sova Hub.
+Motion/RHF/phone/integration libraries не встановлені — додавайте за фазою.
 
-### Що пішло не так
+Не блокують Phase 1: Telegram bot/chat credentials; Turnstile keys; domain,
+DNS/hosting/HTTPS; GA/Meta/TikTok IDs; Search Console/Google Business доступи;
+реальні media/reviews/cases/teachers і перевірені public messenger links.
+До публікації узгодити «8 років», rescheduling per format, privacy/media consent.
+Майбутні UX рішення: hide Reviews nav з секцією; English hero eyebrow versus
+no mixed language; locale privacy routes/redirect. Не вирішуйте бізнес-конфлікти
+мовчки. Формальна українська «ви»; ніякого fake content/stock student imagery.
 
-- ❌ GitHub account без write-доступу спричинив push 403 — виправлено:
-  активний `VladSidun`, push і PR успішні.
-- ❌ CI warnings старого Node 20 actions runtime/Ubuntu migration — виправлено
-  оновленням actions та явним Ubuntu 24.04.
-- ❌ Legacy plugins `eslint-config-next` несумісні з ESLint 10 — виправлено
-  сумісними plugins; різниця rule coverage задокументована.
-- ❌ Перший dependency install отримав `ERESOLVE` через старий dependency
-  graph — виправлено clean install; CI `npm ci` теж пройшов.
-- ❌ Import warning AxeBuilder — виправлено named import.
-- ❌ Конфлікт `NO_COLOR`/`FORCE_COLOR` у локальному Playwright — на момент
-  основного merge був non-blocking; виправлення перевіряється в доповненні нижче.
-- ❌ Автоматична перевірка безпеки відхилила видалення резервної копії старих
-  залежностей, без деталізації причини. `.git/eslint9-node_modules-backup` і
-  `.git/package-lock-eslint9.json` залишені лише локально, не tracked і не
-  використовуються збіркою; це не blocker Phase 1.
+## 5. Компактна історія Phase 0
 
-## Доповнення Phase 0 — звітування та test runner · 2026-09-18
+| Delivery | Commits / результат |
+| --- | --- |
+| Bootstrap | e645b78 — source-of-truth docs та ignore rules, основа main/develop. |
+| Foundation | 4636cb0 — framework/config; 7599eab — quality/tests; 79ad9a0 — README/AGENTS. |
+| Compatibility | b0c8238 — CI Node 24 actions; b34c555 — ESLint 10/plugins/axe. PR #1 merged: f97bdb5. |
+| Reporting / warning fix | a04dbb3 — Playwright color fix; 26c6f57 — report/rules; a33905d — verified CI evidence. PR #2 merged: d754752. |
+| Формат handoff · 2026-09-18 | [PR #3](https://github.com/VladSidun/SOVA/pull/3), docs/phase-0-handoff: стислий контекст нового агента та правильні ✅/❌ у Guide §38.1/AGENTS. Documentation-only, git diff --check passed. Delivery status — у PR/Git history; ця правка не змінює завершений scope Phase 0. |
 
-**Статус:** доповнення реалізовано, усі локальні перевірки та PR CI passed.
-Git snapshot нижче зафіксований перед дозволеним користувачем merge.
-Гілка: `feature/phase-0-reporting` від актуального чистого `develop`.
+Після кожної фази оновлюйте sections 1–4 до актуального стану, додавайте короткий
+рядок delivery у section 5 та актуальні outcomes нижче. Зберігайте факти виконаних
+фаз, прибирайте дублікати й застарілі pending statuses. Не записуйте майбутні hash,
+merge чи неперевірені результати; own report commit hash не потрібен.
 
-- Створено цей журнал з повним звітом Phase 0 й перевіреними Git/CI фактами.
-- Guide §38.1 перед переліком Phase 0–9 вимагає автоматично оновлювати журнал
-  після кожної фази, зберігати історію, зазначати фактичні перевірки/Git status,
-  не вигадувати успіхи й завершувати звіти списком `❌`.
-- AGENTS.md посилається на це правило; README містить посилання на журнал
-  і підтверджений статус merge основного PR.
-- Playwright config очищає inherited `NO_COLOR` лише в test runner, оскільки
-  Playwright примусово задає `FORCE_COLOR` workers/server. Host shell не змінено,
-  warnings не приховуються через `NODE_NO_WARNINGS`.
-- Без нових dependencies, UI або функцій Phase 1.
+## 6. Результати / невирішені проблеми
 
-### Перевірки доповнення
-
-- `npm run typecheck`, `npm run lint`, `npm test` (10/10), `npm run build` — passed.
-- `npm run e2e` — 4/4 passed, axe UA/EN — 0 violations, без color warnings.
-- `git diff --check` — passed.
-- [PR CI на 26c6f57](https://github.com/VladSidun/SOVA/actions/runs/35368445319)
-  — passed, включно з clean `npm ci`, build і E2E.
-
-### Git delivery доповнення — snapshot перед merge
-
-- `a04dbb3` — `fix: resolve Playwright color environment conflict`
-- `26c6f57` — `docs: record Phase 0 progress and require phase reports`
-- Гілка pushed в origin; [PR #2](https://github.com/VladSidun/SOVA/pull/2)
-  відкрито у `develop`, implementation CI passed. Користувач дозволив merge.
-- Цей запис уточнюється окремим documentation commit до merge. Його власний
-  hash і майбутній merge hash тут не записуються. Остаточний verified
-  merge/CI status доступний у PR #2 та фінальному звіті користувачу.
-- Phase 1 не розпочато; `main` без змін. Code/build blockers не залишилося.
-
-### Що пішло не так
-
-- ❌ Playwright color environment warning — виправлено конфігурацією;
-  підтверджено чистим E2E output (4/4 passed).
-- ❌ Локальна резервна копія в `.git` залишається після попереднього відхилення
-  cleanup; не впливає на runtime, CI або готовність до Phase 1.
+- ✅ Phase 0 реалізовано, PR #1/#2 merged, local та CI checks passed; Phase 1 не розпочато.
+- ✅ Push 403 виправлено вибором GitHub account з write-доступом; CI runtime warnings усунено.
+- ✅ ESLint peer incompatibility/ERESOLVE та AxeBuilder import warning виправлено; reproducible npm ci passed.
+- ✅ Playwright color warning усунено, E2E output чистий. Static lint coverage tradeoff задокументовано; manual a11y QA майбутнього UI залишається потрібною.
+- ❌ Видалення старої dependency backup автоматична перевірка безпеки відхилила без деталізації причини. Лише локальні `.git/eslint9-node_modules-backup` та `.git/package-lock-eslint9.json` залишаються невидаленими; untracked, не використовуються, не blocker. За потреби користувач може очистити ці backup-файли локально; не обходьте відхилення й не видаляйте `.git` цілком.

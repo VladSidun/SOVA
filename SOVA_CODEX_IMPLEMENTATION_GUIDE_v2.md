@@ -1038,16 +1038,22 @@ After successfully completing each authorized phase, Codex must automatically
 create or update `PROGRESS_CODEX.md` in the repository root before the final
 response. Do not ask for separate permission to write this report.
 
-- Read the existing log first. Preserve earlier phase reports; append a new
-  dated phase entry or a dated follow-up for corrections to a completed phase.
-- Write reports in Ukrainian. Include phase number/name, date, scope and status,
-  delivered files/behavior, dependency decisions, actual verification commands
-  and results, branch, available commit hashes/messages, PR/CI links and their
-  verified status, limitations, external setup, and readiness for the next phase.
-- End every phase entry and final phase response with a list of problems,
-  each starting with `❌`. Distinguish fixed issues from remaining blockers and
-  non-blocking limitations. If none occurred, explicitly state that no problems
-  were found rather than inventing an error.
+- Treat this file as a concise handoff for an agent continuing in another chat,
+  not a transcript. Read it at the start of work alongside AGENTS.md and the
+  source-of-truth documents. Keep an up-to-date overview at the top: completed
+  and unstarted phases, verified integration commit/PR status, and next scope.
+- Write in Ukrainian. Explain what exists and how it works: key file paths,
+  reusable APIs, configuration/flags, dependency decisions, actual verification
+  commands/results and CI evidence, limitations, external setup, and the next
+  phase's starting points. Another agent should not need previous chat history.
+- Preserve completed-phase facts and a compact dated delivery history. Update
+  the current snapshot and consolidate superseded follow-ups; avoid repeating
+  the specification, full logs, stale pending states or duplicate phase reports.
+- Use `✅` for successful outcomes, including resolved problems; use `❌` only
+  for failed or unresolved outcomes, stating impact and the next action.
+  Unstarted/out-of-scope work is planned work, not a failure. End phase reports
+  and final phase responses with this outcome list. If no issues remain, state
+  `✅ Unresolved problems: none` rather than inventing an error.
 - Never include secrets, private administration links, lead payloads or PII.
   Never claim an unrun test passed or an unperformed push/merge succeeded.
 - Mark a phase successful only after its authorized scope and required checks
