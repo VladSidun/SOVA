@@ -119,8 +119,8 @@ public messenger links, privacy consent і дозволи на media. У май�
 
 ## Доповнення Phase 0 — звітування та test runner · 2026-09-18
 
-**Статус:** доповнення реалізовано, усі локальні перевірки passed;
-Git delivery ще не виконано на момент цього запису.
+**Статус:** доповнення реалізовано, усі локальні перевірки та PR CI passed.
+Git snapshot нижче зафіксований перед дозволеним користувачем merge.
 Гілка: `feature/phase-0-reporting` від актуального чистого `develop`.
 
 - Створено цей журнал з повним звітом Phase 0 й перевіреними Git/CI фактами.
@@ -138,8 +138,20 @@ Git delivery ще не виконано на момент цього запис�
 
 - `npm run typecheck`, `npm run lint`, `npm test` (10/10), `npm run build` — passed.
 - `npm run e2e` — 4/4 passed, axe UA/EN — 0 violations, без color warnings.
-- `git diff --check` — passed. PR CI ще не запущено; push/PR/merge доповнення
-  ще не виконано на момент запису. Git status буде доповнено після перевірки CI.
+- `git diff --check` — passed.
+- [PR CI на 26c6f57](https://github.com/VladSidun/SOVA/actions/runs/35368445319)
+  — passed, включно з clean `npm ci`, build і E2E.
+
+### Git delivery доповнення — snapshot перед merge
+
+- `a04dbb3` — `fix: resolve Playwright color environment conflict`
+- `26c6f57` — `docs: record Phase 0 progress and require phase reports`
+- Гілка pushed в origin; [PR #2](https://github.com/VladSidun/SOVA/pull/2)
+  відкрито у `develop`, implementation CI passed. Користувач дозволив merge.
+- Цей запис уточнюється окремим documentation commit до merge. Його власний
+  hash і майбутній merge hash тут не записуються. Остаточний verified
+  merge/CI status доступний у PR #2 та фінальному звіті користувачу.
+- Phase 1 не розпочато; `main` без змін. Code/build blockers не залишилося.
 
 ### Що пішло не так
 
