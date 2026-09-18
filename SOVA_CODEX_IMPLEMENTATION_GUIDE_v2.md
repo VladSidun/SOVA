@@ -1032,6 +1032,34 @@ At minimum:
 
 # 38. Development phases
 
+## 38.1. Mandatory phase reporting
+
+After successfully completing each authorized phase, Codex must automatically
+create or update `PROGRESS_CODEX.md` in the repository root before the final
+response. Do not ask for separate permission to write this report.
+
+- Read the existing log first. Preserve earlier phase reports; append a new
+  dated phase entry or a dated follow-up for corrections to a completed phase.
+- Write reports in Ukrainian. Include phase number/name, date, scope and status,
+  delivered files/behavior, dependency decisions, actual verification commands
+  and results, branch, available commit hashes/messages, PR/CI links and their
+  verified status, limitations, external setup, and readiness for the next phase.
+- End every phase entry and final phase response with a list of problems,
+  each starting with `❌`. Distinguish fixed issues from remaining blockers and
+  non-blocking limitations. If none occurred, explicitly state that no problems
+  were found rather than inventing an error.
+- Never include secrets, private administration links, lead payloads or PII.
+  Never claim an unrun test passed or an unperformed push/merge succeeded.
+- Mark a phase successful only after its authorized scope and required checks
+  pass. If blocked, record partial progress and the exact blocker; do not mark
+  the phase complete. A completed phase does not mean the entire MVP is ready.
+- Include the report in the phase PR. A report commit cannot include its own
+  hash or a future merge hash: label pending Git/CI actions accurately and use
+  a dated follow-up when recording later verified results. Do not fabricate
+  identifiers or create an endless chain of commits solely to record hashes.
+- Reporting never authorizes the next phase, release, push or merge by itself;
+  follow the current user's Git authorization and repository workflow.
+
 ## Phase 0
 - initialize repo;
 - TS strict;
