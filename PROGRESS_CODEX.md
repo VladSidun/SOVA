@@ -14,7 +14,8 @@
 - Origin: `https://github.com/VladSidun/SOVA.git`; integration: `develop`;
   release: `main`. Перевірений стартовий commit Phase 1: `ecb887a` у `develop`
   (містить merged PR #1–#3). Phase 1 code commits: `49455f0`, `3715068`.
-  Push/PR фіксуються лише після фактичного виконання, без auto-merge.
+  Гілку запушено; [PR #4](https://github.com/VladSidun/SOVA/pull/4) відкрито
+  у `develop`, CI passed, auto-merge не ввімкнено.
 - Це development preview з `noindex, nofollow`, не production MVP.
 
 ## 2. Що реалізовано і як використовувати
@@ -75,7 +76,7 @@ tracking IDs, messenger deep links, реальний контент, «8 рок�
 | Phase 0 foundation | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. |
 | Phase 0 reporting/fixes | `a04dbb3`, `26c6f57`, `a33905d`; PR #2 merged як `d754752`; CI passed. |
 | Phase 0 handoff | `7352a63`, `10d3be8`; PR #3 merged як `ecb887a`. |
-| Phase 1 shell · 2026-09-20 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage. Push/PR status оновити тільки після фактичної remote operation. |
+| Phase 1 shell · 2026-09-20 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage; [PR #4](https://github.com/VladSidun/SOVA/pull/4) open у `develop`, [CI run 35535346254](https://github.com/VladSidun/SOVA/actions/runs/35535346254) passed, без auto-merge. |
 
 ## 6. Результати / невирішені проблеми
 
@@ -83,4 +84,5 @@ tracking IDs, messenger deep links, реальний контент, «8 рок�
 - ✅ Phase 1 scope реалізовано без Hero/Phase 2, fake content або зміни підтверджених бізнес-фактів.
 - ✅ Обов’язкові checks, 7 E2E і responsive preview 360/768/1366 пройдено.
 - ✅ UA/EN, formal Ukrainian CTA, keyboard/focus behavior і hidden-section nav policy покриті тестами.
+- ✅ `feature/phase-1-shell` запушено; PR #4 open у `develop`, remote CI passed, merge не виконувався.
 - ❌ Favicon ще не реалізований: browser preview бачить 404 для `/favicon.ico`; це pre-existing deferred asset поза Phase 1, shell functionality не порушена.
