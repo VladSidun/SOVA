@@ -1,9 +1,11 @@
-# SOVA — Phase 0 foundation
+# SOVA — Phase 1 site shell
 
 Next.js App Router foundation for **Центр вивчення іноземних мов SOVA**.
-Implemented scope: **Phase 0 only**. This is not the marketing website or a
-production-ready MVP. `/uk` and `/en` render a minimal localized route smoke
-target; `/` redirects to `/uk` regardless of browser language.
+Implemented scope: **Phase 0 foundation + Phase 1 shell**. This is not the full
+marketing website or a production-ready MVP. `/uk` and `/en` render the
+localized Header, navigation, current foundation content and contact Footer;
+`/` redirects to `/uk` regardless of browser language. Hero and all Phase 2
+conversion sections remain intentionally unimplemented.
 
 ## Source of truth
 
@@ -104,11 +106,12 @@ On Linux, browser installation may need `npx playwright install --with-deps
 chromium`. Playwright starts/stops `next start`; no existing server is reused.
 The Playwright runner clears inherited `NO_COLOR` because Playwright forces
 color in workers/server processes; the host shell environment is unchanged.
-Smoke coverage: root redirect, both locales, HTML language, Tailwind utility,
-no navigation/unverified eight-year claim, unsupported-locale 404, automated
-accessibility scans of both locale pages. Unit tests
-cover business/pricing/flags, empty real-content collections, env boundaries
-and next-intl dictionary rendering. Later lead/UI/SEO tests are not included.
+Smoke coverage: root redirect, both locales, HTML language, localized shell,
+desktop/contact anchor navigation, locale switching, mobile 360/768 overflow,
+mobile menu Escape/focus behavior, unsupported-locale 404 and automated
+accessibility scans of both locale pages. Unit tests cover the Phase 0
+configuration/env/i18n contracts plus Phase 1 menu keyboard behavior and
+feature-gated navigation. Later lead/form/SEO tests are not included.
 
 Production-build inspection locally: `npm run build`, then `npm run start`.
 The Phase 0 pages intentionally emit `noindex, nofollow` until Phase 6 SEO work.
@@ -119,9 +122,10 @@ and whitespace checks on PRs to `develop`/`main` and pushes to those branches.
 ## Repository map
 
 ```text
-src/app/[locale]/    minimal locale layout/page; reserved privacy directory
+src/app/[locale]/    localized shell layout and minimal non-Hero page content
 src/app/api/leads/   reserved directory, no API endpoint
-src/components/     reserved layout/sections/lead/ui/analytics directories
+src/components/layout/ Header, Footer, Container and Section primitives
+src/components/     later sections/lead/ui/analytics directories remain reserved
 src/config/         business, pricing, social links, disabled feature flags
 src/content/        typed empty content collections
 src/types/          locale/content/lead data contracts
@@ -148,10 +152,12 @@ eight-year statistic. Analytics flags are false too. Business config contains
 only confirmed facts; prices are stored once with their billing units.
 Empty collections contain no sample people, reviews or exam claims.
 
-Phase 1 can build the shell using locale navigation helpers, fonts, tokens,
-config and testing tools. Header, menu, Footer, language-switch UI, Hero,
-marketing sections, form, lead API, Telegram/Turnstile runtime integrations,
-analytics, production SEO, privacy content and deployment are not implemented.
+Phase 1 provides the Header, mobile menu, Footer, language switch and anchor
+registry. Only the contact anchor is exposed because it is the only rendered
+target in this phase; planned and feature-gated entries remain absent until
+their real sections exist. Hero, marketing sections, form, lead API,
+Telegram/Turnstile runtime integrations, analytics, production SEO, privacy
+content and deployment are not implemented.
 No DB or Sova Hub has been added.
 
 Known document ambiguities for future work: hide the Reviews nav link while

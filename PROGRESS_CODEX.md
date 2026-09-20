@@ -1,6 +1,6 @@
 # SOVA — передача контексту Codex
 
-Оновлено: 2026-09-18. Мета: продовжити роботу в іншому чаті без пошуку
+Оновлено: 2026-09-20. Мета: продовжити роботу в іншому чаті без пошуку
 попередніх розмов. Це стан реалізації, не заміна ТЗ.
 
 ## 1. Почніть звідси
@@ -8,102 +8,79 @@
 - Прочитайте `AGENTS.md`, цей файл і обидва source-of-truth документи перед
   змінами: user instruction → `SOVA_WEBSITE_SPEC_v2.md` (бізнес/UX) →
   `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md` (техніка) → код.
-- Phase 0 **виконано**. Phase 1 **не розпочато**; Phase 2–9 теж не розпочато.
-  Подальшу фазу реалізовуйте лише за прямим завданням користувача.
-- Origin: `https://github.com/VladSidun/SOVA.git`. Integration: `develop`;
-  release: `main`. Перевірений integration commit: `d754752` (PR #2).
-  Main залишається на `e645b78`, documentation bootstrap, не реліз сайту.
-- [PR #1](https://github.com/VladSidun/SOVA/pull/1) і
-  [PR #2](https://github.com/VladSidun/SOVA/pull/2) **merged у develop**.
-  [CI develop на d754752](https://github.com/VladSidun/SOVA/actions/runs/35368778828)
-  **passed**. Перед новою роботою перевірте status/branch/log/remotes,
-  отримайте актуальний develop, збережіть user changes.
-- Це development foundation з `noindex, nofollow`, а не production MVP.
+- Phase 0 виконано й merged у `develop`. Phase 1 реалізовано у
+  `feature/phase-1-shell`; Hero і Phase 2 не розпочато. Не переходьте до
+  наступної фази без прямого завдання користувача.
+- Origin: `https://github.com/VladSidun/SOVA.git`; integration: `develop`;
+  release: `main`. Перевірений стартовий commit Phase 1: `ecb887a` у `develop`
+  (містить merged PR #1–#3). Phase 1 code commits: `49455f0`, `3715068`.
+  Push/PR фіксуються лише після фактичного виконання, без auto-merge.
+- Це development preview з `noindex, nofollow`, не production MVP.
 
 ## 2. Що реалізовано і як використовувати
 
 | Частина | Реалізація / точки входу |
 | --- | --- |
-| Runtime | Node 24.x, npm, committed `package-lock.json`; setup `npm ci`. Next 16.3.5, React 19.3.0, TS strict; alias `@/` → `src/`. |
-| Маршрути | `src/app/[locale]/layout.tsx`, `page.tsx`: static `/uk`, `/en`, лише H1 SOVA та локалізований launch status. Немає landing UI. |
-| i18n | next-intl 4.14.5; `src/i18n/routing.ts`: uk/en, default uk, prefix always, detection false. `src/proxy.ts` redirects `/` → `/uk`; unsupported locale → 404. |
-| Переклади / navigation | `src/i18n/messages/{uk,en}.json`; `request.ts` через `next/root-params`, timezone Europe/Kyiv. `navigation.ts` exports localized `Link`, `redirect`, `usePathname`, `useRouter`, `getPathname` — повторно використовуйте для Phase 1. |
-| Styles / fonts | Tailwind 4.3.3 через PostCSS; tokens у `src/styles/globals.css`. Inter 400/500/600 body та Manrope 600/700 headings через next/font у locale layout, latin+cyrillic; `font-sans`, `font-heading`, brand color utilities. Clean font build потребує network. |
-| Бізнес / ціни | `src/config/business.ts`, `pricing.ts`, `social.ts` — єдині конфігурації підтверджених даних; не дублюйте constants у компонентах. Ціни: group 1500/month, pair 350/lesson, individual 500/lesson (UAH). |
-| Flags | `src/config/features.ts`: showTeachers/showReviews/showResults/showHeroVideo/showEightYearsStat=false; enableGA/enableMetaPixel/enableTikTokPixel=false. «8 років» не рендериться. |
-| Content / types | `src/types/content.ts`: Locale, LocalizedString, Direction, FormatContent, Teacher, Review, StudentCase, FAQItem; `lead.ts`: контракти заявки, не runtime validation. `src/content/*.ts` — типізовані порожні колекції, без sample records. |
-| Public env | `src/lib/public-env.ts`: `parsePublicEnv`, `getPublicEnv`, whitelist NEXT_PUBLIC_*; Zod 4, blank optional values допустимі. `next.config.ts` перевіряє public env; SITE_URL default localhost, production canonical ще не генерується. |
-| Private env | `src/lib/env.ts`: lazy `getServerEnv()` за server-only; `env-schema.ts` вимагає Telegram token/chat ID разом або жодного. Credentials необов’язкові у Phase 0; errors містять лише key names. Secrets ніколи не передавати client/analytics/logs. |
-| Assets / reserved modules | `public/brand/logo.svg` — існуючий SVG без редизайну, лише whitespace normalized; red #D32F2F, black #1A1A1A. `src/components/{layout,sections,lead,ui,analytics}`, privacy/API directories та media dirs лише reserved `.gitkeep`. |
-| Lint | ESLint 10.10.0, flat config: Next plugin + typescript-eslint + eslint-react + Hooks + import-x/TS resolver. Legacy eslint-config-next видалений через несумісні peers; rule coverage відрізняється, див. README. Без force/peer overrides. |
-| Tests / CI | Vitest 5.0.1 + Testing Library/jsdom (`tests/`); Playwright 1.63.0 + axe 4.13.0 (`e2e/`). `playwright.config.ts` production server 127.0.0.1:3100, reuse=false, CI retries=2; очищає NO_COLOR лише в runner для сумісності з forced color workers. CI: Ubuntu 24.04, Node 24, install→typecheck→lint→unit→build→Chromium E2E→diff check. |
+| Runtime | Node 24.x, npm, Next 16.3.5, React 19.3.0, TS strict, Tailwind 4.3.3, next-intl 4.14.5. Dependency graph зафіксований у `package-lock.json`; setup `npm ci`. |
+| Маршрути | `src/app/[locale]/layout.tsx` збирає локалізований shell для `/uk` і `/en`; `/` → `/uk`, unsupported locale → 404. `page.tsx` усе ще мінімальний launch-status content, не Hero. |
+| Layout primitives | `src/components/layout/Container.tsx` — responsive max-width/padding; `Section.tsx` — базовий section wrapper. `globals.css` задає sticky-anchor offset, smooth scroll і reduced-motion fallback. |
+| Header | `Header.tsx`: sticky logo/header, desktop nav, formal CTA, UA/EN switch, mobile burger. CTA використовує підтверджений `business.phoneE164`; 44px+ targets, skip link, `aria-expanded/controls`, Escape, focus-on-open, focus trap і focus return. |
+| Navigation registry | `src/config/navigation.ts`: один реєстр anchor IDs/labels. `getNavigationItems()` одночасно перевіряє, що target реально rendered, і feature flag. У Phase 1 доступний лише `#contacts`; Directions/Formats/About/Pricing з’являться зі своїми секціями, Reviews лишається hidden при `showReviews=false`. |
+| Language switch | Використовує `src/i18n/navigation.ts`, зберігає поточний pathname і змінює locale prefix. `Navigation`/`Footer` мають повні окремі UA/EN dictionaries без змішування copy. |
+| Footer / contacts | `Footer.tsx`, anchor `#contacts`: телефон, Instagram, Facebook, Google Maps, адреса та Пн–Сб 09:00–20:00. Дані беруться з `business.ts`/`social.ts`; англійська адреса зберігається поруч як локалізоване представлення того самого факту. Fake email/messenger/review/media немає. |
+| Phase 0 config | Підтверджені business/pricing constants, disabled content/analytics flags, empty typed teachers/reviews/cases, public/private env boundary збережено без змін бізнес-фактів. `8 років` не рендериться. |
+| Tests | 13 Vitest tests / 4 files. `navigation.test.tsx` покриває open/close, Escape, focus trap/return та hidden nav. 7 Chromium E2E: Phase 0 routing/a11y плюс anchors, locale switch і 360/768 overflow/menu smoke. |
 
-## 3. Перевірки та команди
+## 3. Перевірки та результати
 
-Остання повна перевірка: 2026-09-18, integration `d754752`, CI за посиланням вище.
-Typecheck, lint (0 warnings), 10 unit tests/3 files, build, 4 Chromium E2E та
-whitespace check — passed. Axe UA/EN: 0 WCAG 2/2.1 A/AA violations.
-Unit coverage: business/pricing/flags, empty collections, env boundaries, i18n.
-E2E: root redirect, UA/EN lang/status/Tailwind/no marketing/no 8 years/noindex,
-unsupported locale 404. Targeted lint smoke підтвердив any/Hooks/async client/
-unresolved imports rules. API/form/mobile menu/landing tests ще не існують.
+Локальна перевірка Phase 1 (2026-09-20, branch `feature/phase-1-shell`):
 
 ```text
-npm ci
-npm run dev
-npm run typecheck
-npm run lint
-npm test
-npm run build
-npx playwright install chromium
-npm run e2e
-git diff --check
+npm run typecheck  — passed
+npm run lint       — passed, 0 warnings
+npm test           — passed, 13 tests / 4 files
+npm run build      — passed, static /uk and /en
+npm run e2e        — passed, 7 Chromium tests
+git diff --check   — passed
 ```
 
-E2E потребує попереднього build; Linux: browser install з `--with-deps`.
-`npm run start` — production server; `npm run test:watch` — watch mode.
-`.env.example` можна скопіювати в `.env.local`, лише якщо його ще немає.
-Secrets/local env ignored; єдиний tracked env файл — `.env.example`.
+Browser preview через реальний Chromium перевірено на 360×800, 768×800 і
+1366×768. UA та EN оглянуті, mobile menu і desktop CTA/anchor працездатні;
+`scrollWidth === clientWidth` на 360 і 1366, E2E окремо перевіряє 360/768.
+WCAG 2/2.1 A/AA Axe smoke для UA/EN — 0 violations.
+
+`npm run e2e` потребує попереднього `npm run build`; runner сам запускає
+production server на `127.0.0.1:3100`.
 
 ## 4. Наступний scope та відкладені рішення
 
-Phase 1 за Guide: Header, mobile menu, Footer, container, anchors, language
-switch. Використовуйте locale navigation helpers, fonts/tokens, config та
-існуючі tests. Hero/trust/directions/matcher/pricing UI належать Phase 2.
-Не додавайте dead CTA/anchors; приховані секції не повинні мати nav links.
+Наступна фаза лише після прямої авторизації: Phase 2 — Hero, trust strip,
+directions, goal matcher, formats/pricing. Коли секція реально рендериться,
+додайте її ID до `renderedSectionIds`; не створюйте dead nav links.
 
-Ще не реалізовано: landing sections, form/server lead schema, API/Telegram/
-Turnstile runtime, attribution, analytics, production SEO/JSON-LD/sitemap/
-robots, privacy content, favicon/OG image, motion, deployment, DB чи Sova Hub.
-Motion/RHF/phone/integration libraries не встановлені — додавайте за фазою.
+Ще не реалізовано: trial/why/method/location/FAQ, form/server validation,
+API/Telegram/Turnstile, attribution, analytics, production SEO/JSON-LD/
+sitemap/robots, privacy content, motion/final polish, deployment, DB/Sova Hub,
+реальні media/reviews/cases/teachers. Motion/RHF/phone libraries не встановлені.
 
-Не блокують Phase 1: Telegram bot/chat credentials; Turnstile keys; domain,
-DNS/hosting/HTTPS; GA/Meta/TikTok IDs; Search Console/Google Business доступи;
-реальні media/reviews/cases/teachers і перевірені public messenger links.
-До публікації узгодити «8 років», rescheduling per format, privacy/media consent.
-Майбутні UX рішення: hide Reviews nav з секцією; English hero eyebrow versus
-no mixed language; locale privacy routes/redirect. Не вирішуйте бізнес-конфлікти
-мовчки. Формальна українська «ви»; ніякого fake content/stock student imagery.
+До production залишаються зовнішні/бізнес рішення: Telegram/Turnstile/domain,
+tracking IDs, messenger deep links, реальний контент, «8 років», правила
+перенесення занять і media/privacy consent. Не вигадуйте ці дані.
 
-## 5. Компактна історія Phase 0
+## 5. Компактна історія delivery
 
 | Delivery | Commits / результат |
 | --- | --- |
-| Bootstrap | e645b78 — source-of-truth docs та ignore rules, основа main/develop. |
-| Foundation | 4636cb0 — framework/config; 7599eab — quality/tests; 79ad9a0 — README/AGENTS. |
-| Compatibility | b0c8238 — CI Node 24 actions; b34c555 — ESLint 10/plugins/axe. PR #1 merged: f97bdb5. |
-| Reporting / warning fix | a04dbb3 — Playwright color fix; 26c6f57 — report/rules; a33905d — verified CI evidence. PR #2 merged: d754752. |
-| Формат handoff · 2026-09-18 | [PR #3](https://github.com/VladSidun/SOVA/pull/3), docs/phase-0-handoff: стислий контекст нового агента та правильні ✅/❌ у Guide §38.1/AGENTS. Documentation-only, git diff --check passed. Delivery status — у PR/Git history; ця правка не змінює завершений scope Phase 0. |
-
-Після кожної фази оновлюйте sections 1–4 до актуального стану, додавайте короткий
-рядок delivery у section 5 та актуальні outcomes нижче. Зберігайте факти виконаних
-фаз, прибирайте дублікати й застарілі pending statuses. Не записуйте майбутні hash,
-merge чи неперевірені результати; own report commit hash не потрібен.
+| Bootstrap | `e645b78` — source-of-truth docs та ignore rules, основа main/develop. |
+| Phase 0 foundation | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. |
+| Phase 0 reporting/fixes | `a04dbb3`, `26c6f57`, `a33905d`; PR #2 merged як `d754752`; CI passed. |
+| Phase 0 handoff | `7352a63`, `10d3be8`; PR #3 merged як `ecb887a`. |
+| Phase 1 shell · 2026-09-20 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage. Push/PR status оновити тільки після фактичної remote operation. |
 
 ## 6. Результати / невирішені проблеми
 
-- ✅ Phase 0 реалізовано, PR #1/#2 merged, local та CI checks passed; Phase 1 не розпочато.
-- ✅ Push 403 виправлено вибором GitHub account з write-доступом; CI runtime warnings усунено.
-- ✅ ESLint peer incompatibility/ERESOLVE та AxeBuilder import warning виправлено; reproducible npm ci passed.
-- ✅ Playwright color warning усунено, E2E output чистий. Static lint coverage tradeoff задокументовано; manual a11y QA майбутнього UI залишається потрібною.
-- ❌ Видалення старої dependency backup автоматична перевірка безпеки відхилила без деталізації причини. Лише локальні `.git/eslint9-node_modules-backup` та `.git/package-lock-eslint9.json` залишаються невидаленими; untracked, не використовуються, не blocker. За потреби користувач може очистити ці backup-файли локально; не обходьте відхилення й не видаляйте `.git` цілком.
+- ✅ Phase 0 підтверджено merged у актуальний `develop`; Phase 1 відгалужено від `ecb887a`.
+- ✅ Phase 1 scope реалізовано без Hero/Phase 2, fake content або зміни підтверджених бізнес-фактів.
+- ✅ Обов’язкові checks, 7 E2E і responsive preview 360/768/1366 пройдено.
+- ✅ UA/EN, formal Ukrainian CTA, keyboard/focus behavior і hidden-section nav policy покриті тестами.
+- ❌ Favicon ще не реалізований: browser preview бачить 404 для `/favicon.ico`; це pre-existing deferred asset поза Phase 1, shell functionality не порушена.
