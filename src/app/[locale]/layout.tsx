@@ -26,6 +26,9 @@ const manrope = Manrope({
 // Foundation only. Production SEO is implemented in Phase 6.
 export const metadata: Metadata = {
   title: business.brandName,
+  icons: {
+    icon: [{ url: "/brand/logo.svg", type: "image/svg+xml" }],
+  },
   robots: { index: false, follow: false },
 };
 

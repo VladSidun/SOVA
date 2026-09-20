@@ -12,7 +12,18 @@ for (const { locale, status } of [
 ]) {
   test(`${locale} shell route loads without marketing sections`, async ({ page }) => {
     const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+    const failedFirstPartyResponses: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+    });
+    page.on("response", (response) => {
+      const url = new URL(response.url());
+      if (url.origin === "http://127.0.0.1:3100" && response.status() >= 400) {
+        failedFirstPartyResponses.push(`${response.status()} ${url.pathname}`);
+      }
+    });
     const response = await page.goto(`/${locale}`);
     expect(response?.status()).toBe(200);
     await expect(page.locator("html")).toHaveAttribute("lang", locale);
@@ -23,9 +34,12 @@ for (const { locale, status } of [
     await expect(page.locator("#contacts")).toBeAttached();
     await expect(page.getByText(/8 років|8 years/)).toHaveCount(0);
     await expect(page.locator("meta[name='robots']")).toHaveAttribute("content", /noindex/);
+    await expect(page.locator("link[rel='icon']")).toHaveAttribute("href", "/brand/logo.svg");
     // Confirms that the responsive Tailwind container utility is compiled and loaded.
     await expect(page.getByRole("main").locator("section > div")).toHaveCSS("padding-left", "32px");
     expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+    expect(failedFirstPartyResponses).toEqual([]);
     const accessibility = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
       .analyze();
