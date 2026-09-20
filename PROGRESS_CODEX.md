@@ -16,7 +16,7 @@
   (містить merged PR #1–#3). Phase 1 code commits: `49455f0`, `3715068`,
   `1828e90`.
   Гілку запушено; [PR #4](https://github.com/VladSidun/SOVA/pull/4) відкрито
-  у `develop`, CI passed, auto-merge не ввімкнено.
+  у `develop`, merge state clean, фінальний CI passed, auto-merge не ввімкнено.
 - Це development preview з `noindex, nofollow`, не production MVP.
 
 ## 2. Що реалізовано і як використовувати
@@ -61,6 +61,18 @@ production server на `127.0.0.1:3100`.
 directions, goal matcher, formats/pricing. Коли секція реально рендериться,
 додайте її ID до `renderedSectionIds`; не створюйте dead nav links.
 
+Старт у новому чаті:
+
+1. Перевірити, що [PR #4](https://github.com/VladSidun/SOVA/pull/4) вручну
+   merged у `develop`; не створювати Phase 2 branch від неповного `develop`.
+2. Виконати `git fetch --prune origin`, `git switch develop` і
+   `git pull --ff-only origin develop`.
+3. Переконатися, що tip `origin/feature/phase-1-shell` є ancestor актуального
+   `develop`; це підтверджує повний merge Phase 1 разом із handoff.
+4. Створити окрему feature branch для Phase 2 від оновленого `develop`.
+5. Ще раз прочитати `AGENTS.md`, цей handoff, SPEC і GUIDE; реалізовувати лише
+   Phase 2, повторно використовуючи shell, navigation registry, config та tests.
+
 Ще не реалізовано: trial/why/method/location/FAQ, form/server validation,
 API/Telegram/Turnstile, attribution, analytics, production SEO/JSON-LD/
 sitemap/robots, privacy content, motion/final polish, deployment, DB/Sova Hub,
@@ -78,7 +90,7 @@ tracking IDs, messenger deep links, реальний контент, «8 рок�
 | Phase 0 foundation | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. |
 | Phase 0 reporting/fixes | `a04dbb3`, `26c6f57`, `a33905d`; PR #2 merged як `d754752`; CI passed. |
 | Phase 0 handoff | `7352a63`, `10d3be8`; PR #3 merged як `ecb887a`. |
-| Phase 1 shell · 2026-09-20/21 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage; `1828e90` — favicon/console/HTTP regression fix. [PR #4](https://github.com/VladSidun/SOVA/pull/4) open у `develop`, [CI run 35539989480](https://github.com/VladSidun/SOVA/actions/runs/35539989480) passed, без auto-merge. |
+| Phase 1 shell · 2026-09-20/21 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage; `1828e90` — favicon/console/HTTP regression fix; `638afc4` — error-resolution report. [PR #4](https://github.com/VladSidun/SOVA/pull/4) open у `develop`, [CI run 35540252412](https://github.com/VladSidun/SOVA/actions/runs/35540252412) passed, merge state clean, без auto-merge. |
 
 ## 6. Результати / невирішені проблеми
 
@@ -87,5 +99,6 @@ tracking IDs, messenger deep links, реальний контент, «8 рок�
 - ✅ Обов’язкові checks, 7 E2E і responsive preview 360/768/1366 пройдено.
 - ✅ UA/EN, formal Ukrainian CTA, keyboard/focus behavior і hidden-section nav policy покриті тестами.
 - ✅ Favicon 404 усунуто через metadata на verified logo; console/network regression checks додано.
-- ✅ `feature/phase-1-shell` запушено; PR #4 open у `develop`, remote CI passed, merge не виконувався.
+- ✅ `feature/phase-1-shell` запушено; PR #4 open у `develop`, final remote CI passed, merge state clean; merge не виконувався.
+- ✅ Handoff містить точний порядок переходу до Phase 2 після ручного merge PR #4.
 - ✅ Невирішених проблем у Phase 1 немає.
