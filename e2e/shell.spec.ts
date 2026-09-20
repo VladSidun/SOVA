@@ -15,8 +15,9 @@ test("desktop anchor navigation and locale switching work", async ({ page }) => 
   await page.getByRole("link", { name: "Перейти на англійську" }).click();
   await expect(page).toHaveURL(/\/en$/);
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-  await expect(page.getByText("Сайт готується до запуску.")).toHaveCount(0);
-  await expect(page.getByText("The website is being prepared for launch.")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "English built around your goal — from entrance exams to working abroad.",
+  );
 });
 
 for (const width of [360, 768]) {

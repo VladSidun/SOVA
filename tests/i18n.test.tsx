@@ -19,6 +19,10 @@ describe("UA/EN scaffolding", () => {
     expect(Object.keys(uk.Foundation)).toEqual(Object.keys(en.Foundation));
     expect(Object.keys(uk.Navigation)).toEqual(Object.keys(en.Navigation));
     expect(Object.keys(uk.Footer)).toEqual(Object.keys(en.Footer));
+    expect(Object.keys(uk.Conversion)).toEqual(Object.keys(en.Conversion));
+    expect(Object.keys(uk.Conversion.Hero)).toEqual(Object.keys(en.Conversion.Hero));
+    expect(Object.keys(uk.Conversion.GoalMatcher)).toEqual(Object.keys(en.Conversion.GoalMatcher));
+    expect(Object.keys(uk.Conversion.Formats)).toEqual(Object.keys(en.Conversion.Formats));
   });
 
   it.each([
