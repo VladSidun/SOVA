@@ -1,5 +1,31 @@
 {
   "Foundation": {
     "status": "Сайт готується до запуску."
+  },
+  "Navigation": {
+    "skipToContent": "Перейти до основного вмісту",
+    "homeLabel": "SOVA — на головну",
+    "primaryLabel": "Основна навігація",
+    "mobileLabel": "Мобільна навігація",
+    "languageSwitcher": "Вибір мови",
+    "switchToUkrainian": "Перейти на українську",
+    "switchToEnglish": "Перейти на англійську",
+    "openMenu": "Відкрити меню",
+    "closeMenu": "Закрити меню",
+    "freeLesson": "Безкоштовний урок",
+    "directions": "Напрями",
+    "formats": "Формати",
+    "about": "Про SOVA",
+    "pricing": "Ціни",
+    "reviews": "Відгуки",
+    "contacts": "Контакти"
+  },
+  "Footer": {
+    "description": "Центр вивчення іноземних мов у Мукачеві. Навчання офлайн та онлайн.",
+    "heading": "Контакти",
+    "hours": "Пн–Сб: {hours}",
+    "socialLabel": "SOVA у соціальних мережах",
+    "route": "Прокласти маршрут",
+    "copyright": "Центр вивчення іноземних мов SOVA."
   }
 }

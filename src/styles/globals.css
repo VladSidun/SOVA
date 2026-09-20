@@ -18,7 +18,19 @@
   --color-brand-white: var(--brand-white);
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: clip;
   background: var(--brand-white);
   color: var(--brand-black);
   font-family: var(--font-inter), sans-serif;
@@ -26,4 +38,14 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-manrope), sans-serif;
+}
+
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

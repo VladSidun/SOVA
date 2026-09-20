@@ -1,5 +1,31 @@
 {
   "Foundation": {
     "status": "The website is being prepared for launch."
+  },
+  "Navigation": {
+    "skipToContent": "Skip to main content",
+    "homeLabel": "SOVA — home",
+    "primaryLabel": "Primary navigation",
+    "mobileLabel": "Mobile navigation",
+    "languageSwitcher": "Language selection",
+    "switchToUkrainian": "Switch to Ukrainian",
+    "switchToEnglish": "Switch to English",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "freeLesson": "Free trial lesson",
+    "directions": "Goals",
+    "formats": "Formats",
+    "about": "About SOVA",
+    "pricing": "Pricing",
+    "reviews": "Reviews",
+    "contacts": "Contacts"
+  },
+  "Footer": {
+    "description": "A foreign language center in Mukachevo. Learn in person or online.",
+    "heading": "Contacts",
+    "hours": "Mon–Sat: {hours}",
+    "socialLabel": "SOVA on social media",
+    "route": "Get directions",
+    "copyright": "SOVA Foreign Language Center."
   }
 }

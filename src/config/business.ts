@@ -20,3 +20,8 @@ export const business = {
   frequencyPerWeek: { min: 2, max: 3 },
   trialMinutes: 45,
 } as const;
+
+export const businessAddress = {
+  uk: business.address,
+  en: "26/11 Kyryla i Mefodiia Square, Mukachevo",
+} as const;
