@@ -25,3 +25,9 @@ export const businessAddress = {
   uk: business.address,
   en: "26/11 Kyryla i Mefodiia Square, Mukachevo",
 } as const;
+
+// Kept separate from verified business facts and never rendered while the
+// corresponding feature flag is disabled.
+export const unverifiedClaims = {
+  yearsOfExperience: 8,
+} as const;
