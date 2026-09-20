@@ -9,12 +9,27 @@ export type Direction = {
   title: LocalizedString;
   description: LocalizedString;
   goals: readonly import("./lead").LeadGoal[];
+  leadGoal: import("./lead").LeadGoal;
 };
+
+export type FormatDetail =
+  | "groupSize"
+  | "pairSize"
+  | "personalPlan"
+  | "frequency"
+  | "duration"
+  | "modes";
 
 export type FormatContent = {
   id: FormatId;
   title: LocalizedString;
   description: LocalizedString;
+  details: readonly FormatDetail[];
+};
+
+export type GoalOption = {
+  id: import("./lead").LeadGoal;
+  label: LocalizedString;
 };
 
 export type Teacher = {

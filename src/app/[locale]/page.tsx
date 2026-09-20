@@ -1,17 +1,18 @@
-import { getTranslations } from "next-intl/server";
-import { Section } from "@/components/layout/Section";
-import { business } from "@/config/business";
+import { LeadGoalProvider } from "@/components/lead/LeadGoalProvider";
+import { Directions } from "@/components/sections/Directions";
+import { GoalMatcher } from "@/components/sections/GoalMatcher";
+import { Hero } from "@/components/sections/Hero";
+import { TrustStrip } from "@/components/sections/TrustStrip";
 
-// Minimal route smoke target, not a landing section or Hero.
-export default async function FoundationPage() {
-  const t = await getTranslations("Foundation");
-
+export default function LandingPage() {
   return (
     <main id="main-content" tabIndex={-1}>
-      <Section containerClassName="min-h-[45vh] py-6">
-        <h1 className="text-2xl font-bold">{business.brandName}</h1>
-        <p className="mt-2">{t("status")}</p>
-      </Section>
+      <LeadGoalProvider>
+        <Hero />
+        <TrustStrip />
+        <Directions />
+        <GoalMatcher />
+      </LeadGoalProvider>
     </main>
   );
 }
