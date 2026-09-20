@@ -107,8 +107,9 @@ chromium`. Playwright starts/stops `next start`; no existing server is reused.
 The Playwright runner clears inherited `NO_COLOR` because Playwright forces
 color in workers/server processes; the host shell environment is unchanged.
 Smoke coverage: root redirect, both locales, HTML language, localized shell,
-desktop/contact anchor navigation, locale switching, mobile 360/768 overflow,
-mobile menu Escape/focus behavior, unsupported-locale 404 and automated
+desktop/contact anchor navigation, locale switching, SVG favicon, console and
+first-party HTTP errors, mobile 360/768 overflow, mobile menu Escape/focus
+behavior, unsupported-locale 404 and automated
 accessibility scans of both locale pages. Unit tests cover the Phase 0
 configuration/env/i18n contracts plus Phase 1 menu keyboard behavior and
 feature-gated navigation. Later lead/form/SEO tests are not included.
@@ -132,7 +133,7 @@ src/types/          locale/content/lead data contracts
 src/i18n/           routing/navigation/request config and dictionaries
 src/lib/            public/private environment validation
 src/styles/         Tailwind, SVG-derived colors, font tokens
-public/brand/       unchanged supplied logo.svg
+public/brand/       supplied logo.svg, also used by shell favicon metadata
 public/images/      reserved school/students/reviews/placeholders directories
 public/video/       reserved media directory
 tests/              configuration/environment/localization smoke tests
