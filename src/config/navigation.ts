@@ -33,6 +33,8 @@ const navigationItems: ReadonlyArray<NavigationItem & { feature?: keyof FeatureF
 // emits dead links. About and Reviews remain out until their authorized phases.
 export const renderedSectionIds: ReadonlyArray<SectionId> = [
   sectionIds.directions,
+  sectionIds.formats,
+  sectionIds.pricing,
   sectionIds.contacts,
 ];
 

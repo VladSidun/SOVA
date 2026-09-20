@@ -1,5 +1,6 @@
 import { LeadGoalProvider } from "@/components/lead/LeadGoalProvider";
 import { Directions } from "@/components/sections/Directions";
+import { FormatsPricing } from "@/components/sections/FormatsPricing";
 import { GoalMatcher } from "@/components/sections/GoalMatcher";
 import { Hero } from "@/components/sections/Hero";
 import { TrustStrip } from "@/components/sections/TrustStrip";
@@ -12,6 +13,7 @@ export default function LandingPage() {
         <TrustStrip />
         <Directions />
         <GoalMatcher />
+        <FormatsPricing />
       </LeadGoalProvider>
     </main>
   );
