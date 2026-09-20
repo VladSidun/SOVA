@@ -15,7 +15,10 @@ describe("UA/EN scaffolding", () => {
     expect(routing.locales).toEqual(["uk", "en"]);
     expect(routing.defaultLocale).toBe("uk");
     expect(routing.localeDetection).toBe(false);
+    expect(Object.keys(uk)).toEqual(Object.keys(en));
     expect(Object.keys(uk.Foundation)).toEqual(Object.keys(en.Foundation));
+    expect(Object.keys(uk.Navigation)).toEqual(Object.keys(en.Navigation));
+    expect(Object.keys(uk.Footer)).toEqual(Object.keys(en.Footer));
   });
 
   it.each([

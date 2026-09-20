@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
 import { business } from "@/config/business";
+import { getNavigationItems } from "@/config/navigation";
 import { routing } from "@/i18n/routing";
 import "@/styles/globals.css";
 
@@ -23,6 +26,9 @@ const manrope = Manrope({
 // Foundation only. Production SEO is implemented in Phase 6.
 export const metadata: Metadata = {
   title: business.brandName,
+  icons: {
+    icon: [{ url: "/brand/logo.svg", type: "image/svg+xml" }],
+  },
   robots: { index: false, follow: false },
 };
 
@@ -46,7 +52,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <Header navigationItems={getNavigationItems()} />
+          {children}
+          <Footer locale={locale} />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
