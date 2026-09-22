@@ -21,15 +21,15 @@ export function WhySova() {
 
       <div className="mt-10 grid gap-4 lg:grid-cols-12">
         <article className="rounded-[1.75rem] bg-brand-red p-7 text-white sm:p-9 lg:col-span-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/75">{t("reach.label")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white">{t("reach.label")}</p>
           <div className="mt-8 grid grid-cols-2 gap-6">
             <div>
               <p className="font-heading text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.lifetimeStudents}</p>
-              <p className="mt-3 max-w-44 text-sm leading-6 text-white/80">{t("reach.lifetime")}</p>
+              <p className="mt-3 max-w-44 text-sm leading-6 text-white">{t("reach.lifetime")}</p>
             </div>
             <div className="border-l border-white/25 pl-6">
               <p className="font-heading text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.currentStudents}</p>
-              <p className="mt-3 max-w-44 text-sm leading-6 text-white/80">{t("reach.current")}</p>
+              <p className="mt-3 max-w-44 text-sm leading-6 text-white">{t("reach.current")}</p>
             </div>
           </div>
         </article>

@@ -76,4 +76,11 @@ describe("responsive navigation", () => {
     expect(items.map((item) => item.id)).toEqual([sectionIds.directions, sectionIds.contacts]);
     expect(items.some((item) => item.href === "#reviews")).toBe(false);
   });
+
+  it("includes the ready About target while keeping Reviews hidden", () => {
+    const items = getNavigationItems();
+
+    expect(items.some((item) => item.href === "#about")).toBe(true);
+    expect(items.some((item) => item.href === "#reviews")).toBe(false);
+  });
 });
