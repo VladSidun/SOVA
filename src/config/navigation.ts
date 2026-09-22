@@ -29,9 +29,14 @@ const navigationItems: ReadonlyArray<NavigationItem & { feature?: keyof FeatureF
   { id: sectionIds.contacts, href: "#contacts", labelKey: "contacts" },
 ];
 
-// Phase 1 renders only the contact anchor in the Footer. Later phases extend
-// this list as their real sections are added, so the shell never emits dead links.
-export const renderedSectionIds: ReadonlyArray<SectionId> = [sectionIds.contacts];
+// Only IDs backed by real rendered targets belong here, so the shell never
+// emits dead links. About and Reviews remain out until their authorized phases.
+export const renderedSectionIds: ReadonlyArray<SectionId> = [
+  sectionIds.directions,
+  sectionIds.formats,
+  sectionIds.pricing,
+  sectionIds.contacts,
+];
 
 export function getNavigationItems({
   flags = features,

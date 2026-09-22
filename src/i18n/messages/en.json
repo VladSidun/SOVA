@@ -27,5 +27,62 @@
     "socialLabel": "SOVA on social media",
     "route": "Get directions",
     "copyright": "SOVA Foreign Language Center."
+  },
+  "Conversion": {
+    "Hero": {
+      "eyebrow": "English School • Mukachevo • Offline + Online",
+      "title": "English built around your goal — from entrance exams to working abroad.",
+      "body": "Group, pair and individual lessons for school pupils, university students and adults. In person in central Mukachevo or online.",
+      "primaryCta": "Claim your free trial lesson",
+      "secondaryCta": "Find your programme in 60 seconds",
+      "microcopy": "{minutes} minutes • level check • introduction • personal plan — free.",
+      "mediaLabel": "Branded SOVA media placeholder for a future real photo or video from the school",
+      "mediaBadge": "SOVA English",
+      "mediaTitle": "English for whatever comes next.",
+      "mediaNote": "A real photo or video from SOVA will appear here."
+    },
+    "Trust": {
+      "label": "Verified facts about SOVA"
+    },
+    "Directions": {
+      "eyebrow": "Learning built around your goal",
+      "title": "What do you need English for?",
+      "intro": "Do not pick a course at random. Start with the outcome — we will account for your level, deadline and preferred format.",
+      "action": "Choose this goal",
+      "selectAria": "Choose goal: {goal}"
+    },
+    "GoalMatcher": {
+      "eyebrow": "Goal matcher",
+      "title": "Find your starting point.",
+      "intro": "Choose one goal now. We will keep it in the link so you can continue from it in the short enquiry form.",
+      "question": "What matters most to you?",
+      "selectAria": "Save goal: {goal}",
+      "emptyLabel": "Your choice",
+      "emptyValue": "Choose a goal on the right",
+      "emptyNote": "This does not lock you into a programme — the final plan depends on your level and deadline.",
+      "selectedLabel": "Selected goal",
+      "selectedNote": "Your choice is saved. We will use it to match the programme in the next step.",
+      "privacyNote": "No contact details are needed at this step."
+    },
+    "Formats": {
+      "eyebrow": "Formats and pricing",
+      "title": "Clear before the first conversation.",
+      "intro": "Choose the level of personalisation and budget that suit you. The programme within each format is adapted to your goal.",
+      "popular": "Popular format",
+      "units": {
+        "month": "UAH / month",
+        "lesson": "UAH / lesson"
+      },
+      "details": {
+        "groupSize": "{min}–{max} people",
+        "pairSize": "2 people",
+        "personalPlan": "Personal programme",
+        "frequency": "{min}–{max} times / week",
+        "duration": "{min}–{max} min",
+        "modes": "Offline / Online"
+      },
+      "cta": "Find the right format",
+      "examNote": "NMT, EVI and international exam preparation uses the same formats and the standard price of the format you choose."
+    }
   }
 }

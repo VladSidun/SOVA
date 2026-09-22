@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { business } from "@/config/business";
-import type { NavigationItem } from "@/config/navigation";
+import { sectionIds, type NavigationItem } from "@/config/navigation";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "./Container";
 
@@ -144,7 +143,7 @@ export function Header({ navigationItems }: HeaderProps) {
           <LanguageSwitch />
           <a
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-red px-5 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
-            href={`tel:${business.phoneE164}`}
+            href={`#${sectionIds.lead}`}
           >
             {t("freeLesson")}
           </a>
@@ -194,7 +193,7 @@ export function Header({ navigationItems }: HeaderProps) {
               ))}
               <a
                 className="mt-2 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-red px-5 text-center text-base font-semibold text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
-                href={`tel:${business.phoneE164}`}
+                href={`#${sectionIds.lead}`}
                 onClick={() => closeMenu()}
               >
                 {t("freeLesson")}

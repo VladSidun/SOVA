@@ -3,102 +3,101 @@
 Оновлено: 2026-09-21. Мета: продовжити роботу в іншому чаті без пошуку
 попередніх розмов. Це стан реалізації, не заміна ТЗ.
 
-## 1. Почніть звідси
+## 1. Поточний стан
 
-- Прочитайте `AGENTS.md`, цей файл і обидва source-of-truth документи перед
-  змінами: user instruction → `SOVA_WEBSITE_SPEC_v2.md` (бізнес/UX) →
-  `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md` (техніка) → код.
-- Phase 0 виконано й merged у `develop`. Phase 1 реалізовано у
-  `feature/phase-1-shell`; Hero і Phase 2 не розпочато. Не переходьте до
-  наступної фази без прямого завдання користувача.
-- Origin: `https://github.com/VladSidun/SOVA.git`; integration: `develop`;
-  release: `main`. Перевірений стартовий commit Phase 1: `ecb887a` у `develop`
-  (містить merged PR #1–#3). Phase 1 code commits: `49455f0`, `3715068`,
-  `1828e90`.
-  Гілку запушено; [PR #4](https://github.com/VladSidun/SOVA/pull/4) відкрито
-  у `develop`, merge state clean, фінальний CI passed, auto-merge не ввімкнено.
-- Це development preview з `noindex, nofollow`, не production MVP.
+- Перед змінами прочитайте `AGENTS.md`, цей файл, `SOVA_WEBSITE_SPEC_v2.md`
+  і `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md`. Пріоритет: актуальне завдання
+  користувача → SPEC → GUIDE → код.
+- Phase 0 і Phase 1 merged у `develop`; merged Phase 1 tip — `24d3799`.
+- Phase 2 реалізовано у `feature/phase-2-conversion`, відгалуженій від
+  актуального `origin/develop` після перевірки, що повний Phase 1 є ancestor.
+  Code commits: `8b4f273`, `0210373`, `4ed8a0b`.
+- [PR #5](https://github.com/VladSidun/SOVA/pull/5) відкрито у `develop` без
+  auto-merge. Гілку запушено; фінальний test/report commit і remote CI мають
+  бути перевірені перед merge.
+- Це development preview з `noindex, nofollow`, не production MVP. Phase 3+
+  не починати без окремої прямої авторизації.
 
-## 2. Що реалізовано і як використовувати
+## 2. Що реалізовано
 
 | Частина | Реалізація / точки входу |
 | --- | --- |
-| Runtime | Node 24.x, npm, Next 16.3.5, React 19.3.0, TS strict, Tailwind 4.3.3, next-intl 4.14.5. Dependency graph зафіксований у `package-lock.json`; setup `npm ci`. |
-| Маршрути | `src/app/[locale]/layout.tsx` збирає локалізований shell для `/uk` і `/en`; `/` → `/uk`, unsupported locale → 404. `page.tsx` усе ще мінімальний launch-status content, не Hero. Metadata використовує перевірений `/brand/logo.svg` як SVG favicon. |
-| Layout primitives | `src/components/layout/Container.tsx` — responsive max-width/padding; `Section.tsx` — базовий section wrapper. `globals.css` задає sticky-anchor offset, smooth scroll і reduced-motion fallback. |
-| Header | `Header.tsx`: sticky logo/header, desktop nav, formal CTA, UA/EN switch, mobile burger. CTA використовує підтверджений `business.phoneE164`; 44px+ targets, skip link, `aria-expanded/controls`, Escape, focus-on-open, focus trap і focus return. |
-| Navigation registry | `src/config/navigation.ts`: один реєстр anchor IDs/labels. `getNavigationItems()` одночасно перевіряє, що target реально rendered, і feature flag. У Phase 1 доступний лише `#contacts`; Directions/Formats/About/Pricing з’являться зі своїми секціями, Reviews лишається hidden при `showReviews=false`. |
-| Language switch | Використовує `src/i18n/navigation.ts`, зберігає поточний pathname і змінює locale prefix. `Navigation`/`Footer` мають повні окремі UA/EN dictionaries без змішування copy. |
-| Footer / contacts | `Footer.tsx`, anchor `#contacts`: телефон, Instagram, Facebook, Google Maps, адреса та Пн–Сб 09:00–20:00. Дані беруться з `business.ts`/`social.ts`; англійська адреса зберігається поруч як локалізоване представлення того самого факту. Fake email/messenger/review/media немає. |
-| Phase 0 config | Підтверджені business/pricing constants, disabled content/analytics flags, empty typed teachers/reviews/cases, public/private env boundary збережено без змін бізнес-фактів. `8 років` не рендериться. |
-| Tests | 13 Vitest tests / 4 files. `navigation.test.tsx` покриває open/close, Escape, focus trap/return та hidden nav. 7 Chromium E2E: Phase 0 routing/a11y плюс anchors, locale switch, favicon, console/first-party HTTP errors і 360/768 overflow/menu smoke. |
+| Runtime / shell | Node 24, Next 16.3.5, React 19.3.0, TypeScript strict, Tailwind 4.3.3, next-intl 4.14.5. `/uk` і `/en`, `/` → `/uk`; SVG logo, responsive Header/Footer, language switch та mobile focus trap з Phase 1 збережені. |
+| Phase 2 composition | `src/app/[locale]/page.tsx` рендерить лише `Hero`, `TrustStrip`, `Directions`, `GoalMatcher`, `FormatsPricing` між Phase 1 Header/Footer. Trial process, About, reviews, results, FAQ та інші пізні секції не створені й не лишають порожніх блоків. |
+| Hero | `src/components/sections/Hero.tsx`: точний UA H1/body/CTA зі SPEC, 45-хвилинний trial із `business.trialMinutes`, restrained primary/secondary CTA та branded 4:5 placeholder без stock imagery. Placeholder використовує наявний `/brand/logo.svg`; реальні media відкладені. |
+| Trust | `TrustStrip.tsx` + `content/trust.ts`: з 2019 року, 100+ зараз, 1000+ за весь час, Offline + Online. Непідтверджені 8 років ізольовані в `unverifiedClaims` і не рендеряться при `showEightYearsStat=false`. |
+| Directions | `content/directions.ts` містить 7 двомовних config-driven напрямів без фактів у JSX. `Directions.tsx` рендерить адаптивну сітку; кожна CTA має typed `leadGoal`. |
+| Goal state | `LeadGoalProvider.tsx` + `lib/lead-goal.ts` — спільний API для Phase 4: `useLeadGoal()`, `isLeadGoal()`, `buildLeadGoalHref()`, query key `goal`. Вибір оновлює URL як `?goal=<LeadGoal>#lead`, зберігає наявні query/UTM, відновлюється з прямого URL і скролить до matcher-а з reduced-motion fallback. Контактні дані не збираються. |
+| Goal matcher | `GoalMatcher.tsx` і `content/goals.ts`: усі значення `LeadGoal`, видимий selected state та чесний lead-area placeholder. Повної форми, валідації чи доставки немає — це scope Phase 4/5. |
+| Formats / pricing | `FormatsPricing.tsx` + `content/formats.ts` рендерять cards із `config/pricing.ts` і `business.ts`: group 1500 грн/місяць, 3–5 людей, 60–75 хв, 2–3 рази/тиждень; pair 350 грн/заняття, 60–75 хв, 2–3 рази/тиждень; individual 500 грн/заняття, 60–75 хв. Exam prep використовує стандартну ціну обраного формату без окремої націнки. |
+| Navigation / i18n | `renderedSectionIds` тепер містить тільки реальні `directions`, `formats`, `pricing`, `contacts`. Header CTA веде до `#lead`. UA формальна; EN адаптована окремо в messages. About/Reviews не потрапляють у nav. |
 
-## 3. Перевірки та результати
+## 3. Перевірки Phase 2
 
-Локальна перевірка Phase 1 (2026-09-21, branch `feature/phase-1-shell`):
+Фінальний локальний прогін 2026-09-21 на `feature/phase-2-conversion`:
 
 ```text
 npm run typecheck  — passed
 npm run lint       — passed, 0 warnings
-npm test           — passed, 13 tests / 4 files
+npm test           — passed, 18 tests / 5 files
 npm run build      — passed, static /uk and /en
-npm run e2e        — passed, 7 Chromium tests
+npm run e2e        — passed, 14 Chromium tests
 git diff --check   — passed
 ```
 
-Browser preview через реальний Chromium перевірено на 360×800, 768×800 і
-1366×768. UA та EN оглянуті, mobile menu і desktop CTA/anchor працездатні;
-`scrollWidth === clientWidth` на 360 і 1366, E2E окремо перевіряє 360/768.
-WCAG 2/2.1 A/AA Axe smoke для UA/EN — 0 violations. Console — 0 errors /
-0 warnings; first-party requests, включно з favicon, повертають 200.
+Покрито exact pricing, 45 хв, відсутність `8 років`, direction → `LeadGoal`,
+відновлення query selection, збереження існуючого UTM, CTA targets, hidden
+sections, UA/EN, mobile menu, console/network smoke та WCAG 2/2.1 A/AA Axe.
 
-`npm run e2e` потребує попереднього `npm run build`; runner сам запускає
-production server на `127.0.0.1:3100`.
+Responsive перевірено реальним Chromium на 360, 390, 768, 1366 і 1920 px:
+горизонтального overflow немає. Full-page preview оглянуто на 360/768/1366/
+1920; Hero, trust grid, directions, matcher і pricing перебудовуються без
+перекриття. Під час першого E2E Axe знайшов недостатню прозорість білого тексту
+на червоній pricing-card; контраст виправлено, повторний Axe — 0 violations.
 
-## 4. Наступний scope та відкладені рішення
+`npm run e2e` потребує актуального `npm run build`; runner піднімає production
+server на `127.0.0.1:3100`.
 
-Наступна фаза лише після прямої авторизації: Phase 2 — Hero, trust strip,
-directions, goal matcher, formats/pricing. Коли секція реально рендериться,
-додайте її ID до `renderedSectionIds`; не створюйте dead nav links.
+## 4. Наступний scope і відкладені рішення
 
-Старт у новому чаті:
+Наступна фаза лише після прямої авторизації: Phase 3 — trial process, Why SOVA,
+method, location, FAQ. Не додавати форму раніше Phase 4 і API/delivery раніше
+Phase 5.
 
-1. Перевірити, що [PR #4](https://github.com/VladSidun/SOVA/pull/4) вручну
-   merged у `develop`; не створювати Phase 2 branch від неповного `develop`.
-2. Виконати `git fetch --prune origin`, `git switch develop` і
-   `git pull --ff-only origin develop`.
-3. Переконатися, що tip `origin/feature/phase-1-shell` є ancestor актуального
-   `develop`; це підтверджує повний merge Phase 1 разом із handoff.
-4. Створити окрему feature branch для Phase 2 від оновленого `develop`.
-5. Ще раз прочитати `AGENTS.md`, цей handoff, SPEC і GUIDE; реалізовувати лише
-   Phase 2, повторно використовуючи shell, navigation registry, config та tests.
+Початок наступної гілки:
 
-Ще не реалізовано: trial/why/method/location/FAQ, form/server validation,
-API/Telegram/Turnstile, attribution, analytics, production SEO/JSON-LD/
-sitemap/robots, privacy content, motion/final polish, deployment, DB/Sova Hub,
-реальні media/reviews/cases/teachers. Motion/RHF/phone libraries не встановлені.
+1. Дочекатися ручного merge PR #5 у `develop`; auto-merge не вмикати.
+2. `git fetch --prune origin`, `git switch develop`, `git pull --ff-only`.
+3. Перевірити, що tip Phase 2 є ancestor актуального `develop`.
+4. Створити окрему feature branch для явно дозволеної фази.
+5. Повторно використати `Section`, config facts, navigation registry та
+   `LeadGoalProvider`; не дублювати pricing/business copy у JSX.
 
-До production залишаються зовнішні/бізнес рішення: Telegram/Turnstile/domain,
-tracking IDs, messenger deep links, реальний контент, «8 років», правила
-перенесення занять і media/privacy consent. Не вигадуйте ці дані.
+Ще не реалізовано: trial/why/method/location/FAQ, повна lead form, Zod/phone
+validation, Turnstile, attribution storage, `/api/leads`, Telegram/fallback,
+analytics, production SEO/JSON-LD/sitemap/robots, privacy page, motion/final
+polish, deployment, DB/Sova Hub, реальні media/reviews/cases/teachers.
+
+До production лишаються зовнішні/бізнес рішення: Telegram/Turnstile/domain,
+tracking IDs, messenger deep links, реальний контент, підтвердження «8 років»,
+правила перенесення занять і media/privacy consent.
 
 ## 5. Компактна історія delivery
 
 | Delivery | Commits / результат |
 | --- | --- |
-| Bootstrap | `e645b78` — source-of-truth docs та ignore rules, основа main/develop. |
-| Phase 0 foundation | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. |
-| Phase 0 reporting/fixes | `a04dbb3`, `26c6f57`, `a33905d`; PR #2 merged як `d754752`; CI passed. |
-| Phase 0 handoff | `7352a63`, `10d3be8`; PR #3 merged як `ecb887a`. |
-| Phase 1 shell · 2026-09-20/21 | `49455f0` — responsive localized shell; `3715068` — component/E2E coverage; `1828e90` — favicon/console/HTTP regression fix; `638afc4` — error-resolution report. [PR #4](https://github.com/VladSidun/SOVA/pull/4) open у `develop`, [CI run 35540252412](https://github.com/VladSidun/SOVA/actions/runs/35540252412) passed, merge state clean, без auto-merge. |
+| Bootstrap | `e645b78` — source-of-truth docs та ignore rules. |
+| Phase 0 | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. Reporting/fixes PR #2 merged як `d754752`; handoff PR #3 merged як `ecb887a`. |
+| Phase 1 shell · 2026-09-20/21 | `49455f0`, `3715068`, `1828e90`, `638afc4`; PR #4 merged у `develop` як `24d3799`. |
+| Phase 2 conversion · 2026-09-21 | `8b4f273` — Hero/Trust; `0210373` — Directions/GoalMatcher/shared goal query; `4ed8a0b` — Formats/Pricing. PR #5 open у `develop`, без auto-merge. |
 
 ## 6. Результати / невирішені проблеми
 
-- ✅ Phase 0 підтверджено merged у актуальний `develop`; Phase 1 відгалужено від `ecb887a`.
-- ✅ Phase 1 scope реалізовано без Hero/Phase 2, fake content або зміни підтверджених бізнес-фактів.
-- ✅ Обов’язкові checks, 7 E2E і responsive preview 360/768/1366 пройдено.
-- ✅ UA/EN, formal Ukrainian CTA, keyboard/focus behavior і hidden-section nav policy покриті тестами.
-- ✅ Favicon 404 усунуто через metadata на verified logo; console/network regression checks додано.
-- ✅ `feature/phase-1-shell` запушено; PR #4 open у `develop`, final remote CI passed, merge state clean; merge не виконувався.
-- ✅ Handoff містить точний порядок переходу до Phase 2 після ручного merge PR #4.
-- ✅ Невирішених проблем у Phase 1 немає.
+- ✅ Phase 2 відгалужено від актуального `develop` після merged Phase 1.
+- ✅ Hero, trust, directions, matcher і pricing відповідають дозволеному scope та SPEC.
+- ✅ Pricing/trial/trust facts походять із config; «8 років» відсутні при flag=false.
+- ✅ Direction/goal selection зберігає typed `LeadGoal` у query для Phase 4 без збору PII.
+- ✅ UA/EN, formal UA, SVG logo, branded placeholder, accessibility і 44px+ targets перевірені.
+- ✅ 18 unit/component tests, 14 E2E, build і responsive 360/390/768/1366/1920 пройдено.
+- ✅ `feature/phase-2-conversion` запушено; PR #5 відкрито в `develop`, auto-merge не ввімкнено.
+- ✅ Невирішених проблем у Phase 2 немає.

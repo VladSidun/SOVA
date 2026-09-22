@@ -38,8 +38,9 @@ describe("responsive navigation", () => {
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     const mobileNavigation = screen.getByRole("navigation", { name: "Мобільна навігація" });
-    const contactLink = within(mobileNavigation).getByRole("link", { name: "Контакти" });
-    await waitFor(() => expect(contactLink).toHaveFocus());
+    const firstLink = within(mobileNavigation).getByRole("link", { name: "Напрями" });
+    expect(within(mobileNavigation).getByRole("link", { name: "Контакти" })).toBeInTheDocument();
+    await waitFor(() => expect(firstLink).toHaveFocus());
 
     fireEvent.keyDown(document, { key: "Escape" });
 
@@ -53,7 +54,7 @@ describe("responsive navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Відкрити меню" }));
 
     const mobileNavigation = screen.getByRole("navigation", { name: "Мобільна навігація" });
-    const firstLink = within(mobileNavigation).getByRole("link", { name: "Контакти" });
+    const firstLink = within(mobileNavigation).getByRole("link", { name: "Напрями" });
     const lastLink = within(mobileNavigation).getByRole("link", { name: "Безкоштовний урок" });
     await waitFor(() => expect(firstLink).toHaveFocus());
 
