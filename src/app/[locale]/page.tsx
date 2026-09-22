@@ -4,6 +4,7 @@ import { FAQ } from "@/components/sections/FAQ";
 import { FormatsPricing } from "@/components/sections/FormatsPricing";
 import { GoalMatcher } from "@/components/sections/GoalMatcher";
 import { Hero } from "@/components/sections/Hero";
+import { LeadSection } from "@/components/sections/LeadSection";
 import { Location } from "@/components/sections/Location";
 import { Method } from "@/components/sections/Method";
 import { OptionalContentSections } from "@/components/sections/OptionalContentSections";
@@ -26,6 +27,7 @@ export default function LandingPage() {
         <OptionalContentSections />
         <Location />
         <FAQ />
+        <LeadSection />
       </LeadGoalProvider>
     </main>
   );
