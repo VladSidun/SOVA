@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
 import { business, businessAddress } from "@/config/business";
-import { sectionIds } from "@/config/navigation";
 import { social } from "@/config/social";
 import type { Locale } from "@/types/content";
 import { Container } from "./Container";
@@ -13,10 +12,7 @@ export async function Footer({ locale }: FooterProps) {
   const t = await getTranslations({ locale, namespace: "Footer" });
 
   return (
-    <footer
-      className="border-t border-white/10 bg-brand-black py-10 text-white sm:py-12"
-      id={sectionIds.contacts}
-    >
+    <footer className="border-t border-white/10 bg-brand-black py-10 text-white sm:py-12">
       <Container>
         <div className="grid gap-10 md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] md:items-start">
           <div className="max-w-xl">

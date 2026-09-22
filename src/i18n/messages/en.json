@@ -120,6 +120,25 @@
         "standards": { "title": "CEFR and current materials", "body": "We use CEFR levels and work with Cambridge, Oxford, Pearson and other up-to-date resources." },
         "younger": { "title": "Interactive learning for younger students", "body": "Games and active tasks keep learners engaged; the usual rhythm is {min}–{max} lessons a week depending on format and goal." }
       }
+    },
+    "Why": {
+      "eyebrow": "Why SOVA",
+      "title": "Evidence, not loud promises.",
+      "intro": "We combine the school’s experience, a clear method and formats that fit real life.",
+      "reach": { "label": "People who chose SOVA", "lifetime": "students taught to date", "current": "students learning now" },
+      "goal": { "title": "Learning built around a specific goal", "body": "Your level, deadline and desired outcome shape the programme — not the other way around. It starts with a free diagnosis and plan." },
+      "speaking": { "title": "Speak, do not just study", "body": "A speaking-first approach turns rules into language you can use in real conversations." },
+      "materials": { "title": "A strong system without outdated templates", "body": "We work with CEFR and current materials from leading international publishers." },
+      "place": { "title": "In central Mukachevo — or wherever you are", "body": "A comfortable modern space for in-person lessons and a complete online learning option." },
+      "smallGroups": { "badge": "people per group", "title": "Small groups and a clear start", "body": "More attention for each learner and a free {minutes}-minute diagnosis before you begin." }
+    },
+    "Location": {
+      "eyebrow": "Location",
+      "title": "SOVA in central Mukachevo.",
+      "hours": "Mon–Sat: {hours}",
+      "note": "Paid parking is available nearby. You can also study online.",
+      "route": "Get directions",
+      "mapTitle": "Map showing SOVA in Mukachevo"
     }
   }
 }
