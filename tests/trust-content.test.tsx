@@ -61,9 +61,9 @@ describe("Phase 3 trust content", () => {
       "href",
       business.googleMaps,
     );
-    expect(within(location!).getByTitle("Карта розташування SOVA у Мукачеві")).toHaveAttribute(
-      "loading",
-      "lazy",
+    expect(within(location!).getByTestId("location-map-preview")).toHaveAttribute(
+      "href",
+      business.googleMaps,
     );
   });
 

@@ -12,9 +12,9 @@ test("Phase 3 location uses verified business facts and the configured map URL",
     "href",
     business.googleMaps,
   );
-  await expect(location.getByTitle("Карта розташування SOVA у Мукачеві")).toHaveAttribute(
-    "loading",
-    "lazy",
+  await expect(location.getByTestId("location-map-preview")).toHaveAttribute(
+    "href",
+    business.googleMaps,
   );
 });
 

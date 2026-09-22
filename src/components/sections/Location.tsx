@@ -4,9 +4,6 @@ import { business, businessAddress } from "@/config/business";
 import { sectionIds } from "@/config/navigation";
 import type { Locale } from "@/types/content";
 
-const mapEmbedUrl =
-  "https://www.google.com/maps?q=26%2F11%20Kyryla%20i%20Mefodiia%20Square%2C%20Mukachevo&output=embed";
-
 export function Location() {
   const locale = useLocale() as Locale;
   const t = useTranslations("TrustContent.Location");
@@ -35,15 +32,29 @@ export function Location() {
           </a>
         </div>
 
-        <div className="min-h-[22rem] overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/5 sm:min-h-[28rem]">
-          <iframe
-            className="h-full min-h-[22rem] w-full border-0 sm:min-h-[28rem]"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            src={mapEmbedUrl}
-            title={t("mapTitle")}
-          />
-        </div>
+        <a
+          aria-label={t("mapTitle")}
+          className="group relative min-h-[22rem] overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#252525] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:min-h-[28rem]"
+          data-testid="location-map-preview"
+          href={business.googleMaps}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <span aria-hidden="true" className="absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(255,255,255,.09)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.09)_1px,transparent_1px)] [background-size:3rem_3rem]" />
+          <span aria-hidden="true" className="absolute -left-20 top-[38%] h-12 w-[130%] -rotate-6 rounded-full border-y border-white/20 bg-white/[0.04]" />
+          <span aria-hidden="true" className="absolute left-[52%] top-[-12%] h-[130%] w-10 rotate-[24deg] rounded-full border-x border-white/15 bg-white/[0.03]" />
+          <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+            <span aria-hidden="true" className="flex size-16 items-center justify-center rounded-full bg-brand-red shadow-[0_18px_45px_rgba(211,47,47,0.35)] transition-transform group-hover:-translate-y-1">
+              <span className="size-4 rounded-full border-4 border-white" />
+            </span>
+            <span className="mt-4 rounded-full bg-white px-4 py-2 text-center text-xs font-bold text-brand-black shadow-xl">
+              {business.brandName} · {business.city}
+            </span>
+          </span>
+          <span className="absolute bottom-5 right-5 rounded-full border border-white/15 bg-brand-black/80 px-4 py-2 text-xs font-semibold text-white backdrop-blur">
+            {t("openMap")} ↗
+          </span>
+        </a>
       </div>
     </Section>
   );

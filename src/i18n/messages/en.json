@@ -138,7 +138,8 @@
       "hours": "Mon–Sat: {hours}",
       "note": "Paid parking is available nearby. You can also study online.",
       "route": "Get directions",
-      "mapTitle": "Map showing SOVA in Mukachevo"
+      "mapTitle": "Open the map showing SOVA in Mukachevo",
+      "openMap": "Open Google Maps"
     },
     "FAQ": {
       "eyebrow": "FAQ",
