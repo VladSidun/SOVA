@@ -84,5 +84,42 @@
       "cta": "Find the right format",
       "examNote": "NMT, EVI and international exam preparation uses the same formats and the standard price of the format you choose."
     }
+  },
+  "TrustContent": {
+    "Trial": {
+      "eyebrow": "Free trial • {minutes} minutes",
+      "title": "We understand your goal first. Then we recommend a programme.",
+      "intro": "This is a focused diagnostic session: we meet, assess your knowledge and agree on a realistic route to your outcome.",
+      "host": "Your trial is led by a potential teacher or by an administrator / head teacher.",
+      "offlineBonus": "For in-person study, we also show you around the school and introduce the learning materials.",
+      "insideLabel": "What happens in 45 minutes",
+      "steps": {
+        "apply": { "title": "Send a short enquiry", "body": "Share your goal and preferred format — no lengthy questionnaire." },
+        "connect": { "title": "Arrange the session", "body": "We contact you and find a convenient time." },
+        "diagnose": { "title": "{minutes} min: test and diagnosis", "body": "We meet, assess your knowledge and identify your current level." },
+        "plan": { "title": "Receive a personal plan", "body": "We recommend a programme, format and schedule, and explain the pricing clearly." }
+      },
+      "details": {
+        "meet": "introduction and context for your goal",
+        "test": "knowledge assessment",
+        "level": "level identification",
+        "diagnostic": "short language diagnosis",
+        "programme": "programme matched to your goal, level and deadline",
+        "schedule": "schedule discussion",
+        "pricing": "format and pricing explanation"
+      }
+    },
+    "Method": {
+      "eyebrow": "The SOVA method",
+      "title": "Do more than know the rules. Use English with confidence.",
+      "intro": "We combine a clear framework, regular practice and materials matched to each learner’s level and goals.",
+      "standardsLabel": "Standards and publishers used in our teaching",
+      "principles": {
+        "goal": { "title": "A route built around your goal", "body": "Once we know your level, we shape the programme around the outcome, deadline and pace that matter to you." },
+        "speaking": { "title": "Speaking from the first lesson", "body": "Grammar is reinforced through real conversation and practical situations instead of remaining theory." },
+        "standards": { "title": "CEFR and current materials", "body": "We use CEFR levels and work with Cambridge, Oxford, Pearson and other up-to-date resources." },
+        "younger": { "title": "Interactive learning for younger students", "body": "Games and active tasks keep learners engaged; the usual rhythm is {min}–{max} lessons a week depending on format and goal." }
+      }
+    }
   }
 }
