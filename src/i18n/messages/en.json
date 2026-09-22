@@ -151,5 +151,68 @@
       "results": "Student results",
       "reviews": "Reviews"
     }
+  },
+  "LeadForm": {
+    "eyebrow": "Free trial • 3 short steps",
+    "title": "Take the first step towards your goal.",
+    "intro": "Tell us who will be learning and what they need English for. We will assess the level and recommend a programme and format.",
+    "privacyNote": "Your name, phone number and comment are used only to contact you about learning. No email is needed.",
+    "progress": "Step {step} of 3",
+    "progressLabel": "Enquiry progress",
+    "progressStep": "Step {step}",
+    "optional": "(optional)",
+    "audience": {
+      "title": "Who will be studying?",
+      "options": {
+        "child": "Child",
+        "school_student": "School pupil",
+        "university_student": "University student",
+        "adult": "Adult"
+      }
+    },
+    "ageOrGrade": {
+      "label": "Age or school year",
+      "placeholder": "For example, age 12 or Year 7"
+    },
+    "goals": {
+      "title": "What is your goal?",
+      "preselected": "The goal selected above is already included. Choose more if relevant."
+    },
+    "studyMode": {
+      "title": "How would you prefer to study?",
+      "options": {
+        "offline": "In person",
+        "online": "Online",
+        "unsure": "Not sure — advise me"
+      }
+    },
+    "contact": {
+      "title": "How should we contact you?",
+      "name": "Name",
+      "phone": "Phone",
+      "phonePlaceholder": "+380 99 123 45 67",
+      "methodTitle": "Choose your preferred contact method",
+      "methods": {
+        "call": "Phone call",
+        "telegram": "Telegram",
+        "viber": "Viber",
+        "whatsapp": "WhatsApp"
+      },
+      "comment": "Comment",
+      "commentHint": "Up to 500 characters.",
+      "consent": "I agree that SOVA may use my contact details only to contact me about learning."
+    },
+    "actions": {
+      "back": "Back",
+      "next": "Next",
+      "submit": "Claim your free trial lesson",
+      "sending": "Sending…"
+    },
+    "error": "We could not send your enquiry. Your details remain in the form — check your connection and try again.",
+    "success": {
+      "eyebrow": "Enquiry sent",
+      "title": "Thank you — we have your enquiry.",
+      "body": "We will contact you using your chosen method to arrange the free trial. There is no need to submit the form again."
+    }
   }
 }

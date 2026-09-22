@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { LeadGoalLink, useLeadGoal } from "@/components/lead/LeadGoalProvider";
 import { Section } from "@/components/layout/Section";
 import { goalOptions } from "@/content/goals";
-import { leadTargetId } from "@/lib/lead-goal";
 import type { Locale } from "@/types/content";
 
 export function GoalMatcher() {
@@ -17,7 +16,6 @@ export function GoalMatcher() {
     <Section
       className="bg-[var(--surface-soft)] py-16 sm:py-20 lg:py-24"
       containerClassName="grid gap-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-start lg:gap-14"
-      id={leadTargetId}
     >
       <div className="max-w-xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
