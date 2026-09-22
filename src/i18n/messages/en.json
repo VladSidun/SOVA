@@ -139,6 +139,16 @@
       "note": "Paid parking is available nearby. You can also study online.",
       "route": "Get directions",
       "mapTitle": "Map showing SOVA in Mukachevo"
+    },
+    "FAQ": {
+      "eyebrow": "FAQ",
+      "title": "The essentials, answered.",
+      "intro": "Answers to common questions before you take the first step. We agree the details of your programme after the level check."
+    },
+    "Deferred": {
+      "teachers": "Teachers",
+      "results": "Student results",
+      "reviews": "Reviews"
     }
   }
 }
