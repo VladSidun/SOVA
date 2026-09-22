@@ -1,6 +1,6 @@
 # SOVA — передача контексту Codex
 
-Оновлено: 2026-09-21. Мета: продовжити роботу в іншому чаті без пошуку
+Оновлено: 2026-09-22. Мета: продовжити роботу в іншому чаті без пошуку
 попередніх розмов. Це стан реалізації, не заміна ТЗ.
 
 ## 1. Поточний стан
@@ -8,96 +8,99 @@
 - Перед змінами прочитайте `AGENTS.md`, цей файл, `SOVA_WEBSITE_SPEC_v2.md`
   і `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md`. Пріоритет: актуальне завдання
   користувача → SPEC → GUIDE → код.
-- Phase 0 і Phase 1 merged у `develop`; merged Phase 1 tip — `24d3799`.
-- Phase 2 реалізовано у `feature/phase-2-conversion`, відгалуженій від
-  актуального `origin/develop` після перевірки, що повний Phase 1 є ancestor.
-  Code commits: `8b4f273`, `0210373`, `4ed8a0b`.
-- [PR #5](https://github.com/VladSidun/SOVA/pull/5) відкрито у `develop` без
-  auto-merge. Гілку запушено; фінальний test/report commit і remote CI мають
-  бути перевірені перед merge.
-- Це development preview з `noindex, nofollow`, не production MVP. Phase 3+
-  не починати без окремої прямої авторизації.
+- Phase 0–2 merged у `develop`; merged Phase 2 tip — `ea2d16b`.
+- Phase 3 реалізовано у `feature/phase-3-trust-content`, відгалуженій від
+  `ea2d16b` після перевірки ancestry. Code/test commits: `e312347`, `d5f4001`,
+  `73d8eac`, `afe2262`, `3d87d57`.
+- [PR #6](https://github.com/VladSidun/SOVA/pull/6) відкрито у `develop` без
+  auto-merge. Гілку запушено; актуальний remote head/CI перевіряйте live.
+- Це development preview з `noindex, nofollow`, не production MVP. Phase 4+
+  не починати без окремої прямої авторизації та merged PR #6.
 
 ## 2. Що реалізовано
 
 | Частина | Реалізація / точки входу |
 | --- | --- |
-| Runtime / shell | Node 24, Next 16.3.5, React 19.3.0, TypeScript strict, Tailwind 4.3.3, next-intl 4.14.5. `/uk` і `/en`, `/` → `/uk`; SVG logo, responsive Header/Footer, language switch та mobile focus trap з Phase 1 збережені. |
-| Phase 2 composition | `src/app/[locale]/page.tsx` рендерить лише `Hero`, `TrustStrip`, `Directions`, `GoalMatcher`, `FormatsPricing` між Phase 1 Header/Footer. Trial process, About, reviews, results, FAQ та інші пізні секції не створені й не лишають порожніх блоків. |
-| Hero | `src/components/sections/Hero.tsx`: точний UA H1/body/CTA зі SPEC, 45-хвилинний trial із `business.trialMinutes`, restrained primary/secondary CTA та branded 4:5 placeholder без stock imagery. Placeholder використовує наявний `/brand/logo.svg`; реальні media відкладені. |
-| Trust | `TrustStrip.tsx` + `content/trust.ts`: з 2019 року, 100+ зараз, 1000+ за весь час, Offline + Online. Непідтверджені 8 років ізольовані в `unverifiedClaims` і не рендеряться при `showEightYearsStat=false`. |
-| Directions | `content/directions.ts` містить 7 двомовних config-driven напрямів без фактів у JSX. `Directions.tsx` рендерить адаптивну сітку; кожна CTA має typed `leadGoal`. |
-| Goal state | `LeadGoalProvider.tsx` + `lib/lead-goal.ts` — спільний API для Phase 4: `useLeadGoal()`, `isLeadGoal()`, `buildLeadGoalHref()`, query key `goal`. Вибір оновлює URL як `?goal=<LeadGoal>#lead`, зберігає наявні query/UTM, відновлюється з прямого URL і скролить до matcher-а з reduced-motion fallback. Контактні дані не збираються. |
-| Goal matcher | `GoalMatcher.tsx` і `content/goals.ts`: усі значення `LeadGoal`, видимий selected state та чесний lead-area placeholder. Повної форми, валідації чи доставки немає — це scope Phase 4/5. |
-| Formats / pricing | `FormatsPricing.tsx` + `content/formats.ts` рендерять cards із `config/pricing.ts` і `business.ts`: group 1500 грн/місяць, 3–5 людей, 60–75 хв, 2–3 рази/тиждень; pair 350 грн/заняття, 60–75 хв, 2–3 рази/тиждень; individual 500 грн/заняття, 60–75 хв. Exam prep використовує стандартну ціну обраного формату без окремої націнки. |
-| Navigation / i18n | `renderedSectionIds` тепер містить тільки реальні `directions`, `formats`, `pricing`, `contacts`. Header CTA веде до `#lead`. UA формальна; EN адаптована окремо в messages. About/Reviews не потрапляють у nav. |
+| Runtime / shell | Node 24, Next 16.3.5, React 19.3.0, TypeScript strict, Tailwind 4.3.3, next-intl 4.14.5. `/uk` і `/en`, `/` → `/uk`; SVG logo, responsive Header/Footer, language switch і mobile focus trap збережені. |
+| Phase 2 conversion | `Hero`, `TrustStrip`, `Directions`, `GoalMatcher`, `FormatsPricing`; typed `LeadGoal` у query, config-driven facts/pricing, без збору PII. |
+| Trial process | `TrialProcess.tsx`: чотири етапи та повний зміст 45 хв — знайомство, тестування, рівень, діагностика, програма під ціль/рівень/deadline, графік і ціни. Окремо вказані potential teacher або administrator/head teacher, offline-екскурсія й матеріали. |
+| Why SOVA | `WhySova.tsx`: шість різних proof-композицій замість 10 однакових cards; 1000+/100+, goal-based, speaking-first, CEFR/publishers, центр Мукачева + online/offline, групи 3–5 і free diagnostic. |
+| Method | `Method.tsx`: CEFR, Cambridge/Oxford/Pearson, speaking, програма під ціль і дедлайн, interactive/games для молодших учнів. |
+| Deferred content | `OptionalContentSections.tsx` + `features.ts` + порожні typed `teachers`/`cases`/`reviews`: Teachers, Results, Reviews не рендеряться й не лишають порожніх gaps; Reviews nav link відсутній. Реальний контент можна додати й увімкнути flags пізніше. |
+| Location | `Location.tsx`: точна адреса, Пн–Сб 09:00–20:00, paid parking, online note, lightweight CSS map preview без Google JS SDK. Обидві CTA використовують `business.googleMaps`. `#contacts` тепер веде до секції локації; дубль ID у Footer прибрано. |
+| FAQ | `FAQ.tsx` + `content/faq.ts`: native semantic `details/summary`, UA/EN, keyboard-ready. Rescheduling прямо описано як format-specific; універсального непідтвердженого правила немає. |
+| Navigation / i18n | Реальний `#about` додано в nav. Teachers/Results/Reviews та їхні links hidden. Увесь Phase 3 content має адаптовані UA/EN словники; українська формальна. |
 
-## 3. Перевірки Phase 2
+## 3. Перевірки Phase 3
 
-Фінальний локальний прогін 2026-09-21 на `feature/phase-2-conversion`:
+Фінальний чистий прогін 2026-09-22 на commit `3d87d57` в ізольованому worktree:
 
 ```text
+npm ci             — passed, 346 packages, 0 vulnerabilities
 npm run typecheck  — passed
 npm run lint       — passed, 0 warnings
-npm test           — passed, 18 tests / 5 files
+npm test           — passed, 24 tests / 6 files
 npm run build      — passed, static /uk and /en
-npm run e2e        — passed, 14 Chromium tests
+npm run e2e        — passed, 20 Chromium tests
 git diff --check   — passed
 ```
 
-Покрито exact pricing, 45 хв, відсутність `8 років`, direction → `LeadGoal`,
-відновлення query selection, збереження існуючого UTM, CTA targets, hidden
-sections, UA/EN, mobile menu, console/network smoke та WCAG 2/2.1 A/AA Axe.
+Покрито Google Maps URL, address/hours/parking, native FAQ keyboard behavior,
+format-specific rescheduling copy, six proof blocks, full trial content,
+hidden modules/nav links, UA/EN, mobile menu, console/network smoke та WCAG
+2/2.1 A/AA Axe.
 
-Responsive перевірено реальним Chromium на 360, 390, 768, 1366 і 1920 px:
-горизонтального overflow немає. Full-page preview оглянуто на 360/768/1366/
-1920; Hero, trust grid, directions, matcher і pricing перебудовуються без
-перекриття. Під час першого E2E Axe знайшов недостатню прозорість білого тексту
-на червоній pricing-card; контраст виправлено, повторний Axe — 0 violations.
+Responsive E2E пройдено на 360/390/768/1366/1920 px без horizontal overflow.
+Full-page visual review виконано на 360/768/1366; Phase 3 section crops і
+фінальний location map preview перевірено на 360/1366. Перший Axe прогін знайшов
+три low-contrast підписи у red proof block; колір виправлено, фінальний Axe —
+0 violations.
 
-`npm run e2e` потребує актуального `npm run build`; runner піднімає production
-server на `127.0.0.1:3100`.
+Локальний `npm ci` в основному checkout спершу блокувався Windows `EPERM`, бо
+відкритий VS Code тримав native `@unrs` module. Чистий `npm ci` і весь фінальний
+gate успішно виконані в окремому worktree на тому самому commit.
 
 ## 4. Наступний scope і відкладені рішення
 
-Наступна фаза лише після прямої авторизації: Phase 3 — trial process, Why SOVA,
-method, location, FAQ. Не додавати форму раніше Phase 4 і API/delivery раніше
-Phase 5.
+Наступна фаза лише після прямої авторизації та ручного merge PR #6: Phase 4 —
+lead form, client/server validation contract, attribution і Turnstile. Не
+реалізовувати `/api/leads`/Telegram delivery до Phase 5; SEO/analytics до Phase
+6; motion/final polish до Phase 7.
 
 Початок наступної гілки:
 
-1. Дочекатися ручного merge PR #5 у `develop`; auto-merge не вмикати.
+1. Перевірити live, що PR #6 merged у `develop`; auto-merge не вмикати.
 2. `git fetch --prune origin`, `git switch develop`, `git pull --ff-only`.
-3. Перевірити, що tip Phase 2 є ancestor актуального `develop`.
-4. Створити окрему feature branch для явно дозволеної фази.
-5. Повторно використати `Section`, config facts, navigation registry та
-   `LeadGoalProvider`; не дублювати pricing/business copy у JSX.
+3. Перевірити, що tip Phase 3 є ancestor актуального `develop`.
+4. Створити окрему feature branch лише для явно дозволеної фази.
+5. Повторно використати `LeadGoalProvider`, `sectionIds`, business config і
+   trial copy; не дублювати PII в analytics/logs.
 
-Ще не реалізовано: trial/why/method/location/FAQ, повна lead form, Zod/phone
-validation, Turnstile, attribution storage, `/api/leads`, Telegram/fallback,
-analytics, production SEO/JSON-LD/sitemap/robots, privacy page, motion/final
-polish, deployment, DB/Sova Hub, реальні media/reviews/cases/teachers.
+Ще не реалізовано: lead form, Zod/phone validation, Turnstile, attribution,
+`/api/leads`, Telegram/fallback, analytics, production SEO/JSON-LD/sitemap/
+robots, privacy page, motion/final polish, deployment, DB/Sova Hub, реальні
+media/reviews/cases/teachers.
 
 До production лишаються зовнішні/бізнес рішення: Telegram/Turnstile/domain,
 tracking IDs, messenger deep links, реальний контент, підтвердження «8 років»,
-правила перенесення занять і media/privacy consent.
+точні правила перенесення для кожного формату та media/privacy consent.
 
 ## 5. Компактна історія delivery
 
 | Delivery | Commits / результат |
 | --- | --- |
-| Bootstrap | `e645b78` — source-of-truth docs та ignore rules. |
-| Phase 0 | `4636cb0`, `7599eab`, `79ad9a0`, `b0c8238`, `b34c555`; PR #1 merged як `f97bdb5`. Reporting/fixes PR #2 merged як `d754752`; handoff PR #3 merged як `ecb887a`. |
-| Phase 1 shell · 2026-09-20/21 | `49455f0`, `3715068`, `1828e90`, `638afc4`; PR #4 merged у `develop` як `24d3799`. |
-| Phase 2 conversion · 2026-09-21 | `8b4f273` — Hero/Trust; `0210373` — Directions/GoalMatcher/shared goal query; `4ed8a0b` — Formats/Pricing. PR #5 open у `develop`, без auto-merge. |
+| Phase 0 | PR #1–#3 merged; foundation/CI/reporting завершені. |
+| Phase 1 shell | PR #4 merged як `24d3799`; responsive shell, navigation, accessibility. |
+| Phase 2 conversion | `8b4f273`, `0210373`, `4ed8a0b`, `58d61f8`; PR #5 merged як `ea2d16b`. |
+| Phase 3 trust content | `e312347` trial/method; `d5f4001` proof/location; `73d8eac` FAQ/hidden modules; `afe2262` tests; `3d87d57` lightweight map fix. PR #6 open у `develop`, без auto-merge. |
 
 ## 6. Результати / невирішені проблеми
 
-- ✅ Phase 2 відгалужено від актуального `develop` після merged Phase 1.
-- ✅ Hero, trust, directions, matcher і pricing відповідають дозволеному scope та SPEC.
-- ✅ Pricing/trial/trust facts походять із config; «8 років» відсутні при flag=false.
-- ✅ Direction/goal selection зберігає typed `LeadGoal` у query для Phase 4 без збору PII.
-- ✅ UA/EN, formal UA, SVG logo, branded placeholder, accessibility і 44px+ targets перевірені.
-- ✅ 18 unit/component tests, 14 E2E, build і responsive 360/390/768/1366/1920 пройдено.
-- ✅ `feature/phase-2-conversion` запушено; PR #5 відкрито в `develop`, auto-merge не ввімкнено.
-- ✅ Невирішених проблем у Phase 2 немає.
+- ✅ Phase 3 відгалужено від актуального `develop` після merged Phase 2.
+- ✅ TrialProcess, WhySova, Method, Location і FAQ відповідають дозволеному scope.
+- ✅ Teachers, Results і Reviews структурно готові, але hidden без fake content і nav links.
+- ✅ Google Maps CTA використовує verified config; адреса та графік точні.
+- ✅ FAQ доступний з клавіатури та не обіцяє універсального перенесення.
+- ✅ 24 unit/component tests, 20 E2E, build, Axe і responsive QA пройдено.
+- ✅ `feature/phase-3-trust-content` запушено; PR #6 відкрито в `develop`, auto-merge не ввімкнено.
+- ✅ Невирішених проблем у Phase 3 немає.
