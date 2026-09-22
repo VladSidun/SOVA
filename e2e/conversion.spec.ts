@@ -21,7 +21,8 @@ test("verified prices render and unavailable sections stay absent", async ({ pag
   await expect(page.getByText("1500 грн / місяць", { exact: false })).toBeVisible();
   await expect(page.getByText("350 грн / заняття", { exact: false })).toBeVisible();
   await expect(page.getByText("500 грн / заняття", { exact: false })).toBeVisible();
-  await expect(page.locator("#about, #reviews, #teachers, #results")).toHaveCount(0);
+  await expect(page.locator("#about")).toHaveCount(1);
+  await expect(page.locator("#reviews, #teachers, #results")).toHaveCount(0);
   await expect(page.getByText(/Lorem ipsum/i)).toHaveCount(0);
 });
 

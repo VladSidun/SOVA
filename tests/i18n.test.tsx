@@ -23,6 +23,12 @@ describe("UA/EN scaffolding", () => {
     expect(Object.keys(uk.Conversion.Hero)).toEqual(Object.keys(en.Conversion.Hero));
     expect(Object.keys(uk.Conversion.GoalMatcher)).toEqual(Object.keys(en.Conversion.GoalMatcher));
     expect(Object.keys(uk.Conversion.Formats)).toEqual(Object.keys(en.Conversion.Formats));
+    expect(Object.keys(uk.TrustContent)).toEqual(Object.keys(en.TrustContent));
+    expect(Object.keys(uk.TrustContent.Trial)).toEqual(Object.keys(en.TrustContent.Trial));
+    expect(Object.keys(uk.TrustContent.Why)).toEqual(Object.keys(en.TrustContent.Why));
+    expect(Object.keys(uk.TrustContent.Method)).toEqual(Object.keys(en.TrustContent.Method));
+    expect(Object.keys(uk.TrustContent.Location)).toEqual(Object.keys(en.TrustContent.Location));
+    expect(Object.keys(uk.TrustContent.FAQ)).toEqual(Object.keys(en.TrustContent.FAQ));
   });
 
   it.each([

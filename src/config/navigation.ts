@@ -30,10 +30,11 @@ const navigationItems: ReadonlyArray<NavigationItem & { feature?: keyof FeatureF
 ];
 
 // Only IDs backed by real rendered targets belong here, so the shell never
-// emits dead links. About and Reviews remain out until their authorized phases.
+// emits dead links. Reviews remains out until verified content is available.
 export const renderedSectionIds: ReadonlyArray<SectionId> = [
   sectionIds.directions,
   sectionIds.formats,
+  sectionIds.about,
   sectionIds.pricing,
   sectionIds.contacts,
 ];

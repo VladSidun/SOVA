@@ -22,7 +22,7 @@ export const business = {
 } as const;
 
 export const businessAddress = {
-  uk: business.address,
+  uk: "м. Мукачево, площа Кирила і Мефодія, 26/11",
   en: "26/11 Kyryla i Mefodiia Square, Mukachevo",
 } as const;
 
