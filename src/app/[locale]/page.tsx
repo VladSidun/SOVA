@@ -11,8 +11,17 @@ import { OptionalContentSections } from "@/components/sections/OptionalContentSe
 import { TrustStrip } from "@/components/sections/TrustStrip";
 import { TrialProcess } from "@/components/sections/TrialProcess";
 import { WhySova } from "@/components/sections/WhySova";
+import { buildLeadFallbackLinks } from "@/lib/contact-links";
+import { getPublicEnv } from "@/lib/public-env";
 
 export default function LandingPage() {
+  const publicEnv = getPublicEnv();
+  const fallbackLinks = buildLeadFallbackLinks({
+    whatsapp: publicEnv.NEXT_PUBLIC_WHATSAPP_URL,
+    viber: publicEnv.NEXT_PUBLIC_VIBER_URL,
+    telegram: publicEnv.NEXT_PUBLIC_TELEGRAM_URL,
+  });
+
   return (
     <main id="main-content" tabIndex={-1}>
       <LeadGoalProvider>
@@ -27,7 +36,10 @@ export default function LandingPage() {
         <OptionalContentSections />
         <Location />
         <FAQ />
-        <LeadSection />
+        <LeadSection
+          fallbackLinks={fallbackLinks}
+          turnstileSiteKey={publicEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        />
       </LeadGoalProvider>
     </main>
   );
