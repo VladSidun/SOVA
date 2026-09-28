@@ -144,6 +144,35 @@ describe("Phase 4 lead form", () => {
     expect(screen.getByLabelText("Ім’я")).toHaveValue("Олена");
     expect(screen.getByLabelText("Телефон")).toHaveValue("099 123 45 67");
     expect(screen.getByLabelText(/Коментар/)).toHaveValue("Зателефонуйте після 18:00");
+    expect(screen.getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/380992671906");
+    expect(screen.getByRole("link", { name: "Viber" })).toHaveAttribute("href", "viber://chat?number=%2B380992671906");
+    expect(screen.getByRole("link", { name: /Подзвонити/ })).toHaveAttribute("href", "tel:+380992671906");
+    expect(screen.queryByRole("link", { name: "Telegram" })).not.toBeInTheDocument();
+  });
+
+  it("shows Telegram fallback only when a verified public URL is configured", async () => {
+    const submitLead = vi.fn<SubmitLead>().mockRejectedValue(new Error("delivery failed"));
+    render(
+      <LeadSection
+        fallbackLinks={{
+          phone: "tel:+380992671906",
+          phoneDisplay: "+380 99 267 1906",
+          whatsapp: "https://wa.me/380992671906",
+          viber: "viber://chat?number=%2B380992671906",
+          telegram: "https://t.me/verified_sova",
+        }}
+        submitLead={submitLead}
+      />,
+      { wrapper: Providers },
+    );
+
+    await reachContactStep();
+    await fillAndSubmitContact();
+
+    expect(await screen.findByRole("link", { name: "Telegram" })).toHaveAttribute(
+      "href",
+      "https://t.me/verified_sova",
+    );
   });
 
   it("removes all PII from analytics helper parameters", () => {

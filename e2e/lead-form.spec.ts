@@ -89,3 +89,50 @@ test("validation errors are inline, associated and do not erase input", async ({
   await expect(page.getByRole("radio", { name: "Школяр" })).toBeChecked();
   await expect(page.getByLabel(/Вік або клас/)).toHaveValue("8 клас");
 });
+
+test("delivery failure shows messenger fallback and preserves the completed form", async ({ page }) => {
+  await page.route("**/api/leads", async (route) => {
+    await route.fulfill({
+      status: 502,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: false, code: "DELIVERY_FAILED" }),
+    });
+  });
+
+  await page.goto("/uk");
+  await page.locator("#lead").scrollIntoViewIfNeeded();
+  await page.getByRole("radio", { name: "Дорослий" }).check();
+  await page.getByRole("button", { name: "Далі" }).click();
+  await page.getByRole("checkbox", { name: "Speaking" }).check();
+  await page.getByRole("radio", { name: "Онлайн" }).check();
+  await page.getByRole("button", { name: "Далі" }).click();
+  await page.getByLabel("Ім’я").fill("Олена");
+  await page.getByRole("textbox", { name: "Телефон", exact: true }).fill("099 123 45 67");
+  await page.getByRole("radio", { name: "Telegram" }).check();
+  await page.getByLabel(/Коментар/).fill("Напишіть після 18:00");
+  await page.getByRole("checkbox", { name: /SOVA використає мої контактні дані/ }).check();
+  await page.getByRole("button", { name: "Заберіть безкоштовний пробний урок" }).click();
+
+  const alert = page.locator("#lead").getByRole("alert").filter({
+    hasText: "Не вдалося надіслати заявку автоматично",
+  });
+  await expect(alert).toContainText("Ваші дані збережено у формі");
+  await expect(alert.getByRole("link", { name: "WhatsApp" })).toHaveAttribute(
+    "href",
+    "https://wa.me/380992671906",
+  );
+  await expect(alert.getByRole("link", { name: "Viber" })).toHaveAttribute(
+    "href",
+    "viber://chat?number=%2B380992671906",
+  );
+  await expect(alert.getByRole("link", { name: /Подзвонити/ })).toHaveAttribute(
+    "href",
+    "tel:+380992671906",
+  );
+  await expect(alert.getByRole("link", { name: "Telegram" })).toHaveCount(0);
+  await expect(page.getByLabel("Ім’я")).toHaveValue("Олена");
+  await expect(page.getByRole("textbox", { name: "Телефон", exact: true })).toHaveValue(
+    "099 123 45 67",
+  );
+  await expect(page.getByLabel(/Коментар/)).toHaveValue("Напишіть після 18:00");
+});
