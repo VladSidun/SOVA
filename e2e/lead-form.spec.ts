@@ -135,4 +135,10 @@ test("delivery failure shows messenger fallback and preserves the completed form
     "099 123 45 67",
   );
   await expect(page.getByLabel(/Коментар/)).toHaveValue("Напишіть після 18:00");
+  const accessibility = await new AxeBuilder({ page })
+    .include("#lead")
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

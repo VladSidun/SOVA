@@ -391,7 +391,7 @@ export function LeadForm({
                 <a className="min-h-11 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.whatsapp} rel="noreferrer" target="_blank">
                   WhatsApp
                 </a>
-                <a className="min-h-11 rounded-full bg-[#7360F2] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.viber}>
+                <a className="min-h-11 rounded-full bg-[#5B45D6] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.viber}>
                   Viber
                 </a>
                 {fallbackLinks.telegram ? (
