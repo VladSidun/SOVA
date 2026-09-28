@@ -43,3 +43,7 @@ export type LeadPayload = {
   pageUrl: string;
   turnstileToken: string;
 };
+
+export type NormalizedLead = Omit<LeadPayload, "turnstileToken"> & {
+  receivedAt: string;
+};
