@@ -76,6 +76,7 @@ export function LeadForm({
   const [submitError, setSubmitError] = useState(false);
   const [phoneCopied, setPhoneCopied] = useState(false);
   const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileFailed, setTurnstileFailed] = useState(false);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
@@ -152,11 +153,13 @@ export function LeadForm({
   const handleTurnstileToken = useCallback((token: string) => {
     setTurnstileToken(token);
     setTurnstileReady(true);
+    setTurnstileFailed(false);
   }, []);
 
   const handleTurnstileError = useCallback(() => {
     setTurnstileToken("");
     setTurnstileReady(false);
+    setTurnstileFailed(true);
   }, []);
 
   const copyPhone = async () => {
@@ -194,6 +197,7 @@ export function LeadForm({
       if (turnstileSiteKey && !getTurnstileToken) {
         setTurnstileToken("");
         setTurnstileReady(false);
+        setTurnstileFailed(false);
         setTurnstileResetKey((value) => value + 1);
       }
       trackEvent("trial_form_error", {
@@ -375,7 +379,7 @@ export function LeadForm({
                 resetKey={turnstileResetKey}
                 siteKey={turnstileSiteKey}
               />
-              {waitingForTurnstile ? (
+              {waitingForTurnstile && !turnstileFailed ? (
                 <p className="mt-2 text-xs text-[var(--text-muted)]" role="status">
                   {t("turnstile.pending")}
                 </p>
@@ -383,10 +387,14 @@ export function LeadForm({
             </div>
           ) : null}
 
-          {submitError ? (
+          {submitError || turnstileFailed ? (
             <div className="mt-6 rounded-2xl border border-brand-red/25 bg-red-50 p-5" role="alert">
-              <p className="text-sm font-semibold text-brand-red">{t("error")}</p>
-              <p className="mt-2 text-sm leading-6 text-brand-black">{t("fallback.intro")}</p>
+              <p className="text-sm font-semibold text-brand-red">
+                {submitError ? t("error") : t("turnstile.error")}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-brand-black">
+                {submitError ? t("fallback.intro") : t("turnstile.fallbackIntro")}
+              </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <a className="min-h-11 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.whatsapp} rel="noreferrer" target="_blank">
                   WhatsApp
@@ -414,7 +422,13 @@ export function LeadForm({
               {t("actions.back")}
             </button>
             <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-red-700 disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting || waitingForTurnstile} type="submit">
-              {isSubmitting ? t("actions.sending") : waitingForTurnstile ? t("actions.verifying") : t("actions.submit")}
+              {isSubmitting
+                ? t("actions.sending")
+                : turnstileFailed
+                  ? t("actions.verificationFailed")
+                  : waitingForTurnstile
+                    ? t("actions.verifying")
+                    : t("actions.submit")}
             </button>
           </div>
         </div>

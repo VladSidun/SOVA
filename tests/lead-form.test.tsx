@@ -11,6 +11,21 @@ import type { SubmitLead } from "@/lib/lead-client";
 import uk from "@/i18n/messages/uk.json";
 import type { LeadPayload } from "@/types/lead";
 
+vi.mock("@/components/lead/TurnstileWidget", () => ({
+  TurnstileWidget: ({
+    onError,
+    onToken,
+  }: {
+    onError: () => void;
+    onToken: (token: string) => void;
+  }) => (
+    <>
+      <button onClick={onError} type="button">Simulate Turnstile error</button>
+      <button onClick={() => onToken("test-token")} type="button">Simulate Turnstile token</button>
+    </>
+  ),
+}));
+
 function Providers({ children }: { children: ReactNode }) {
   return (
     <NextIntlClientProvider locale="uk" messages={uk} timeZone="Europe/Kyiv">
@@ -148,6 +163,27 @@ describe("Phase 4 lead form", () => {
     expect(screen.getByRole("link", { name: "Viber" })).toHaveAttribute("href", "viber://chat?number=%2B380992671906");
     expect(screen.getByRole("link", { name: /Подзвонити/ })).toHaveAttribute("href", "tel:+380992671906");
     expect(screen.queryByRole("link", { name: "Telegram" })).not.toBeInTheDocument();
+  });
+
+  it("shows contact fallback when Turnstile fails and keeps the form data", async () => {
+    const submitLead = vi.fn<SubmitLead>();
+    render(<LeadSection submitLead={submitLead} turnstileSiteKey="test-site-key" />, {
+      wrapper: Providers,
+    });
+
+    await reachContactStep();
+    fireEvent.change(screen.getByLabelText("Ім’я"), { target: { value: "Олена" } });
+    fireEvent.click(screen.getByRole("button", { name: "Simulate Turnstile error" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Заявку не надіслано");
+    expect(screen.getByRole("link", { name: "WhatsApp" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Перевірка недоступна" })).toBeDisabled();
+    expect(screen.getByLabelText("Ім’я")).toHaveValue("Олена");
+    expect(submitLead).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Simulate Turnstile token" }));
+    await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Заберіть безкоштовний пробний урок" })).toBeEnabled();
   });
 
   it("shows Telegram fallback only when a verified public URL is configured", async () => {

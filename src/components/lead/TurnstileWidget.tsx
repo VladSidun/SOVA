@@ -19,6 +19,7 @@ type TurnstileApi = {
       sitekey: string;
       language: string;
       size: "flexible";
+      retry: "never";
       callback: (token: string) => void;
       "error-callback": () => void;
       "expired-callback": () => void;
@@ -53,6 +54,7 @@ export function TurnstileWidget({ locale, onError, onToken, resetKey, siteKey }:
       sitekey: siteKey,
       language: locale,
       size: "flexible",
+      retry: "never",
       callback: (token) => onTokenRef.current(token),
       "error-callback": () => onErrorRef.current(),
       "expired-callback": () => onErrorRef.current(),
@@ -66,6 +68,7 @@ export function TurnstileWidget({ locale, onError, onToken, resetKey, siteKey }:
     <>
       <Script
         id="cloudflare-turnstile"
+        onError={() => onErrorRef.current()}
         onReady={() => setScriptReady(true)}
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"

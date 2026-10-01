@@ -206,20 +206,23 @@
       "back": "Back",
       "next": "Next",
       "submit": "Claim your free trial lesson",
-    "sending": "Sending…",
-    "verifying": "Checking protection…"
+      "sending": "Sending…",
+      "verifying": "Checking protection…",
+      "verificationFailed": "Verification unavailable"
     },
-  "turnstile": {
-    "label": "Cloudflare Turnstile anti-spam check",
-    "pending": "Please wait for the anti-spam check to finish."
-  },
-  "error": "We could not send your enquiry automatically. Your details remain in the form.",
-  "fallback": {
-    "intro": "Try again, message us using your preferred messenger, or call us.",
-    "call": "Call",
-    "copy": "Copy number",
-    "copied": "Number copied"
-  },
+    "turnstile": {
+      "label": "Cloudflare Turnstile anti-spam check",
+      "pending": "Please wait for the anti-spam check to finish.",
+      "error": "The anti-spam check could not finish. Your enquiry was not sent, and your details remain in the form.",
+      "fallbackIntro": "Refresh the page to try again, or message us directly or call us."
+    },
+    "error": "We could not send your enquiry automatically. Your details remain in the form.",
+    "fallback": {
+      "intro": "Try again, message us using your preferred messenger, or call us.",
+      "call": "Call",
+      "copy": "Copy number",
+      "copied": "Number copied"
+    },
     "success": {
       "eyebrow": "Enquiry sent",
       "title": "Thank you — we have your enquiry.",
