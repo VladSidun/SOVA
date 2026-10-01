@@ -21,6 +21,17 @@ const lead: NormalizedLead = {
 };
 
 describe("TelegramLeadDestination", () => {
+  it.each([
+    ["2026-01-15T10:00:00.000Z", "15.01.2026, 12:00"],
+    ["2026-07-15T10:00:00.000Z", "15.07.2026, 13:00"],
+    ["2026-10-01T21:30:00.000Z", "02.10.2026, 00:30"],
+  ])("shows %s as Kyiv time", (receivedAt, expected) => {
+    const message = formatTelegramLead({ ...lead, receivedAt });
+
+    expect(message).toContain(`🕒 <b>Час (Київ):</b> ${expected}`);
+    expect(message).not.toContain(receivedAt);
+  });
+
   it("escapes every user-controlled HTML field in the structured message", () => {
     expect(escapeTelegramHtml("<&>")).toBe("&lt;&amp;&gt;");
 

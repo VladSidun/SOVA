@@ -38,6 +38,16 @@ const contactMethodLabels: Record<ContactMethod, string> = {
   whatsapp: "WhatsApp",
 };
 
+const kyivDateTimeFormatter = new Intl.DateTimeFormat("uk-UA", {
+  timeZone: "Europe/Kyiv",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
 export function escapeTelegramHtml(value: string) {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
@@ -69,7 +79,7 @@ export function formatTelegramLead(lead: NormalizedLead) {
     `🔎 <b>Term:</b> ${field(lead.attribution.term, 200)}`,
     `↩️ <b>Referrer:</b> ${field(lead.attribution.referrer, 300)}`,
     `🚪 <b>Landing:</b> ${field(lead.attribution.landingUrl, 500)}`,
-    `🕒 <b>Time:</b> ${field(lead.receivedAt, 40)}`,
+    `🕒 <b>Час (Київ):</b> ${kyivDateTimeFormatter.format(new Date(lead.receivedAt))}`,
   ].join("\n");
 }
 
