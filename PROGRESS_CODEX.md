@@ -1,6 +1,6 @@
 # SOVA — передача контексту Codex
 
-Оновлено: 2026-09-29. Мета: продовжити роботу в іншому чаті без пошуку
+Оновлено: 2026-10-02. Мета: продовжити роботу в іншому чаті без пошуку
 попередніх розмов. Це стан реалізації, не заміна ТЗ.
 
 ## 1. Поточний стан
@@ -10,9 +10,10 @@
   користувача → SPEC → GUIDE → код.
 - Phase 0–4 merged у `develop`; merged Phase 4 commit — `8aa65d9` (PR #7).
 - Phase 5 реалізовано у `feature/phase-5-lead-delivery`, створеній безпосередньо
-  від `8aa65d9`. Commits: `4351f7c`, `da21475`, `aca6905`, `8bb26f5`.
-- Push, PR у `develop` та remote CI ще не виконані на момент цього report commit;
-  їх треба перевірити live після push. Auto-merge не вмикати.
+  від `8aa65d9`. Основні commits: `4351f7c`, `da21475`, `aca6905`, `8bb26f5`;
+  LAN preview fix: `02c7da8`.
+- PR #8 відкрито у `develop`; CI для code tip `02c7da8` пройшов 2026-10-02.
+  Auto-merge не вмикати.
 - Це development preview з `noindex, nofollow`, не production MVP.
 
 ## 2. Що реалізовано
@@ -28,6 +29,7 @@
 | Form integration | Phase 4 state/payload збережені; default submit іде у real `/api/leads`. На failure дані не очищаються, Turnstile reset-иться для повторної спроби, показуються WhatsApp, Viber, phone/copy. Telegram з’являється тільки при `NEXT_PUBLIC_TELEGRAM_URL`. |
 | Public fallback | `src/lib/contact-links.ts`: phone з verified business config, standard `wa.me` та Viber phone deep link; public env може перевизначити WhatsApp/Viber URL. Telegram URL не генерується з номера. |
 | Security boundary | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY` читаються лише server-side через `src/lib/env.ts`; client отримує тільки `NEXT_PUBLIC_*`. `.env.local` ignored і не tracked. |
+| LAN dev preview | `next.config.ts` бере точні дозволені hostname/IP з `SOVA_ALLOWED_DEV_ORIGINS`; приклад є в `.env.example`. Локальний `.env.local` містить `192.168.68.102` без коміту. Після restart `next dev` форма переходить 1 → 2 → 3 за LAN адресою. |
 
 Phase 0–4 UI лишився без зміни scope: UA/EN shell, conversion/trust sections,
 config-driven confirmed facts, hidden fake-free optional content, 3-step lead form,
@@ -60,6 +62,14 @@ and 1366×900 confirmed responsive fallback and preserved fields. The only
 console/network error in the deliberate no-credentials submit was the expected
 controlled `POST /api/leads` 503.
 
+Виправлення LAN preview 2026-10-02: у Chrome підтверджено, що до дозволу
+dev origin `localhost:3000/uk` переходив на крок 2, а
+`192.168.68.102:3000/uk` залишався на кроці 1. Після конфігурації і явного
+restart LAN форма переходить на кроки 2 і 3; попередження `/_next/hmr` не
+повторилось. Окремо пройшли 7 тестів `tests/lead-form.test.tsx`, typecheck,
+lint, build і `git diff --check`. Повний E2E після цієї зміни не запускався;
+24 E2E вище стосуються попереднього code tip.
+
 Security evidence: built `.next/static` contains 0 hits for
 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY`; production
 `src` contains 0 `console.log/info/warn/error` calls; only `.env.example` is
@@ -67,7 +77,9 @@ tracked and `.env.local` matches `.gitignore`.
 
 ## 4. Credentials і real-send status
 
-На час Phase 5 у process environment та worktree відсутні:
+На час попереднього Phase 5 прогону ці значення були відсутні. Зараз у
+локальному ignored `.env.local` ключі задано; їхні значення не перевірялися
+і не фіксуються в Git:
 
 ```text
 TELEGRAM_BOT_TOKEN
@@ -76,9 +88,11 @@ TURNSTILE_SECRET_KEY
 NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ```
 
-Тому real Telegram/Turnstile delivery **не перевірено**. Успішну реальну
-відправку не заявлено; реалізацію перевірено deterministic mocks та controlled
-no-credentials browser flow.
+Real Telegram/Turnstile delivery **не перевірено**. На LAN IP віджет Turnstile
+повертає `110200` (hostname не дозволений у Cloudflare), тому submit на цій
+адресі блокується. Для ручного тесту використайте hostname, дозволений у
+Cloudflare, або окремі development test keys; не послаблюйте server verification.
+Успішну реальну відправку не заявлено.
 
 Для ручної non-production перевірки:
 
@@ -123,7 +137,7 @@ env, privacy page, підтверджені public messenger links, device deep-
 | Phase 2 conversion | PR #5 merged як `ea2d16b`; conversion sections і typed goal state. |
 | Phase 3 trust content | PR #6 merged як `79d57f6`; trust content, FAQ, location. |
 | Phase 4 lead form | PR #7 merged як `8aa65d9`; form/schema/attribution/client boundary. |
-| Phase 5 lead delivery | `4351f7c`, `da21475`, `aca6905`, `8bb26f5`; PR/CI pending після цього report commit. |
+| Phase 5 lead delivery | `4351f7c`, `da21475`, `aca6905`, `8bb26f5`, `02c7da8`; PR #8 відкрито у `develop`, code tip CI пройшов. |
 
 ## 7. Результати / невирішені проблеми
 
@@ -132,6 +146,7 @@ env, privacy page, підтверджені public messenger links, device deep-
 - ✅ Telegram formatter/destination безпечно екранує input; provider/upstream detail і secrets не потрапляють у public response/client bundle/logs.
 - ✅ Failure fallback показує WhatsApp/Viber/phone, conditional Telegram і зберігає всі поля; Axe/overflow перевірки пройдено.
 - ✅ 48 unit/API/component tests, 24 E2E, typecheck, lint, build і `git diff --check` пройдено; Phase 4 tests green.
-- ✅ Real credentials unavailable; реальний send чесно позначено unverified, наведено точні env та manual verification steps.
+- ✅ Реальний send чесно позначено unverified, наведено точні env та manual verification steps.
 - ✅ Не реалізовано unofficial WhatsApp/Viber automation, Sova Hub або DB; це свідомо поза scope.
-- ✅ Невирішених проблем у межах Phase 5 немає.
+- ✅ LAN preview після restart проходить усі 3 кроки; `/_next/hmr` більше не блокується для дозволеної IP.
+- ❌ Turnstile `110200` на LAN IP: поточний Cloudflare widget не дозволяє цей hostname; real submit лишається неперевіреним.
