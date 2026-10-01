@@ -22,11 +22,11 @@
 | --- | --- |
 | API | `src/app/api/leads/route.ts`: dynamic Node route `POST /api/leads`; fail-closed при відсутній server конфігурації; public відповіді містять лише контрольовані `ok/code`. |
 | Server validation | `src/lib/lead-schema.ts`: повторний strict Zod parse, sanitized text/attribution, token 1–2048, URL limits, defensive phone length/validation та E.164 normalization. Invalid JSON/payload → 400 до Turnstile/delivery. |
-| Turnstile | `src/components/lead/TurnstileWidget.tsx`: explicit SPA widget з public site key, expiry/error/reset handling. `src/lib/turnstile.ts`: server-only Siteverify request з timeout; тільки `valid/invalid/unavailable`, без raw Cloudflare body у public response. |
+| Turnstile | `src/components/lead/TurnstileWidget.tsx`: explicit SPA widget з public site key, expiry/error/reset handling; після client error auto-retry вимкнено, щоб не повторювати безкінечно невдалий challenge. `src/lib/turnstile.ts`: server-only Siteverify request з timeout; тільки `valid/invalid/unavailable`, без raw Cloudflare body у public response. |
 | Destination architecture | `src/lib/lead-destination.ts`: `LeadDestination.send(NormalizedLead)`. `WhatsAppLeadDestination`, `ViberLeadDestination`, `SovaHubLeadDestination` зарезервовані лише як майбутні extension names; не реалізовані. DB немає. |
 | Telegram | `src/lib/telegram.ts`: `TelegramLeadDestination`, одна `sendMessage` спроба після валідного Turnstile, HTML structured message за Guide, escape `&<>`, bounded fields, UA admin labels та UTM/time. Turnstile token ніколи не передається destination. |
 | Controlled errors | 400 `INVALID_REQUEST`, 403 `TURNSTILE_REJECTED`, 503 `VERIFICATION_UNAVAILABLE`/`SERVICE_UNAVAILABLE`, 502 `DELIVERY_FAILED`; Telegram/Turnstile detail, credentials і PII не повертаються. Production source не має `console.*` PII logging. |
-| Form integration | Phase 4 state/payload збережені; default submit іде у real `/api/leads`. На failure дані не очищаються, Turnstile reset-иться для повторної спроби, показуються WhatsApp, Viber, phone/copy. Telegram з’являється тільки при `NEXT_PUBLIC_TELEGRAM_URL`. |
+| Form integration | Phase 4 state/payload збережені; default submit іде у real `/api/leads`. На delivery або Turnstile failure дані не очищаються; Turnstile error показує чіткий unsent стан і WhatsApp/Viber/phone fallback замість вічного pending. Telegram з’являється тільки при `NEXT_PUBLIC_TELEGRAM_URL`. |
 | Public fallback | `src/lib/contact-links.ts`: phone з verified business config, standard `wa.me` та Viber phone deep link; public env може перевизначити WhatsApp/Viber URL. Telegram URL не генерується з номера. |
 | Security boundary | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY` читаються лише server-side через `src/lib/env.ts`; client отримує тільки `NEXT_PUBLIC_*`. `.env.local` ignored і не tracked. |
 | LAN dev preview | `next.config.ts` бере точні дозволені hostname/IP з `SOVA_ALLOWED_DEV_ORIGINS`; приклад є в `.env.example`. Локальний `.env.local` містить `192.168.68.102` без коміту. Після restart `next dev` форма переходить 1 → 2 → 3 за LAN адресою. |
@@ -70,6 +70,12 @@ restart LAN форма переходить на кроки 2 і 3; попере
 lint, build і `git diff --check`. Повний E2E після цієї зміни не запускався;
 24 E2E вище стосуються попереднього code tip.
 
+Turnstile fallback fix 2026-10-02: у Chrome на `localhost` підтверджено
+Cloudflare `110200`; форма тепер показує unsent alert, WhatsApp/Viber/phone,
+зберігає поля та блокує submit. 49 unit/API/component tests, typecheck, lint,
+build і `git diff --check` пройшли локально. GitHub Quality CI для code tip
+`fdb43fb` пройшов, включно з E2E.
+
 Security evidence: built `.next/static` contains 0 hits for
 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY`; production
 `src` contains 0 `console.log/info/warn/error` calls; only `.env.example` is
@@ -88,10 +94,14 @@ TURNSTILE_SECRET_KEY
 NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ```
 
-Real Telegram/Turnstile delivery **не перевірено**. На LAN IP віджет Turnstile
-повертає `110200` (hostname не дозволений у Cloudflare), тому submit на цій
-адресі блокується. Для ручного тесту використайте hostname, дозволений у
-Cloudflare, або окремі development test keys; не послаблюйте server verification.
+Real Telegram/Turnstile delivery **не перевірено**. Поточний widget повертає
+`110200` і на `localhost`, і на LAN IP: ці hostname не дозволені в Cloudflare.
+Для тесту на цьому ПК додайте `localhost` до Hostname Management поточного
+Turnstile widget. Для іншого пристрою використайте окремий development FQDN,
+що вказує на LAN машину, і додайте його до widget та `SOVA_ALLOWED_DEV_ORIGINS`;
+звичайна IP адреса не відповідає вимозі Cloudflare до FQDN. Інший варіант —
+парні Cloudflare test site/secret keys лише в ізольованому non-production
+середовищі з окремим Telegram test destination. Server verification не вимикати.
 Успішну реальну відправку не заявлено.
 
 Для ручної non-production перевірки:
@@ -137,7 +147,7 @@ env, privacy page, підтверджені public messenger links, device deep-
 | Phase 2 conversion | PR #5 merged як `ea2d16b`; conversion sections і typed goal state. |
 | Phase 3 trust content | PR #6 merged як `79d57f6`; trust content, FAQ, location. |
 | Phase 4 lead form | PR #7 merged як `8aa65d9`; form/schema/attribution/client boundary. |
-| Phase 5 lead delivery | `4351f7c`, `da21475`, `aca6905`, `8bb26f5`, `02c7da8`; PR #8 відкрито у `develop`, code tip CI пройшов. |
+| Phase 5 lead delivery | `4351f7c`, `da21475`, `aca6905`, `8bb26f5`, `02c7da8`, `fdb43fb`; PR #8 відкрито у `develop`; code tip CI пройшов. |
 
 ## 7. Результати / невирішені проблеми
 
@@ -145,8 +155,9 @@ env, privacy page, підтверджені public messenger links, device deep-
 - ✅ Secure API, strict server validation, E.164, Turnstile verification і replaceable destination architecture реалізовано без DB.
 - ✅ Telegram formatter/destination безпечно екранує input; provider/upstream detail і secrets не потрапляють у public response/client bundle/logs.
 - ✅ Failure fallback показує WhatsApp/Viber/phone, conditional Telegram і зберігає всі поля; Axe/overflow перевірки пройдено.
-- ✅ 48 unit/API/component tests, 24 E2E, typecheck, lint, build і `git diff --check` пройдено; Phase 4 tests green.
+- ✅ Після Turnstile fix: 49 unit/API/component tests, typecheck, lint, build і `git diff --check` пройдено локально; GitHub Quality CI з E2E пройшов для code tip `fdb43fb`.
 - ✅ Реальний send чесно позначено unverified, наведено точні env та manual verification steps.
 - ✅ Не реалізовано unofficial WhatsApp/Viber automation, Sova Hub або DB; це свідомо поза scope.
 - ✅ LAN preview після restart проходить усі 3 кроки; `/_next/hmr` більше не блокується для дозволеної IP.
-- ❌ Turnstile `110200` на LAN IP: поточний Cloudflare widget не дозволяє цей hostname; real submit лишається неперевіреним.
+- ✅ Turnstile error тепер показує чіткий unsent стан і прямі контакти без повторних автоматичних спроб.
+- ❌ Turnstile `110200` на localhost і LAN IP: current widget не дозволяє ці hostname; real submit лишається неперевіреним до Cloudflare hostname configuration.
