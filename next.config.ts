@@ -7,6 +7,10 @@ parsePublicEnv(process.env);
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  agentRules: false,
+  allowedDevOrigins: process.env.SOVA_ALLOWED_DEV_ORIGINS?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 };
 
 export default createNextIntlPlugin("./src/i18n/request.ts")(nextConfig);
