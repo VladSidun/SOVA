@@ -6,11 +6,14 @@ import { Section } from "@/components/layout/Section";
 import { sectionIds } from "@/config/navigation";
 import type { GetTurnstileToken, SubmitLead } from "@/lib/lead-client";
 import type { TrackLeadEvent } from "@/lib/lead-analytics";
+import type { LeadFallbackLinks } from "@/lib/contact-links";
 
 type LeadSectionProps = {
   submitLead?: SubmitLead;
   getTurnstileToken?: GetTurnstileToken;
   trackEvent?: TrackLeadEvent;
+  fallbackLinks?: LeadFallbackLinks;
+  turnstileSiteKey?: string;
 };
 
 export function LeadSection(props: LeadSectionProps) {

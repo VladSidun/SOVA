@@ -2,16 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { goalOptions } from "@/content/goals";
 import { getSessionAttribution } from "@/lib/attribution";
 import {
-  getEmptyTurnstileToken,
   submitLeadToApi,
   type GetTurnstileToken,
   type SubmitLead,
 } from "@/lib/lead-client";
+import { buildLeadFallbackLinks, type LeadFallbackLinks } from "@/lib/contact-links";
 import {
   noopTrackLeadEvent,
   toLeadAnalyticsParams,
@@ -26,6 +26,7 @@ import {
 import type { Locale } from "@/types/content";
 import type { Audience, ContactMethod, StudyMode } from "@/types/lead";
 import { useLeadGoal } from "./LeadGoalProvider";
+import { TurnstileWidget } from "./TurnstileWidget";
 
 type Step = 1 | 2 | 3;
 
@@ -33,6 +34,8 @@ type LeadFormProps = {
   submitLead?: SubmitLead;
   getTurnstileToken?: GetTurnstileToken;
   trackEvent?: TrackLeadEvent;
+  fallbackLinks?: LeadFallbackLinks;
+  turnstileSiteKey?: string;
 };
 
 const audienceOptions: readonly Audience[] = [
@@ -60,8 +63,10 @@ function InlineError({ id, message }: { id: string; message?: string }) {
 
 export function LeadForm({
   submitLead = submitLeadToApi,
-  getTurnstileToken = getEmptyTurnstileToken,
+  getTurnstileToken,
   trackEvent = noopTrackLeadEvent,
+  fallbackLinks = buildLeadFallbackLinks(),
+  turnstileSiteKey,
 }: LeadFormProps) {
   const locale = useLocale() as Locale;
   const t = useTranslations("LeadForm");
@@ -69,11 +74,17 @@ export function LeadForm({
   const [step, setStep] = useState<Step>(1);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [phoneCopied, setPhoneCopied] = useState(false);
+  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileFailed, setTurnstileFailed] = useState(false);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const hasNavigatedRef = useRef(false);
   const previousSelectedGoalRef = useRef(selectedGoal);
   const formSchema = useMemo(() => createLeadFormSchema(locale), [locale]);
   const payloadSchema = useMemo(() => createLeadPayloadSchema(locale), [locale]);
+  const waitingForTurnstile = Boolean(turnstileSiteKey && !getTurnstileToken && !turnstileReady);
 
   const {
     register,
@@ -139,17 +150,40 @@ export function LeadForm({
     goToStep(3);
   };
 
+  const handleTurnstileToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+    setTurnstileReady(true);
+    setTurnstileFailed(false);
+  }, []);
+
+  const handleTurnstileError = useCallback(() => {
+    setTurnstileToken("");
+    setTurnstileReady(false);
+    setTurnstileFailed(true);
+  }, []);
+
+  const copyPhone = async () => {
+    try {
+      await navigator.clipboard.writeText(fallbackLinks.phoneDisplay);
+      setPhoneCopied(true);
+    } catch {
+      setPhoneCopied(false);
+    }
+  };
+
   const onSubmit = handleSubmit(async (formData) => {
     setSubmitError(false);
 
     try {
-      const turnstileToken = await getTurnstileToken();
+      const resolvedTurnstileToken = getTurnstileToken
+        ? await getTurnstileToken()
+        : turnstileToken;
       const payload = payloadSchema.parse({
         ...formData,
         locale,
         attribution: getSessionAttribution(),
         pageUrl: window.location.href,
-        turnstileToken,
+        turnstileToken: resolvedTurnstileToken,
       });
 
       trackEvent("trial_form_submit", toLeadAnalyticsParams(payload));
@@ -159,6 +193,13 @@ export function LeadForm({
       setSubmitted(true);
     } catch {
       setSubmitError(true);
+      setPhoneCopied(false);
+      if (turnstileSiteKey && !getTurnstileToken) {
+        setTurnstileToken("");
+        setTurnstileReady(false);
+        setTurnstileFailed(false);
+        setTurnstileResetKey((value) => value + 1);
+      }
       trackEvent("trial_form_error", {
         locale,
         step: 3,
@@ -329,18 +370,65 @@ export function LeadForm({
           </label>
           <InlineError id="consent-error" message={errors.consent?.message} />
 
-          {submitError ? (
-            <p className="mt-6 rounded-xl border border-brand-red/25 bg-red-50 p-4 text-sm font-medium text-brand-red" role="alert">
-              {t("error")}
-            </p>
+          {turnstileSiteKey && !getTurnstileToken ? (
+            <div aria-label={t("turnstile.label")}>
+              <TurnstileWidget
+                locale={locale}
+                onError={handleTurnstileError}
+                onToken={handleTurnstileToken}
+                resetKey={turnstileResetKey}
+                siteKey={turnstileSiteKey}
+              />
+              {waitingForTurnstile && !turnstileFailed ? (
+                <p className="mt-2 text-xs text-[var(--text-muted)]" role="status">
+                  {t("turnstile.pending")}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {submitError || turnstileFailed ? (
+            <div className="mt-6 rounded-2xl border border-brand-red/25 bg-red-50 p-5" role="alert">
+              <p className="text-sm font-semibold text-brand-red">
+                {submitError ? t("error") : t("turnstile.error")}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-brand-black">
+                {submitError ? t("fallback.intro") : t("turnstile.fallbackIntro")}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a className="min-h-11 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.whatsapp} rel="noreferrer" target="_blank">
+                  WhatsApp
+                </a>
+                <a className="min-h-11 rounded-full bg-[#5B45D6] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.viber}>
+                  Viber
+                </a>
+                {fallbackLinks.telegram ? (
+                  <a className="min-h-11 rounded-full bg-[#229ED9] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.telegram} rel="noreferrer" target="_blank">
+                    Telegram
+                  </a>
+                ) : null}
+                <a className="min-h-11 rounded-full border border-black/20 bg-white px-4 py-2.5 text-sm font-bold text-brand-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.phone}>
+                  {t("fallback.call")}: {fallbackLinks.phoneDisplay}
+                </a>
+                <button className="min-h-11 rounded-full border border-black/20 bg-white px-4 py-2.5 text-sm font-bold text-brand-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={copyPhone} type="button">
+                  {phoneCopied ? t("fallback.copied") : t("fallback.copy")}
+                </button>
+              </div>
+            </div>
           ) : null}
 
           <div className="mt-8 flex flex-wrap justify-between gap-3">
             <button className="min-h-12 rounded-full border border-black/20 px-6 py-3 font-semibold transition hover:bg-black/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={() => goToStep(2)} type="button">
               {t("actions.back")}
             </button>
-            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-red-700 disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting} type="submit">
-              {isSubmitting ? t("actions.sending") : t("actions.submit")}
+            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-red-700 disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting || waitingForTurnstile} type="submit">
+              {isSubmitting
+                ? t("actions.sending")
+                : turnstileFailed
+                  ? t("actions.verificationFailed")
+                  : waitingForTurnstile
+                    ? t("actions.verifying")
+                    : t("actions.submit")}
             </button>
           </div>
         </div>

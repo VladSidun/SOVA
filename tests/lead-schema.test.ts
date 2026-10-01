@@ -41,6 +41,19 @@ describe("shared lead payload schema", () => {
     if (!result.success) expect(result.error.issues.some((issue) => issue.path[0] === "phone")).toBe(true);
   });
 
+  it("defensively rejects oversized phone input and normalizes control characters", () => {
+    expect(createLeadPayloadSchema("uk").safeParse({
+      ...validLead,
+      phone: "+380991234567".repeat(5),
+    }).success).toBe(false);
+
+    const result = createLeadPayloadSchema("uk").parse({
+      ...validLead,
+      phone: "099\u0000123 45 67",
+    });
+    expect(result.phone).toBe("+380991234567");
+  });
+
   it("requires at least one goal", () => {
     const result = createLeadPayloadSchema("uk").safeParse({ ...validLead, goals: [] });
 
