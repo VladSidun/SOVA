@@ -1,6 +1,5 @@
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { z } from "zod";
-import type { LeadPayload } from "@/types/lead";
 
 const audienceValues = ["child", "school_student", "university_student", "adult"] as const;
 const goalValues = [
@@ -81,11 +80,15 @@ function optionalText(maxLength: number, message: string) {
 }
 
 function phoneSchema(message: string) {
-  return z
-    .string()
-    .trim()
-    .refine((value) => parsePhoneNumberFromString(value, "UA")?.isValid() === true, message)
-    .transform((value) => String(parsePhoneNumberFromString(value, "UA")!.number));
+  return z.preprocess(
+    (value) => (typeof value === "string" ? sanitizeLeadText(value) : value),
+    z
+      .string()
+      .min(7, message)
+      .max(40, message)
+      .refine((value) => parsePhoneNumberFromString(value, "UA")?.isValid() === true, message)
+      .transform((value) => String(parsePhoneNumberFromString(value, "UA")!.number)),
+  );
 }
 
 export function createLeadFormSchema(locale: "uk" | "en") {
@@ -110,7 +113,10 @@ export function createLeadFormSchema(locale: "uk" | "en") {
   });
 }
 
-const optionalAttributionValue = z.string().trim().min(1).max(2048).optional();
+const optionalAttributionValue = z.preprocess(
+  (value) => (typeof value === "string" ? sanitizeLeadText(value) : value),
+  z.string().min(1).max(2048).optional(),
+);
 
 export const attributionSchema = z.object({
   source: optionalAttributionValue,
@@ -120,16 +126,21 @@ export const attributionSchema = z.object({
   term: optionalAttributionValue,
   referrer: optionalAttributionValue,
   landingUrl: optionalAttributionValue,
-});
+}).strict();
 
-export function createLeadPayloadSchema(locale: "uk" | "en"): z.ZodType<LeadPayload> {
+export function createLeadPayloadSchema(locale: "uk" | "en") {
   return createLeadFormSchema(locale).extend({
     locale: z.enum(["uk", "en"]),
     attribution: attributionSchema,
-    pageUrl: z.string().url(),
-    // Phase 4 accepts the client token boundary. Server verification belongs to Phase 5.
-    turnstileToken: z.string(),
+    pageUrl: z.string().url().max(2048),
+    turnstileToken: z.string().max(2048),
   });
+}
+
+export function createServerLeadPayloadSchema(locale: "uk" | "en") {
+  return createLeadPayloadSchema(locale)
+    .extend({ turnstileToken: z.string().trim().min(1).max(2048) })
+    .strict();
 }
 
 export type LeadFormInput = z.input<ReturnType<typeof createLeadFormSchema>>;
