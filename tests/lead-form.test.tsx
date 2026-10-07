@@ -239,4 +239,21 @@ describe("Phase 4 lead form", () => {
     expect(JSON.stringify(analytics)).not.toContain("Private comment");
     expect(JSON.stringify(analytics)).not.toContain("secret-client-token");
   });
+
+  it("tracks the form lifecycle once without passing entered PII", async () => {
+    const trackEvent = vi.fn();
+    const submitLead = vi.fn<SubmitLead>().mockResolvedValue(undefined);
+    render(<LeadSection trackEvent={trackEvent} submitLead={submitLead} getTurnstileToken={async () => "test-token"} />, { wrapper: Providers });
+    await reachContactStep();
+    await fillAndSubmitContact();
+    await screen.findByRole("heading", { name: "Дякуємо — заявку прийнято." });
+    expect(trackEvent.mock.calls.map(([event]) => event)).toEqual([
+      "trial_form_start", "trial_form_step_complete", "trial_form_step_complete",
+      "trial_form_step_complete", "trial_form_submit", "trial_form_success",
+    ]);
+    expect(trackEvent).toHaveBeenCalledWith("trial_form_step_complete", { locale: "uk", step: 3 });
+    const serialized = JSON.stringify(trackEvent.mock.calls);
+    expect(serialized).not.toMatch(/Олена|099|18:00|test-token|comment|name|phone|attribution/);
+    expect(screen.queryByRole("checkbox", { name: /SOVA використає/ })).not.toBeInTheDocument();
+  });
 });
