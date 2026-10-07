@@ -24,6 +24,8 @@ export function Location() {
           <a
             className="mt-8 inline-flex min-h-12 items-center justify-center self-start rounded-full bg-brand-red px-6 text-sm font-semibold text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             href={business.googleMaps}
+            data-analytics-event="map_click"
+            data-analytics-source="location"
             rel="noreferrer"
             target="_blank"
           >
@@ -37,6 +39,8 @@ export function Location() {
           className="group relative min-h-[22rem] overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#252525] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:min-h-[28rem]"
           data-testid="location-map-preview"
           href={business.googleMaps}
+          data-analytics-event="map_click"
+          data-analytics-source="location"
           rel="noreferrer"
           target="_blank"
         >
