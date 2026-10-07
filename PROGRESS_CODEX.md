@@ -11,9 +11,9 @@
   6df575c. Checkout: Sova_Project/SOVA-phase-6. Попередні checkout не змінено.
 - [PR #9](https://github.com/VladSidun/SOVA/pull/9) відкрито у develop;
   auto-merge вимкнено, merge лишається користувачу. Code tip bc8c867 запушено.
-- Quality CI для bc8c867 запущено:
-  [run 37684937735](https://github.com/VladSidun/SOVA/actions/runs/37684937735).
-  На час запису виконується; final remote head/CI перевіряйте live.
+- Quality CI для a79c574 пройшов 2026-10-07 (усі кроки, включно з 29 E2E):
+  [run 37685155233](https://github.com/VladSidun/SOVA/actions/runs/37685155233).
+  Подальший commit фіксує лише цей CI результат; final remote head перевіряйте live.
 - Це development preview. Phase 7–9, deployment, DB/Sova Hub, додаткові
   delivery channels, реальні media/reviews/cases/teachers не реалізовувалися.
 
@@ -51,7 +51,8 @@ git diff --check   — passed
 
 Після фінального однорядкового text-width fix bc8c867 повторно пройшли lint,
 build (включає TypeScript) та всі 5 SEO/privacy E2E. Full 29 E2E і 109 tests
-вище виконано до цієї CSS-only правки. Подальший handoff commit змінює лише docs.
+вище виконано до цієї CSS-only правки. Quality CI для a79c574 повторив повний gate на Linux: install, typecheck, lint,
+109 tests, build, 29 E2E та diff check — success. Подальший follow-up лише docs.
 
 Перевірено raw generated HTML усіх чотирьох сторінок без domain env: noindex,
 відсутні canonical/OG URL, JSON-LD без invented URL. Окремий build із synthetic
@@ -112,5 +113,5 @@ Motion/final polish не реалізовувалися. Усі нинішні C
 - ✅ Phase 6 реалізовано від merged develop; гілку запушено і PR #9 відкрито без auto-merge.
 - ✅ Locale SEO, verified JSON-LD, sitemap/robots, privacy і всі Guide events готові в дозволеному scope.
 - ✅ PII restriction, consent gates та no-op providers покрито тестами; live integrations чесно позначено unconfigured.
-- ✅ Typecheck, lint, 109 tests, build, 29 E2E, metadata/HTML, Axe/visual QA і diff check пройдено; targeted E2E після width fix також green.
+- ✅ Typecheck, lint, 109 tests, build, 29 E2E, metadata/HTML, Axe/visual QA і diff check пройдено; targeted E2E після width fix та повний GitHub Quality CI також green.
 - ❌ Успадковані 7 dependency audit findings не усунено в Phase 6; потрібне окреме оновлення перед public launch.
