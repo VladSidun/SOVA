@@ -13,7 +13,6 @@ import {
 } from "@/lib/lead-client";
 import { buildLeadFallbackLinks, type LeadFallbackLinks } from "@/lib/contact-links";
 import {
-  noopTrackLeadEvent,
   toLeadAnalyticsParams,
   type TrackLeadEvent,
 } from "@/lib/lead-analytics";
@@ -27,6 +26,9 @@ import type { Locale } from "@/types/content";
 import type { Audience, ContactMethod, StudyMode } from "@/types/lead";
 import { useLeadGoal } from "./LeadGoalProvider";
 import { TurnstileWidget } from "./TurnstileWidget";
+import { track } from "@/lib/analytics";
+import { isLeadGoal } from "@/lib/lead-goal";
+import { privacy } from "@/content/privacy";
 
 type Step = 1 | 2 | 3;
 
@@ -64,7 +66,7 @@ function InlineError({ id, message }: { id: string; message?: string }) {
 export function LeadForm({
   submitLead = submitLeadToApi,
   getTurnstileToken,
-  trackEvent = noopTrackLeadEvent,
+  trackEvent = track,
   fallbackLinks = buildLeadFallbackLinks(),
   turnstileSiteKey,
 }: LeadFormProps) {
@@ -81,6 +83,7 @@ export function LeadForm({
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const hasNavigatedRef = useRef(false);
+  const hasStartedRef = useRef(false);
   const previousSelectedGoalRef = useRef(selectedGoal);
   const formSchema = useMemo(() => createLeadFormSchema(locale), [locale]);
   const payloadSchema = useMemo(() => createLeadPayloadSchema(locale), [locale]);
@@ -138,7 +141,6 @@ export function LeadForm({
   const continueFromStepOne = async () => {
     const valid = await trigger(["audience", "ageOrGrade"], { shouldFocus: true });
     if (!valid) return;
-    trackEvent("trial_form_start", { locale, step: 1 });
     trackEvent("trial_form_step_complete", { locale, step: 1 });
     goToStep(2);
   };
@@ -157,10 +159,11 @@ export function LeadForm({
   }, []);
 
   const handleTurnstileError = useCallback(() => {
+    trackEvent("trial_form_error", { locale, step: 3 });
     setTurnstileToken("");
     setTurnstileReady(false);
     setTurnstileFailed(true);
-  }, []);
+  }, [locale, trackEvent]);
 
   const copyPhone = async () => {
     try {
@@ -186,6 +189,7 @@ export function LeadForm({
         turnstileToken: resolvedTurnstileToken,
       });
 
+      trackEvent("trial_form_step_complete", { locale, step: 3 });
       trackEvent("trial_form_submit", toLeadAnalyticsParams(payload));
       await submitLead(payload);
       trackEvent("trial_form_success", toLeadAnalyticsParams(payload));
@@ -223,7 +227,18 @@ export function LeadForm({
   }
 
   return (
-    <form className="rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={onSubmit}>
+    <form className="rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={onSubmit}
+      onChangeCapture={(event) => {
+        if (!hasStartedRef.current) {
+          hasStartedRef.current = true;
+          trackEvent("trial_form_start", { locale, step });
+        }
+        const target = event.target;
+        if (target instanceof HTMLInputElement && target.name === "goals" && target.checked && isLeadGoal(target.value)) {
+          track("goal_select", { locale, goal: target.value, source: "lead" });
+        }
+      }}
+    >
       <div className="flex items-center justify-between gap-4 border-b border-black/10 pb-5">
         <p className="text-sm font-bold text-brand-black" aria-live="polite">
           {t("progress", { step })}
@@ -369,6 +384,9 @@ export function LeadForm({
             <span>{t("contact.consent")}</span>
           </label>
           <InlineError id="consent-error" message={errors.consent?.message} />
+          <a className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-red underline underline-offset-4" href={`/${locale}/privacy`} rel="noreferrer" target="_blank">
+            {privacy[locale].policyLink}
+          </a>
 
           {turnstileSiteKey && !getTurnstileToken ? (
             <div aria-label={t("turnstile.label")}>
@@ -396,18 +414,18 @@ export function LeadForm({
                 {submitError ? t("fallback.intro") : t("turnstile.fallbackIntro")}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <a className="min-h-11 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.whatsapp} rel="noreferrer" target="_blank">
+                <a className="min-h-11 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.whatsapp} data-analytics-event="whatsapp_click" data-analytics-source="fallback" rel="noreferrer" target="_blank">
                   WhatsApp
                 </a>
-                <a className="min-h-11 rounded-full bg-[#5B45D6] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.viber}>
+                <a className="min-h-11 rounded-full bg-[#5B45D6] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.viber} data-analytics-event="viber_click" data-analytics-source="fallback">
                   Viber
                 </a>
                 {fallbackLinks.telegram ? (
-                  <a className="min-h-11 rounded-full bg-[#229ED9] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.telegram} rel="noreferrer" target="_blank">
+                  <a className="min-h-11 rounded-full bg-[#229ED9] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.telegram} data-analytics-event="telegram_click" data-analytics-source="fallback" rel="noreferrer" target="_blank">
                     Telegram
                   </a>
                 ) : null}
-                <a className="min-h-11 rounded-full border border-black/20 bg-white px-4 py-2.5 text-sm font-bold text-brand-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.phone}>
+                <a className="min-h-11 rounded-full border border-black/20 bg-white px-4 py-2.5 text-sm font-bold text-brand-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.phone} data-analytics-event="phone_click" data-analytics-source="fallback">
                   {t("fallback.call")}: {fallbackLinks.phoneDisplay}
                 </a>
                 <button className="min-h-11 rounded-full border border-black/20 bg-white px-4 py-2.5 text-sm font-bold text-brand-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={copyPhone} type="button">

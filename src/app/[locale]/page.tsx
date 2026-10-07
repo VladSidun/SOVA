@@ -1,3 +1,6 @@
+import { hasLocale } from "next-intl";
+import { notFound } from "next/navigation";
+import { OrganizationJsonLd } from "@/components/analytics/OrganizationJsonLd";
 import { LeadGoalProvider } from "@/components/lead/LeadGoalProvider";
 import { Directions } from "@/components/sections/Directions";
 import { FAQ } from "@/components/sections/FAQ";
@@ -13,6 +16,14 @@ import { TrialProcess } from "@/components/sections/TrialProcess";
 import { WhySova } from "@/components/sections/WhySova";
 import { buildLeadFallbackLinks } from "@/lib/contact-links";
 import { getPublicEnv } from "@/lib/public-env";
+import { routing } from "@/i18n/routing";
+import { buildPageMetadata, getSeoSettings } from "@/lib/seo";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  return buildPageMetadata(locale, "", getSeoSettings());
+}
 
 export default function LandingPage() {
   const publicEnv = getPublicEnv();
@@ -24,6 +35,7 @@ export default function LandingPage() {
 
   return (
     <main id="main-content" tabIndex={-1}>
+      <OrganizationJsonLd />
       <LeadGoalProvider>
         <Hero />
         <TrustStrip />

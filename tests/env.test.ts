@@ -4,7 +4,7 @@ import { parseServerEnv } from "@/lib/env-schema";
 
 describe("environment scaffolding", () => {
   it("starts locally without external credentials and accepts blank optional keys", () => {
-    expect(parsePublicEnv({ NEXT_PUBLIC_GA_ID: "" }).NEXT_PUBLIC_SITE_URL).toBe("http://localhost:3000");
+    expect(parsePublicEnv({ NEXT_PUBLIC_GA_ID: "" }).NEXT_PUBLIC_SITE_URL).toBeUndefined();
     expect(parseServerEnv({ TELEGRAM_BOT_TOKEN: "", TELEGRAM_CHAT_ID: "", TURNSTILE_SECRET_KEY: "" })).toEqual({
       TELEGRAM_BOT_TOKEN: undefined, TELEGRAM_CHAT_ID: undefined, TURNSTILE_SECRET_KEY: undefined,
     });

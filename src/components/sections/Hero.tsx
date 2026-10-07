@@ -26,12 +26,18 @@ export function Hero() {
               <a
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand-red px-6 text-center text-sm font-semibold text-white shadow-[0_12px_28px_rgba(211,47,47,0.22)] transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-red sm:min-h-14 sm:text-base"
                 href={`#${sectionIds.lead}`}
+                data-analytics-event="cta_click"
+                data-analytics-source="hero"
+                data-analytics-cta="trial"
               >
                 {t("primaryCta")}
               </a>
               <a
                 className="inline-flex min-h-12 items-center justify-center rounded-full border border-black/15 bg-white px-6 text-center text-sm font-semibold text-brand-black transition-colors hover:border-black/30 hover:bg-black/[0.03] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-red sm:min-h-14 sm:text-base"
                 href={`#${sectionIds.lead}`}
+                data-analytics-event="cta_click"
+                data-analytics-source="hero"
+                data-analytics-cta="program"
               >
                 {t("secondaryCta")}
               </a>
