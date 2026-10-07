@@ -1,173 +1,116 @@
 # SOVA — передача контексту Codex
 
-Оновлено: 2026-10-02. Мета: продовжити роботу в іншому чаті без пошуку
-попередніх розмов. Це стан реалізації, не заміна ТЗ.
+Оновлено: 2026-10-07. Джерела: актуальне завдання → SPEC → GUIDE → код.
+Перед змінами прочитайте AGENTS.md, цей файл і обидва source-of-truth документи.
 
-## 1. Поточний стан
+## Поточний стан
 
-- Перед змінами прочитайте `AGENTS.md`, цей файл, `SOVA_WEBSITE_SPEC_v2.md`
-  і `SOVA_CODEX_IMPLEMENTATION_GUIDE_v2.md`. Пріоритет: актуальне завдання
-  користувача → SPEC → GUIDE → код.
-- Phase 0–4 merged у `develop`; merged Phase 4 commit — `8aa65d9` (PR #7).
-- Phase 5 реалізовано у `feature/phase-5-lead-delivery`, створеній безпосередньо
-  від `8aa65d9`. Основні commits: `4351f7c`, `da21475`, `aca6905`, `8bb26f5`;
-  LAN preview fix: `02c7da8`.
-- PR #8 відкрито у `develop`; час у Telegram повідомленні переведено на Київ
-  у code commit `fda914d`. Quality CI для цього commit пройшов 2026-10-02.
-  Auto-merge не вмикати.
-- Це development preview з `noindex, nofollow`, не production MVP.
+- Phase 0–5 merged у develop. PR #8 merged 2026-10-04; integration commit
+  6df575c містить Phase 5 tip a7232a0 (ancestry перевірено live).
+- Реалізовано лише Phase 6 у feature/phase-6-seo-analytics, безпосередньо від
+  6df575c. Checkout: Sova_Project/SOVA-phase-6. Попередні checkout не змінено.
+- [PR #9](https://github.com/VladSidun/SOVA/pull/9) відкрито у develop;
+  auto-merge вимкнено, merge лишається користувачу. Code tip bc8c867 запушено.
+- Quality CI для bc8c867 запущено:
+  [run 37684937735](https://github.com/VladSidun/SOVA/actions/runs/37684937735).
+  На час запису виконується; final remote head/CI перевіряйте live.
+- Це development preview. Phase 7–9, deployment, DB/Sova Hub, додаткові
+  delivery channels, реальні media/reviews/cases/teachers не реалізовувалися.
 
-## 2. Що реалізовано
+## Що вже працює
 
-| Частина | Реалізація / точки входу |
+| Частина | Реалізація та reusable точки входу |
 | --- | --- |
-| API | `src/app/api/leads/route.ts`: dynamic Node route `POST /api/leads`; fail-closed при відсутній server конфігурації; public відповіді містять лише контрольовані `ok/code`. |
-| Server validation | `src/lib/lead-schema.ts`: повторний strict Zod parse, sanitized text/attribution, token 1–2048, URL limits, defensive phone length/validation та E.164 normalization. Invalid JSON/payload → 400 до Turnstile/delivery. |
-| Turnstile | `src/components/lead/TurnstileWidget.tsx`: explicit SPA widget з public site key, expiry/error/reset handling; після client error auto-retry вимкнено, щоб не повторювати безкінечно невдалий challenge. `src/lib/turnstile.ts`: server-only Siteverify request з timeout; тільки `valid/invalid/unavailable`, без raw Cloudflare body у public response. |
-| Destination architecture | `src/lib/lead-destination.ts`: `LeadDestination.send(NormalizedLead)`. `WhatsAppLeadDestination`, `ViberLeadDestination`, `SovaHubLeadDestination` зарезервовані лише як майбутні extension names; не реалізовані. DB немає. |
-| Telegram | `src/lib/telegram.ts`: `TelegramLeadDestination`, одна `sendMessage` спроба після валідного Turnstile, HTML structured message за Guide, escape `&<>`, bounded fields, UA admin labels та UTM. Час заявки показується як `дд.мм.рррр, гг:хх` за `Europe/Kyiv`, із позначкою «Київ»; серверний `receivedAt` лишається UTC ISO. Turnstile token ніколи не передається destination. |
-| Controlled errors | 400 `INVALID_REQUEST`, 403 `TURNSTILE_REJECTED`, 503 `VERIFICATION_UNAVAILABLE`/`SERVICE_UNAVAILABLE`, 502 `DELIVERY_FAILED`; Telegram/Turnstile detail, credentials і PII не повертаються. Production source не має `console.*` PII logging. |
-| Form integration | Phase 4 state/payload збережені; default submit іде у real `/api/leads`. На delivery або Turnstile failure дані не очищаються; Turnstile error показує чіткий unsent стан і WhatsApp/Viber/phone fallback замість вічного pending. Telegram з’являється тільки при `NEXT_PUBLIC_TELEGRAM_URL`. |
-| Public fallback | `src/lib/contact-links.ts`: phone з verified business config, standard `wa.me` та Viber phone deep link; public env може перевизначити WhatsApp/Viber URL. Telegram URL не генерується з номера. |
-| Security boundary | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY` читаються лише server-side через `src/lib/env.ts`; client отримує тільки `NEXT_PUBLIC_*`. `.env.local` ignored і не tracked. |
-| LAN dev preview | `next.config.ts` бере точні дозволені hostname/IP з `SOVA_ALLOWED_DEV_ORIGINS`; приклад є в `.env.example`. Локальний `.env.local` містить `192.168.68.102` без коміту. Після restart `next dev` форма переходить 1 → 2 → 3 за LAN адресою. |
+| Phase 0–3 UI | UA/EN Next App Router shell, responsive Header/Footer і mobile focus trap, Hero, TrustStrip, Directions, GoalMatcher, FormatsPricing, TrialProcess, WhySova, Method, Location, FAQ. Дані й ціни централізовано; teachers/reviews/results/video та «8 років» hidden за flags. |
+| Phase 4 форма | LeadGoalProvider зберігає typed goal у query; LeadForm має три кроки, Back/Next із збереженням даних, strict Zod/phone validation, контактну згоду, session attribution та explicit Turnstile widget. |
+| Phase 5 API | src/app/api/leads/route.ts: server validation → Turnstile Siteverify → NormalizedLead → TelegramLeadDestination. Контрольовані 400/403/502/503, без raw upstream detail/PII/secrets; failure зберігає поля та показує прямі контакти. DB немає. |
+| Phase 5 Telegram | src/lib/telegram.ts: HTML escaping, одна sendMessage спроба, token не йде destination; receivedAt UTC, відображення часу за Europe/Kyiv зі зміщенням winter/summer. Server secrets лишаються server-only. |
+| Phase 6 metadata | src/config/seo.ts + src/lib/seo.ts: UA title/description з Guide 22, природна адаптація EN, privacy metadata. Canonical, uk/en/x-default і OG URL тільки з валідного NEXT_PUBLIC_SITE_URL. x-default веде на український відповідник. |
+| Domain / indexing | NEXT_PUBLIC_SITE_URL optional без localhost default. HTTPS origin без credentials/path/query; local/reserved origin не генерує URL. SOVA_INDEXABLE=true + валідний origin потрібні для index/follow; VERCEL_ENV=preview завжди захищено. Зміна env потребує rebuild. |
+| Structured data | src/lib/structured-data.ts та OrganizationJsonLd: EducationalOrganization + LocalBusiness, verified name/address/phone/hours/social/Maps/areaServed із business config і SPEC 26. Без rating/reviewCount/awards/accreditations/geo/postcode та вигаданого Sunday schedule. Serializer екранує <. |
+| Crawler routes | src/app/sitemap.ts / robots.ts: лише чотири реальні locale routes; production sitemap має language alternates, robots виключає /api/. Preview sitemap порожній, robots disallow /. |
+| Privacy | /uk/privacy і /en/privacy; /privacy → /uk/privacy через existing locale middleware. Описано contact purpose, Telegram/Turnstile, session attribution, analytics обмеження та contact-data requests. Consent короткий і обов’язковий; policy link у формі та footer. Header anchors зі сторінки privacy ведуть на головну потрібної мови. |
+| Analytics boundary | src/lib/analytics.ts: track(event, params), strict whitelist і closed values. Весь event відхиляється при unknown key/unsafe value. Не передаються name/phone/comment/age/token/URLs/UTM/referrer/nested payload; input і raw errors не логуються. |
+| Provider adapters | GA gtag(event + send_to), Meta trackSingleCustom для конкретного ID, TikTok instance(id).track. Flags + ID + окрема tracking consent + готовий runtime потрібні одночасно. Missing gate/SDK → no-op; provider throw не ламає форму. Самі SDK не завантажуються; pre-consent queue немає. |
+| Events | AnalyticsEvents: explicit data attributes для CTA/phone/messenger/social/map, IntersectionObserver для price_view/trial_form_open, real video play тільки з data-analytics-video. Goal і form lifecycle instrumented без PII. Start тільки при першій зміні control; contact consent не вмикає tracking consent. |
+| Later setup | docs/SEO_ANALYTICS_SETUP.md: domain/HTTPS/indexing, Search Console/GBP, IDs/flags, consent, вимкнення automatic matching/events і request-canary audit. Live accounts не налаштовано. |
 
-Phase 0–4 UI лишився без зміни scope: UA/EN shell, conversion/trust sections,
-config-driven confirmed facts, hidden fake-free optional content, 3-step lead form,
-attribution, accessible validation та PII-free analytics parameters.
+## Перевірки Phase 6
 
-## 3. Перевірки Phase 5
-
-Фінальний локальний прогін 2026-09-29 на code/test tip `8bb26f5`:
+Локально на code/test implementation пройшли:
 
 ```text
-npm ci             — passed, 350 packages, 0 vulnerabilities
+npm ci             — passed, 350 packages; audit findings наведені нижче
 npm run typecheck  — passed
 npm run lint       — passed, 0 warnings
-npm test           — passed, 48 tests / 11 files
-npm run build      — passed; /api/leads dynamic, /uk and /en generated
-npm run e2e        — passed, 24 Chromium tests
+npm test           — passed, 109 tests / 15 files
+npm run build      — passed, UA/EN landing + privacy, sitemap/robots, dynamic API
+npm run e2e        — passed, 29 Chromium tests (24 попередні + 5 Phase 6)
 git diff --check   — passed
 ```
 
-API/unit coverage: valid request sends exactly once; invalid payload 400;
-invalid/unavailable/throwing Turnstile; E.164 and oversized phone defense;
-Telegram HTML escaping and one send; provider failure controlled; no token,
-upstream detail or credentials in public body; all Phase 4 tests remain green.
+Після фінального однорядкового text-width fix bc8c867 повторно пройшли lint,
+build (включає TypeScript) та всі 5 SEO/privacy E2E. Full 29 E2E і 109 tests
+вище виконано до цієї CSS-only правки. Подальший handoff commit змінює лише docs.
 
-Browser coverage: mobile/desktop success flow, failure fallback and state
-preservation, UA/EN, keyboard flow, 360/390/768/1366/1920 overflow checks,
-console/network smoke. Axe WCAG 2/2.1 A/AA: 0 violations for locale pages,
-Step 3 and fallback state. Manual headed Chromium check at 360×800, 768×800
-and 1366×900 confirmed responsive fallback and preserved fields. The only
-console/network error in the deliberate no-credentials submit was the expected
-controlled `POST /api/leads` 503.
+Перевірено raw generated HTML усіх чотирьох сторінок без domain env: noindex,
+відсутні canonical/OG URL, JSON-LD без invented URL. Окремий build із synthetic
+QA HTTPS origin + indexing flag підтвердив точні canonical/uk/en/x-default,
+organization URL/@id, чотири sitemap loc та /api/ disallow. Тестовий origin
+не є заявленим доменом SOVA; після перевірки повернуто preview build без env.
 
-Виправлення LAN preview 2026-10-02: у Chrome підтверджено, що до дозволу
-dev origin `localhost:3000/uk` переходив на крок 2, а
-`192.168.68.102:3000/uk` залишався на кроці 1. Після конфігурації і явного
-restart LAN форма переходить на кроки 2 і 3; попередження `/_next/hmr` не
-повторилось. Окремо пройшли 7 тестів `tests/lead-form.test.tsx`, typecheck,
-lint, build і `git diff --check`. Повний E2E після цієї зміни не запускався;
-24 E2E вище стосуються попереднього code tip.
+Browser/Axe: UA/EN privacy, locale switch, /privacy redirect, home anchors;
+0 WCAG 2/2.1 A/AA violations, overflow checks на 360/768/1366. Попередні locale,
+mobile nav, lead success/validation/fallback checks лишилися green; API E2E
+мокають доставку. На сторінках preview немає GA/Meta/TikTok requests.
 
-Turnstile fallback fix 2026-10-02: у Chrome на `localhost` підтверджено
-Cloudflare `110200`; форма тепер показує unsent alert, WhatsApp/Viber/phone,
-зберігає поля та блокує submit. 49 unit/API/component tests, typecheck, lint,
-build і `git diff --check` пройшли локально. GitHub Quality CI для code tip
-`fdb43fb` пройшов, включно з E2E.
+Візуально перевірено privacy screenshots на 360/768/1366 та consent step 3;
+фінальна desktop privacy column має ширину 768 px, без переповнення. Артефакти
+в ignored output/playwright/phase-6, не в Git. Локальний preview:
+http://127.0.0.1:3106/uk та http://127.0.0.1:3106/uk/privacy (поки server працює).
 
-Kyiv timestamp fix 2026-10-02: `tests/telegram.test.ts` перевіряє зимовий і
-літній час та перехід дати через північ. Локально пройшли typecheck, lint,
-52 unit/API/component tests, build і `git diff --check`. E2E: 24/24 пройшли
-на test build з порожнім `NEXT_PUBLIC_TURNSTILE_SITE_KEY`; перший прогін
-із локальним real widget мав 21/24 через відомий Cloudflare `110200`.
-Жоден прогін не надсилав реальну заявку; browser E2E мокають API. GitHub
-Quality CI для `fda914d` пройшов, включно з E2E.
+## Межі інтеграцій і відомі проблеми
 
-Security evidence: built `.next/static` contains 0 hits for
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY`; production
-`src` contains 0 `console.log/info/warn/error` calls; only `.env.example` is
-tracked and `.env.local` matches `.gitignore`.
+- Search Console, Google Business Profile, GA4, Meta Pixel, TikTok Pixel не
+  налаштовано через authenticated accounts. Підготовлено code/checklist;
+  реальна доставка analytics не заявляється.
+- SDK bootstrap і separate tracking consent manager потребують наступного
+  авторизованого external setup. IDs самі по собі нічого не завантажують.
+  Не вставляйте vendor snippet без перевірки automatic URL/DOM/form capture.
+- Retention, processor details і live tracking policy школа має уточнити перед
+  public launch. Ця сторінка — погоджений privacy minimum для preview.
+- Real Telegram/Turnstile send не перевірявся у Phase 6; production hostname
+  configuration та non-production destination test лишаються launch gate.
+  Попередня Phase 5 нотатка про Cloudflare 110200 історична; не вважайте її
+  live діагнозом нового checkout. Тут .env.local не копіювався.
+- npm audit під час npm ci: 7 inherited vulnerabilities (6 high, 1 critical).
+  Critical advisory стосується pinned Next 16.3.5 / next/og ImageResponse;
+  інші — sharp, source-map-js і ESLint glob chain. Package graph не змінено.
+  Перед production потрібна окрема dependency remediation/verification.
 
-## 4. Credentials і real-send status
+## Компактна історія delivery
 
-На час попереднього Phase 5 прогону ці значення були відсутні. Зараз у
-локальному ignored `.env.local` ключі задано; їхні значення не перевірялися
-і не фіксуються в Git:
-
-```text
-TELEGRAM_BOT_TOKEN
-TELEGRAM_CHAT_ID
-TURNSTILE_SECRET_KEY
-NEXT_PUBLIC_TURNSTILE_SITE_KEY
-```
-
-Real Telegram/Turnstile delivery **не перевірено**. Поточний widget повертає
-`110200` і на `localhost`, і на LAN IP: ці hostname не дозволені в Cloudflare.
-Для тесту на цьому ПК додайте `localhost` до Hostname Management поточного
-Turnstile widget. Для іншого пристрою використайте окремий development FQDN,
-що вказує на LAN машину, і додайте його до widget та `SOVA_ALLOWED_DEV_ORIGINS`;
-звичайна IP адреса не відповідає вимозі Cloudflare до FQDN. Інший варіант —
-парні Cloudflare test site/secret keys лише в ізольованому non-production
-середовищі з окремим Telegram test destination. Server verification не вимикати.
-Успішну реальну відправку не заявлено.
-
-Для ручної non-production перевірки:
-
-1. Створіть окремі Turnstile widget/site key + secret для preview hostname;
-   додайте hostname у Cloudflare Turnstile.
-2. Додайте Telegram bot у приватний admin channel/group із правом надсилання;
-   отримайте numeric `TELEGRAM_CHAT_ID` без публікації private channel URL.
-3. У локальному `.env.local` або secret store deployment задайте
-   `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TURNSTILE_SECRET_KEY`,
-   `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. Не комітьте `.env.local`.
-4. За потреби задайте verified `NEXT_PUBLIC_WHATSAPP_URL`,
-   `NEXT_PUBLIC_VIBER_URL`; `NEXT_PUBLIC_TELEGRAM_URL` задавайте лише для
-   підтвердженого public username/link, ніколи для admin channel.
-5. Виконайте `npm run build`, `npm run start`; на `/uk` надішліть одну заявку
-   з явним ім’ям/коментарем `NON-PRODUCTION TEST` і підтвердьте рівно одне
-   повідомлення у private admin channel.
-6. Тимчасово використайте invalid Telegram chat/token у безпечному preview,
-   перевірте controlled fallback, збережені поля та відсутність raw upstream
-   detail у response. Після тесту відновіть/rotate test credentials.
-
-Додатково вручну на реальних пристроях перевірити Viber deep link; WhatsApp
-використовує офіційний `wa.me/<international-number>` формат. Telegram fallback
-залишається hidden без verified public URL.
-
-## 5. Наступний scope
-
-Не починати Phase 6 без окремої прямої авторизації та ручного merge Phase 5 PR.
-Phase 6: production SEO, canonical/hreflang, JSON-LD, sitemap/robots та реальна
-analytics abstraction без PII. Phase 7–9, deployment, DB/Sova Hub, automated
-WhatsApp/Viber, real media/reviews/cases/teachers залишаються поза Phase 5.
-
-Production launch додатково вимагає real credential test, domain/deployment
-env, privacy page, підтверджені public messenger links, device deep-link QA та
-інші launch gates зі SPEC/GUIDE.
-
-## 6. Компактна історія delivery
-
-| Delivery | Commits / результат |
+| Фаза | Підтверджений результат |
 | --- | --- |
-| Phase 0 | PR #1–#3 merged; foundation/CI/reporting завершені. |
-| Phase 1 shell | PR #4 merged як `24d3799`; responsive shell, navigation, accessibility. |
-| Phase 2 conversion | PR #5 merged як `ea2d16b`; conversion sections і typed goal state. |
-| Phase 3 trust content | PR #6 merged як `79d57f6`; trust content, FAQ, location. |
-| Phase 4 lead form | PR #7 merged як `8aa65d9`; form/schema/attribution/client boundary. |
-| Phase 5 lead delivery | `4351f7c`, `da21475`, `aca6905`, `8bb26f5`, `02c7da8`, `fdb43fb`, `fda914d`; PR #8 відкрито у `develop`, Quality CI для code tip пройшов. |
+| 0 | PR #1–#3 merged; foundation/CI. |
+| 1 | PR #4 merged як 24d3799; shell/navigation/accessibility. |
+| 2 | PR #5 merged як ea2d16b; conversion і goal state. |
+| 3 | PR #6 merged як 79d57f6; trust/method/FAQ/location. |
+| 4 | PR #7 merged як 8aa65d9; form/schema/attribution/client boundary. |
+| 5 | PR #8 merged як 6df575c, tip a7232a0; secure API/Telegram/fallback, LAN origin fix, Kyiv timestamps. Історичний gate: 52 tests і 24 E2E, real send не підтверджено. |
+| 6 | 3fc9fe3 SEO/JSON-LD/privacy route; 9164763 privacy/events/adapters; e227e9e PII/interaction tests; bc8c867 text width. PR #9 open, no auto-merge. |
 
-## 7. Результати / невирішені проблеми
+## Наступний дозволений scope
 
-- ✅ Phase 5 відгалужено від merged Phase 4 у актуальному `develop`.
-- ✅ Secure API, strict server validation, E.164, Turnstile verification і replaceable destination architecture реалізовано без DB.
-- ✅ Telegram formatter/destination безпечно екранує input; provider/upstream detail і secrets не потрапляють у public response/client bundle/logs.
-- ✅ Failure fallback показує WhatsApp/Viber/phone, conditional Telegram і зберігає всі поля; Axe/overflow перевірки пройдено.
-- ✅ Після Turnstile fix: 49 unit/API/component tests, typecheck, lint, build і `git diff --check` пройдено локально; GitHub Quality CI з E2E пройшов для code tip `fdb43fb`.
-- ✅ Реальний send чесно позначено unverified, наведено точні env та manual verification steps.
-- ✅ Не реалізовано unofficial WhatsApp/Viber automation, Sova Hub або DB; це свідомо поза scope.
-- ✅ LAN preview після restart проходить усі 3 кроки; `/_next/hmr` більше не блокується для дозволеної IP.
-- ✅ Turnstile error тепер показує чіткий unsent стан і прямі контакти без повторних автоматичних спроб.
-- ✅ Час Telegram заявки показується за Києвом із правильним зимовим/літнім зміщенням; 52 тести та 24 E2E на test build пройшли.
-- ❌ Turnstile `110200` на localhost і LAN IP: current widget не дозволяє ці hostname; real submit лишається неперевіреним до Cloudflare hostname configuration.
+Phase 7 починати тільки після окремої прямої авторизації та ручного merge PR #9.
+Перед новою гілкою fetch origin і перевірте актуальний develop/ancestry/CI.
+Motion/final polish не реалізовувалися. Усі нинішні CTA, event annotations,
+формальні UA тексти, privacy links і disabled content flags потрібно зберегти.
+
+## Результати
+
+- ✅ Phase 6 реалізовано від merged develop; гілку запушено і PR #9 відкрито без auto-merge.
+- ✅ Locale SEO, verified JSON-LD, sitemap/robots, privacy і всі Guide events готові в дозволеному scope.
+- ✅ PII restriction, consent gates та no-op providers покрито тестами; live integrations чесно позначено unconfigured.
+- ✅ Typecheck, lint, 109 tests, build, 29 E2E, metadata/HTML, Axe/visual QA і diff check пройдено; targeted E2E після width fix також green.
+- ❌ Успадковані 7 dependency audit findings не усунено в Phase 6; потрібне окреме оновлення перед public launch.
