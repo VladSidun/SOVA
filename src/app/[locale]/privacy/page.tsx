@@ -20,7 +20,7 @@ export default async function PrivacyPage({ params }: Props) {
   const copy = privacy[locale];
   return (
     <main className="py-12 sm:py-20" id="main-content" tabIndex={-1}>
-      <Container className="max-w-3xl">
+      <Container className="max-w-3xl!">
         <a className="inline-flex min-h-11 items-center font-semibold text-brand-red underline underline-offset-4" href={`/${locale}`}>{copy.back}</a>
         <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">{copy.title}</h1>
         <p className="mt-6 text-lg leading-8 text-[var(--text-muted)]">{copy.intro}</p>
