@@ -15,6 +15,7 @@ import {
   leadTargetId,
 } from "@/lib/lead-goal";
 import type { LeadGoal } from "@/types/lead";
+import { track } from "@/lib/analytics";
 
 type LeadGoalContextValue = {
   selectedGoal: LeadGoal | null;
@@ -44,6 +45,7 @@ export function LeadGoalProvider({ children }: { children: ReactNode }) {
   const selectedGoal = useSyncExternalStore(subscribeToGoalUrl, readGoalFromUrl, () => null);
 
   const selectGoal = useCallback((goal: LeadGoal) => {
+    track("goal_select", { goal });
     const url = new URL(window.location.href);
     url.searchParams.set(leadGoalQueryParam, goal);
     url.hash = leadTargetId;
@@ -74,6 +76,7 @@ type LeadGoalLinkProps = {
   children: ReactNode;
   className?: string;
   activeClassName?: string;
+  source?: "directions" | "goal_matcher";
   "aria-label"?: string;
 };
 
@@ -82,6 +85,7 @@ export function LeadGoalLink({
   children,
   className = "",
   activeClassName = "",
+  source = "directions",
   "aria-label": ariaLabel,
 }: LeadGoalLinkProps) {
   const { selectedGoal, selectGoal } = useLeadGoal();
@@ -93,6 +97,9 @@ export function LeadGoalLink({
       aria-pressed={active}
       className={`${className} ${active ? activeClassName : ""}`.trim()}
       data-lead-goal={goal}
+      data-analytics-event="cta_click"
+      data-analytics-source={source}
+      data-analytics-cta="goal"
       href={buildLeadGoalHref(goal)}
       onClick={(event) => {
         event.preventDefault();

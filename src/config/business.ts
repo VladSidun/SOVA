@@ -3,12 +3,20 @@ export const business = {
   brandName: "SOVA",
   city: "Мукачево",
   address: "площа Кирила і Мефодія, 26/11, Мукачево",
+  postalAddress: {
+    streetAddress: "площа Кирила і Мефодія, 26/11",
+    addressCountry: "UA",
+  },
+  // SPEC 26: local catchment and online geography; no invented village list.
+  areaServed: ["Мукачево", "Мукачівський район", "Закарпатська область", "Україна"],
   phoneE164: "+380992671906",
   phoneDisplay: "+380 99 267 1906",
   foundedYear: 2019,
   currentStudents: "100+",
   lifetimeStudents: "1000+",
   schedule: {
+    opens: "09:00",
+    closes: "20:00",
     mondayToSaturday: "09:00–20:00",
     sunday: null,
   },

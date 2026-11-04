@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { business, businessAddress } from "@/config/business";
 import { social } from "@/config/social";
+import { privacy } from "@/content/privacy";
 import type { Locale } from "@/types/content";
 import { Container } from "./Container";
 
@@ -27,6 +28,8 @@ export async function Footer({ locale }: FooterProps) {
                 <a
                   className="inline-flex min-h-11 items-center underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   href={`tel:${business.phoneE164}`}
+                  data-analytics-event="phone_click"
+                  data-analytics-source="footer"
                 >
                   {business.phoneDisplay}
                 </a>
@@ -35,6 +38,8 @@ export async function Footer({ locale }: FooterProps) {
                 <a
                   className="inline-flex min-h-11 items-center underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   href={business.googleMaps}
+                  data-analytics-event="map_click"
+                  data-analytics-source="footer"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -51,9 +56,16 @@ export async function Footer({ locale }: FooterProps) {
           <nav aria-label={t("socialLabel")}>
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
               <li>
+                <a className="inline-flex min-h-11 items-center hover:text-red-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white" href={`/${locale}/privacy`}>
+                  {privacy[locale].policyLink}
+                </a>
+              </li>
+              <li>
                 <a
                   className="inline-flex min-h-11 items-center hover:text-red-300 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   href={social.instagram}
+                  data-analytics-event="instagram_click"
+                  data-analytics-source="footer"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -64,6 +76,8 @@ export async function Footer({ locale }: FooterProps) {
                 <a
                   className="inline-flex min-h-11 items-center hover:text-red-300 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   href={social.facebook}
+                  data-analytics-event="facebook_click"
+                  data-analytics-source="footer"
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -74,6 +88,8 @@ export async function Footer({ locale }: FooterProps) {
                 <a
                   className="inline-flex min-h-11 items-center hover:text-red-300 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   href={business.googleMaps}
+                  data-analytics-event="map_click"
+                  data-analytics-source="footer"
                   rel="noreferrer"
                   target="_blank"
                 >

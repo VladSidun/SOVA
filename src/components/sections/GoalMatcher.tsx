@@ -47,6 +47,7 @@ export function GoalMatcher() {
               aria-label={t("selectAria", { goal: goal.label[locale] })}
               className="inline-flex min-h-12 items-center justify-center rounded-full border border-black/15 bg-white px-5 text-center text-sm font-semibold text-brand-black transition-colors hover:border-black/30 hover:bg-black/[0.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
               goal={goal.id}
+              source="goal_matcher"
               key={goal.id}
             >
               {goal.label[locale]}

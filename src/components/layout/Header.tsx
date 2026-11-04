@@ -55,6 +55,9 @@ function MenuIcon({ open }: { open: boolean }) {
 }
 
 export function Header({ navigationItems }: HeaderProps) {
+  const locale = useLocale();
+  const pathname = usePathname();
+  const anchorPrefix = pathname === "/" ? "" : `/${locale}`;
   const t = useTranslations("Navigation");
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -131,7 +134,7 @@ export function Header({ navigationItems }: HeaderProps) {
           {navigationItems.map((item) => (
             <a
               className="flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-brand-black hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
-              href={item.href}
+              href={`${anchorPrefix}${item.href}`}
               key={item.id}
             >
               {t(item.labelKey)}
@@ -143,7 +146,10 @@ export function Header({ navigationItems }: HeaderProps) {
           <LanguageSwitch />
           <a
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-red px-5 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
-            href={`#${sectionIds.lead}`}
+            href={`${anchorPrefix}#${sectionIds.lead}`}
+            data-analytics-event="cta_click"
+            data-analytics-source="header"
+            data-analytics-cta="trial"
           >
             {t("freeLesson")}
           </a>
@@ -184,7 +190,7 @@ export function Header({ navigationItems }: HeaderProps) {
               {navigationItems.map((item) => (
                 <a
                   className="flex min-h-12 items-center rounded-xl px-4 text-base font-semibold text-brand-black hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-red"
-                  href={item.href}
+                  href={`${anchorPrefix}${item.href}`}
                   key={item.id}
                   onClick={() => closeMenu()}
                 >
@@ -193,7 +199,10 @@ export function Header({ navigationItems }: HeaderProps) {
               ))}
               <a
                 className="mt-2 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-red px-5 text-center text-base font-semibold text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
-                href={`#${sectionIds.lead}`}
+                href={`${anchorPrefix}#${sectionIds.lead}`}
+                data-analytics-event="cta_click"
+                data-analytics-source="header"
+                data-analytics-cta="trial"
                 onClick={() => closeMenu()}
               >
                 {t("freeLesson")}

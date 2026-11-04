@@ -117,6 +117,9 @@ export function FormatsPricing() {
                       : "bg-brand-black text-white hover:bg-black/85 focus-visible:outline-brand-red"
                   }`}
                   href={`#${sectionIds.lead}`}
+                  data-analytics-event="cta_click"
+                  data-analytics-source="pricing"
+                  data-analytics-cta="trial"
                 >
                   {t("cta")}
                 </a>
