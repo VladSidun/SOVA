@@ -1,9 +1,9 @@
 # SOVA website
 
 Bilingual Next.js marketing website for Центр вивчення іноземних мов SOVA.
-Phase 0–5 are merged into develop. Phase 6 adds local SEO, privacy and analytics
-adapters. This remains a development preview until the production launch gates
-are completed. See PROGRESS_CODEX.md for current delivery and verification.
+Phase 0–7 and dependency maintenance are merged into develop. Phase 8 adds
+regression fixes and release QA. This remains a preview until the public launch
+gates in [release readiness](./docs/RELEASE_READINESS.md) are completed.
 
 ## Source of truth
 
@@ -67,6 +67,8 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
+npm run qa:release
+npm run qa:seo -- --static
 npx playwright install chromium
 npm run e2e
 git diff --check
@@ -79,6 +81,14 @@ credentials absent in the isolated test checkout; real send is a separate check.
 Fonts use next/font and require network access on a clean build. Dependency
 audit results are recorded in progress; do not equate passing tests with a clean
 security audit.
+
+For repeatable mobile Lighthouse audits, serve the production build in one
+terminal (`npm run start -- --hostname 127.0.0.1 --port 3100`) and run
+`npm run qa:lighthouse` in another (pinned external npm exec tool; registry
+access needed on first use). Three runs per locale produce HTML/JSON in
+`output/playwright/phase-8/lighthouse/`. Preview SEO is intentionally reduced by
+noindex; navigation audits do not measure INP. Full evidence, manual checks,
+limitations and exact preview deployment steps are in the readiness report.
 
 ## Code map
 
@@ -95,6 +105,6 @@ security audit.
 | src/lib/{lead-api,telegram,turnstile}.ts | Server delivery and verification |
 | tests, e2e | Unit/component/API and browser regression checks |
 
-Motion/final polish, media, deployment, DB/Sova Hub and additional delivery
-channels remain outside Phase 6. No fake reviews, ratings, teachers, stock
-student photos or accreditations are included.
+Real media, reviews, cases and teachers await supplied materials (Phase 9).
+DB/Sova Hub and additional delivery channels remain out of scope. No fake
+reviews, ratings, teachers, stock student photos or accreditations are included.
