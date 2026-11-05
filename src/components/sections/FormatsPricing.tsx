@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/Reveal";
 import { useLocale, useTranslations } from "next-intl";
 import { Section } from "@/components/layout/Section";
 import { business } from "@/config/business";
@@ -38,7 +39,7 @@ export function FormatsPricing() {
 
   return (
     <Section className="bg-white py-16 sm:py-20 lg:py-24" id={sectionIds.formats}>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <Reveal className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
             {t("eyebrow")}
@@ -48,7 +49,7 @@ export function FormatsPricing() {
           </h2>
         </div>
         <p className="max-w-xl text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
-      </div>
+      </Reveal>
 
       <div className="mt-10 scroll-mt-24" id={sectionIds.pricing}>
         <div className="grid gap-4 lg:grid-cols-3">
@@ -58,23 +59,21 @@ export function FormatsPricing() {
 
             return (
               <article
-                className={`flex min-h-[30rem] flex-col rounded-[1.75rem] border p-6 sm:p-8 ${
+                className={`flex min-w-0 flex-col rounded-[1.75rem] border p-6 text-brand-black sm:p-8 ${
                   featured
-                    ? "border-brand-red bg-brand-red text-white shadow-[0_24px_60px_rgba(211,47,47,0.2)]"
-                    : "border-black/10 bg-[var(--surface-soft)] text-brand-black"
+                    ? "border-brand-red/60 bg-white shadow-[0_12px_36px_rgba(26,26,26,0.06)]"
+                    : "border-black/10 bg-[var(--surface-soft)]"
                 }`}
                 key={format.id}
               >
                 <div className="flex items-center justify-between gap-4">
                   <p
-                    className={`text-xs font-semibold uppercase tracking-[0.16em] ${
-                      featured ? "text-white" : "text-brand-red"
-                    }`}
+                    className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-red"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </p>
                   {featured ? (
-                    <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brand-red">
+                    <span className="rounded-full bg-brand-red/5 px-3 py-1.5 text-xs font-semibold text-brand-red">
                       {t("popular")}
                     </span>
                   ) : null}
@@ -83,27 +82,25 @@ export function FormatsPricing() {
                 <h3 className="mt-8 text-2xl font-bold tracking-[-0.03em] sm:text-3xl">
                   {format.title[locale]}
                 </h3>
-                <p className={`mt-3 text-sm leading-6 ${featured ? "text-white" : "text-[var(--text-muted)]"}`}>
+                <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
                   {format.description[locale]}
                 </p>
 
-                <p className="mt-8 font-heading text-[2.65rem] font-bold leading-none tracking-[-0.045em] sm:text-5xl">
+                <p className="mt-8 flex flex-wrap items-baseline gap-x-2 gap-y-2 font-heading text-[2.65rem] font-bold leading-tight tracking-[-0.045em] xl:text-5xl">
                   {price.priceUAH} <span className="text-lg font-semibold tracking-normal">{t(`units.${price.unit}`)}</span>
                 </p>
 
                 <ul
-                  className={`mt-8 space-y-0 border-t ${featured ? "border-white/20" : "border-black/10"}`}
+                  className="mb-7 mt-7 space-y-0 border-t border-black/10"
                 >
                   {format.details.map((detail) => (
                     <li
-                      className={`flex min-h-14 items-center gap-3 border-b text-sm font-medium ${
-                        featured ? "border-white/20" : "border-black/10"
-                      }`}
+                      className="flex min-h-14 items-center gap-3 border-b border-black/10 py-3 text-sm font-medium"
                       key={detail}
                     >
                       <span
                         aria-hidden="true"
-                        className={`size-1.5 shrink-0 rounded-full ${featured ? "bg-white" : "bg-brand-red"}`}
+                        className="size-1.5 shrink-0 rounded-full bg-brand-red"
                       />
                       {getDetail(detail)}
                     </li>
@@ -111,9 +108,9 @@ export function FormatsPricing() {
                 </ul>
 
                 <a
-                  className={`mt-auto inline-flex min-h-12 items-center justify-center rounded-full px-5 pt-0 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 ${
+                  className={`mt-auto inline-flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 ${
                     featured
-                      ? "bg-white text-brand-red hover:bg-white/90 focus-visible:outline-white"
+                      ? "bg-brand-red text-white hover:bg-[var(--brand-red-hover)] focus-visible:outline-brand-red"
                       : "bg-brand-black text-white hover:bg-black/85 focus-visible:outline-brand-red"
                   }`}
                   href={`#${sectionIds.lead}`}

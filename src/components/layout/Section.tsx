@@ -12,7 +12,7 @@ export function Section({
   ...props
 }: SectionProps) {
   return (
-    <section className={`py-12 sm:py-16 ${className}`.trim()} {...props}>
+    <section className={`section-shell py-12 sm:py-16 ${className}`.trim()} tabIndex={props.id ? -1 : undefined} {...props}>
       <Container className={containerClassName}>{children}</Container>
     </section>
   );

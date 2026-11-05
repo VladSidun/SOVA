@@ -2,10 +2,18 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { sectionIds, type NavigationItem } from "@/config/navigation";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Container } from "./Container";
+
+function subscribeToScroll(onChange: () => void) {
+  window.addEventListener("scroll", onChange, { passive: true });
+  return () => window.removeEventListener("scroll", onChange);
+}
+
+const getScrolled = () => window.scrollY > 16;
+const getServerScrolled = () => false;
 
 type HeaderProps = {
   navigationItems: NavigationItem[];
@@ -59,9 +67,11 @@ export function Header({ navigationItems }: HeaderProps) {
   const pathname = usePathname();
   const anchorPrefix = pathname === "/" ? "" : `/${locale}`;
   const t = useTranslations("Navigation");
+  const scrolled = useSyncExternalStore(subscribeToScroll, getScrolled, getServerScrolled);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLElement>(null);
+  const desktopNavigationRef = useRef<HTMLElement>(null);
 
   const closeMenu = (restoreFocus = false) => {
     setMenuOpen(false);
@@ -78,6 +88,15 @@ export function Header({ navigationItems }: HeaderProps) {
       'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
     focusable?.[0]?.focus();
+
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const onDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        closeMenu();
+        requestAnimationFrame(() => desktopNavigationRef.current?.querySelector("a")?.focus());
+      }
+    };
+    desktop.addEventListener("change", onDesktop);
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -107,12 +126,13 @@ export function Header({ navigationItems }: HeaderProps) {
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      desktop.removeEventListener("change", onDesktop);
       document.body.style.overflow = previousOverflow;
     };
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
+    <header data-scrolled={scrolled || menuOpen} className="site-header sticky top-0 z-50 border-b border-black/10 bg-white/95">
       <a
         className="fixed left-4 top-3 z-[60] -translate-y-24 rounded-md bg-brand-black px-4 py-3 text-sm font-semibold text-white focus:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
         href="#main-content"
@@ -120,7 +140,7 @@ export function Header({ navigationItems }: HeaderProps) {
         {t("skipToContent")}
       </a>
 
-      <Container className="flex min-h-16 items-center gap-2 py-2 lg:min-h-20">
+      <Container className="flex min-h-16 items-center gap-2 py-2 xl:min-h-20">
         <Link
           aria-label={t("homeLabel")}
           className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
@@ -130,7 +150,7 @@ export function Header({ navigationItems }: HeaderProps) {
           <span className="hidden font-heading text-lg font-bold tracking-[0.14em] sm:inline">SOVA</span>
         </Link>
 
-        <nav aria-label={t("primaryLabel")} className="ml-auto hidden items-center gap-1 lg:flex">
+        <nav aria-label={t("primaryLabel")} className="ml-auto hidden items-center gap-1 xl:flex" ref={desktopNavigationRef}>
           {navigationItems.map((item) => (
             <a
               className="flex min-h-11 items-center rounded-full px-3 text-sm font-medium text-brand-black hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
@@ -142,10 +162,10 @@ export function Header({ navigationItems }: HeaderProps) {
           ))}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-3 lg:flex">
+        <div className="ml-auto hidden items-center gap-3 xl:flex">
           <LanguageSwitch />
           <a
-            className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-red px-5 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-brand-red px-5 text-sm font-semibold text-white shadow-sm hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
             href={`${anchorPrefix}#${sectionIds.lead}`}
             data-analytics-event="cta_click"
             data-analytics-source="header"
@@ -155,8 +175,8 @@ export function Header({ navigationItems }: HeaderProps) {
           </a>
         </div>
 
-        <div className="ml-auto flex items-center gap-2 lg:hidden">
-          <LanguageSwitch compact />
+        <div className="ml-auto flex items-center gap-2 xl:hidden">
+          <LanguageSwitch compact onNavigate={() => closeMenu()} />
           <button
             aria-controls="mobile-navigation"
             aria-expanded={menuOpen}
@@ -175,18 +195,18 @@ export function Header({ navigationItems }: HeaderProps) {
         <>
           <button
             aria-label={t("closeMenu")}
-            className="fixed inset-0 top-16 z-40 cursor-default bg-black/30 lg:hidden"
+            className="fixed inset-0 top-[4.25rem] z-40 cursor-default bg-black/30 xl:hidden"
             onClick={() => closeMenu(true)}
             tabIndex={-1}
             type="button"
           />
           <nav
             aria-label={t("mobileLabel")}
-            className="absolute left-0 right-0 top-full z-50 border-b border-black/10 bg-white shadow-xl lg:hidden"
+            className="mobile-panel absolute left-0 right-0 top-full z-50 border-b border-black/10 bg-white shadow-xl xl:hidden"
             id="mobile-navigation"
             ref={mobileMenuRef}
           >
-            <Container className="flex max-h-[calc(100dvh-4rem)] flex-col gap-2 overflow-y-auto py-4">
+            <Container className="flex max-h-[calc(100dvh-5rem)] flex-col gap-2 overflow-y-auto py-4">
               {navigationItems.map((item) => (
                 <a
                   className="flex min-h-12 items-center rounded-xl px-4 text-base font-semibold text-brand-black hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-red"
@@ -198,7 +218,7 @@ export function Header({ navigationItems }: HeaderProps) {
                 </a>
               ))}
               <a
-                className="mt-2 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-red px-5 text-center text-base font-semibold text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
+                className="mt-2 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-red px-5 text-center text-base font-semibold text-white hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
                 href={`${anchorPrefix}#${sectionIds.lead}`}
                 data-analytics-event="cta_click"
                 data-analytics-source="header"

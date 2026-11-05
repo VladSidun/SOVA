@@ -52,7 +52,8 @@ for (const width of [360, 768, 1366]) {
       clientWidth: document.documentElement.clientWidth,
       scrollWidth: document.documentElement.scrollWidth,
     }));
-    expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
+    // A reserved scrollbar gutter can make scrollWidth smaller than clientWidth.
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
     await expect(page.getByRole("heading", { name: "Коротко про важливе." })).toBeVisible();
   });
 }

@@ -23,7 +23,7 @@ describe("Phase 2 conversion sections", () => {
     window.history.replaceState({}, "", "/uk");
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: vi.fn().mockReturnValue({ matches: true }),
+      value: vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
     });
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
@@ -71,7 +71,7 @@ describe("Phase 2 conversion sections", () => {
     );
 
     const directionLink = screen.getByRole("button", { name: "Обрати ціль: НМТ / ЄВІ" });
-    expect(directionLink).toHaveAttribute("href", "?goal=nmt#lead");
+    expect(directionLink).toHaveAttribute("type", "button");
 
     fireEvent.click(directionLink);
 

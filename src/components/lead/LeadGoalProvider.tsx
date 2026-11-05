@@ -9,7 +9,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  buildLeadGoalHref,
   isLeadGoal,
   leadGoalQueryParam,
   leadTargetId,
@@ -54,9 +53,9 @@ export function LeadGoalProvider({ children }: { children: ReactNode }) {
 
     window.requestAnimationFrame(() => {
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      document
-        .getElementById(leadTargetId)
-        ?.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+      const target = document.getElementById(leadTargetId);
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
     });
   }, []);
 
@@ -92,7 +91,7 @@ export function LeadGoalLink({
   const active = selectedGoal === goal;
 
   return (
-    <a
+    <button
       aria-label={ariaLabel}
       aria-pressed={active}
       className={`${className} ${active ? activeClassName : ""}`.trim()}
@@ -100,14 +99,10 @@ export function LeadGoalLink({
       data-analytics-event="cta_click"
       data-analytics-source={source}
       data-analytics-cta="goal"
-      href={buildLeadGoalHref(goal)}
-      onClick={(event) => {
-        event.preventDefault();
-        selectGoal(goal);
-      }}
-      role="button"
+      onClick={() => selectGoal(goal)}
+      type="button"
     >
       {children}
-    </a>
+    </button>
   );
 }

@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/Reveal";
 import { useTranslations } from "next-intl";
 import { Section } from "@/components/layout/Section";
 import { business } from "@/config/business";
@@ -11,7 +12,7 @@ export function TrialProcess() {
   return (
     <Section className="bg-brand-black py-16 text-white sm:py-20 lg:py-24" id="trial">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-16">
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-300 sm:text-sm">
             {t("eyebrow", { minutes: business.trialMinutes })}
           </p>
@@ -22,7 +23,7 @@ export function TrialProcess() {
             <p className="text-sm font-semibold leading-6 text-white">{t("host")}</p>
             <p className="mt-3 text-sm leading-6 text-white/65">{t("offlineBonus")}</p>
           </div>
-        </div>
+        </Reveal>
 
         <div>
           <ol className="grid gap-px overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/15 sm:grid-cols-2">

@@ -59,9 +59,23 @@ describe("Phase 4 lead form", () => {
     window.sessionStorage.clear();
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: vi.fn().mockReturnValue({ matches: true }),
+      value: vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
     });
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
+  });
+
+  it("associates group and consent errors with their keyboard controls", async () => {
+    render(<LeadSection submitLead={vi.fn<SubmitLead>()} />, { wrapper: Providers });
+    fireEvent.click(screen.getByRole("button", { name: "Далі" }));
+    const audience = screen.getByRole("radio", { name: "Дорослий" });
+    await waitFor(() => expect(audience).toHaveAttribute("aria-invalid", "true"));
+    expect(audience).toHaveAccessibleDescription(screen.getByRole("alert").textContent ?? "");
+    await reachContactStep();
+    fireEvent.click(screen.getByRole("button", { name: "Заберіть безкоштовний пробний урок" }));
+    const consent = screen.getByRole("checkbox", { name: /SOVA використає мої контактні дані/ });
+    await waitFor(() => expect(consent).toHaveAttribute("aria-invalid", "true"));
+    expect(consent).toHaveAttribute("aria-describedby", "consent-error");
+    expect(document.getElementById("consent-error")).toHaveAttribute("role", "alert");
   });
 
   it("preserves entered values while moving Back and Next", async () => {

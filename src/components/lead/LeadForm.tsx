@@ -227,7 +227,7 @@ export function LeadForm({
   }
 
   return (
-    <form className="rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={onSubmit}
+    <form className="lead-form min-w-0 rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={onSubmit}
       onChangeCapture={(event) => {
         if (!hasStartedRef.current) {
           hasStartedRef.current = true;
@@ -247,7 +247,7 @@ export function LeadForm({
           {([1, 2, 3] as const).map((item) => (
             <li
               aria-current={item === step ? "step" : undefined}
-              className={`h-2.5 w-10 rounded-full ${item <= step ? "bg-brand-red" : "bg-black/10"}`}
+              className={`form-progress h-2.5 w-8 rounded-full sm:w-10 ${item <= step ? "bg-brand-red" : "bg-black/10"}`}
               key={item}
             >
               <span className="sr-only">{t("progressStep", { step: item })}</span>
@@ -266,7 +266,7 @@ export function LeadForm({
             <div className="grid gap-3 sm:grid-cols-2">
               {audienceOptions.map((option) => (
                 <label className={optionClassName} key={option}>
-                  <input {...register("audience")} type="radio" value={option} />
+                  <input {...register("audience")} aria-invalid={Boolean(errors.audience)} aria-describedby={errors.audience ? "audience-error" : undefined} type="radio" value={option} />
                   <span>{t(`audience.options.${option}`)}</span>
                 </label>
               ))}
@@ -289,8 +289,8 @@ export function LeadForm({
           />
           <InlineError id="age-or-grade-error" message={errors.ageOrGrade?.message} />
 
-          <div className="mt-8 flex justify-end">
-            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={continueFromStepOne} type="button">
+          <div className="form-actions mt-8 flex justify-end">
+            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={continueFromStepOne} type="button">
               {t("actions.next")}
             </button>
           </div>
@@ -308,7 +308,7 @@ export function LeadForm({
             <div className="grid gap-3 sm:grid-cols-2">
               {goalOptions.map((goal) => (
                 <label className={optionClassName} key={goal.id}>
-                  <input {...register("goals")} type="checkbox" value={goal.id} />
+                  <input {...register("goals")} aria-invalid={Boolean(errors.goals)} aria-describedby={errors.goals ? "goals-error" : undefined} type="checkbox" value={goal.id} />
                   <span>{goal.label[locale]}</span>
                 </label>
               ))}
@@ -318,10 +318,10 @@ export function LeadForm({
 
           <fieldset aria-describedby={errors.studyMode ? "study-mode-error" : undefined} className="mt-8">
             <legend className="text-lg font-bold">{t("studyMode.title")}</legend>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {studyModeOptions.map((option) => (
                 <label className={optionClassName} key={option}>
-                  <input {...register("studyMode")} type="radio" value={option} />
+                  <input {...register("studyMode")} aria-invalid={Boolean(errors.studyMode)} aria-describedby={errors.studyMode ? "study-mode-error" : undefined} type="radio" value={option} />
                   <span>{t(`studyMode.options.${option}`)}</span>
                 </label>
               ))}
@@ -329,11 +329,11 @@ export function LeadForm({
             <InlineError id="study-mode-error" message={errors.studyMode?.message} />
           </fieldset>
 
-          <div className="mt-8 flex flex-wrap justify-between gap-3">
+          <div className="form-actions mt-8 flex flex-wrap justify-between gap-3">
             <button className="min-h-12 rounded-full border border-black/20 px-6 py-3 font-semibold transition hover:bg-black/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={() => goToStep(1)} type="button">
               {t("actions.back")}
             </button>
-            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={continueFromStepTwo} type="button">
+            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={continueFromStepTwo} type="button">
               {t("actions.next")}
             </button>
           </div>
@@ -361,10 +361,10 @@ export function LeadForm({
 
           <fieldset aria-describedby={errors.contactMethod ? "contact-method-error" : undefined} className="mt-7">
             <legend className="text-lg font-bold">{t("contact.methodTitle")}</legend>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {contactMethodOptions.map((option) => (
                 <label className={optionClassName} key={option}>
-                  <input {...register("contactMethod")} type="radio" value={option} />
+                  <input {...register("contactMethod")} aria-invalid={Boolean(errors.contactMethod)} aria-describedby={errors.contactMethod ? "contact-method-error" : undefined} type="radio" value={option} />
                   <span>{t(`contact.methods.${option}`)}</span>
                 </label>
               ))}
@@ -379,8 +379,8 @@ export function LeadForm({
           <p className="mt-2 text-xs text-[var(--text-muted)]" id="comment-hint">{t("contact.commentHint")}</p>
           <InlineError id="comment-error" message={errors.comment?.message} />
 
-          <label className="mt-6 flex cursor-pointer items-start gap-3 text-sm leading-6">
-            <input {...register("consent")} aria-describedby={errors.consent ? "consent-error" : undefined} className="mt-1 size-5 shrink-0 accent-[var(--brand-red)]" type="checkbox" />
+          <label className="mt-6 flex min-h-11 cursor-pointer items-start gap-3 py-2 text-sm leading-6">
+            <input {...register("consent")} aria-invalid={Boolean(errors.consent)} aria-describedby={errors.consent ? "consent-error" : undefined} className="mt-1 size-5 shrink-0 accent-[var(--brand-red)]" type="checkbox" />
             <span>{t("contact.consent")}</span>
           </label>
           <InlineError id="consent-error" message={errors.consent?.message} />
@@ -421,7 +421,7 @@ export function LeadForm({
                   Viber
                 </a>
                 {fallbackLinks.telegram ? (
-                  <a className="min-h-11 rounded-full bg-[#229ED9] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.telegram} data-analytics-event="telegram_click" data-analytics-source="fallback" rel="noreferrer" target="_blank">
+                  <a className="min-h-11 rounded-full bg-[#0878ad] px-4 py-2.5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" href={fallbackLinks.telegram} data-analytics-event="telegram_click" data-analytics-source="fallback" rel="noreferrer" target="_blank">
                     Telegram
                   </a>
                 ) : null}
@@ -435,11 +435,11 @@ export function LeadForm({
             </div>
           ) : null}
 
-          <div className="mt-8 flex flex-wrap justify-between gap-3">
+          <div className="form-actions mt-8 flex flex-wrap justify-between gap-3">
             <button className="min-h-12 rounded-full border border-black/20 px-6 py-3 font-semibold transition hover:bg-black/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={() => goToStep(2)} type="button">
               {t("actions.back")}
             </button>
-            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-red-700 disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting || waitingForTurnstile} type="submit">
+            <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-[var(--brand-red-hover)] disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting || waitingForTurnstile} type="submit">
               {isSubmitting
                 ? t("actions.sending")
                 : turnstileFailed
