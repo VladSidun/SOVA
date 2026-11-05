@@ -5,22 +5,22 @@
 
 ## Поточний стан
 
-- Phase 0–6 merged у develop. [PR #9](https://github.com/VladSidun/SOVA/pull/9)
-  перевірено live: merged; integration commit `2aef9cd` містить Phase 6 tip
-  `66a447b` (fetch та ancestry перевірено до змін).
-- Окреме security maintenance у `fix/security-dependencies`, безпосередньо від
-  актуального `origin/develop` `2aef9cd`; це не Phase 7.
-  Checkout: `Sova_Project/SOVA-security-dependencies`.
-- Dependency commit `5109ba4` запушено;
-  [PR #10](https://github.com/VladSidun/SOVA/pull/10) відкрито у develop,
-  без merge та auto-merge. Попередні чотири worktree і їхні локальні зміни
-  збережено; `.env.local` та credentials не копіювалися.
-- Quality CI dependency commit `5109ba4` успішний 2026-11-05:
-  [run 41931736105](https://github.com/VladSidun/SOVA/actions/runs/41931736105).
-  Linux повторив install, typecheck, lint, unit tests, build, 29 E2E і diff check.
-  Наступний commit змінює лише ці звіти; latest head/CI звіряйте у PR #10.
-- Це development preview. Phase 7–9, deployment, DB/Sova Hub, додаткові
-  delivery channels, реальні media/reviews/cases/teachers не реалізовувалися.
+- Phase 0–6 та security maintenance merged у `develop`. Перед Phase 7 виконано
+  fetch і ancestry: tips `66a447b` / `0bb35c0` входять у integration commit
+  `de190a8` (PR #9 та #10).
+- Реалізовано ТІЛЬКИ Phase 7 у `feature/phase-7-motion-polish`, від `de190a8`.
+  Checkout: `Sova_Project/SOVA-phase-7`; інші worktree і локальні зміни збережені.
+  `.env.local`, credentials та external integrations сюди не копіювалися.
+- Code commits: `5a158c3` motion; `a13add1` responsive/accessibility;
+  `3293ad2` brand integration та scrollbar-aware overflow assertions.
+- Гілку запушено; [PR #11](https://github.com/VladSidun/SOVA/pull/11) відкрито
+  у `develop`, без merge та auto-merge.
+- Quality CI на code head `3293ad2` — success 2026-11-05:
+  [run 41996978261](https://github.com/VladSidun/SOVA/actions/runs/41996978261).
+  Linux повторив npm ci, typecheck, lint, 112 tests, build, 33 E2E, diff check.
+  Наступний commit змінює лише цей handoff; latest head/CI перевіряйте у PR.
+- Це development preview. Phase 8–9, deployment, DB/Sova Hub, нові сторінки,
+  додаткові бізнес-фічі та real media/reviews/cases/teachers не реалізовувалися.
 
 ## Що вже працює
 
@@ -40,7 +40,86 @@
 | Events | AnalyticsEvents: explicit data attributes для CTA/phone/messenger/social/map, IntersectionObserver для price_view/trial_form_open, real video play тільки з data-analytics-video. Goal і form lifecycle instrumented без PII. Start тільки при першій зміні control; contact consent не вмикає tracking consent. |
 | Later setup | docs/SEO_ANALYTICS_SETUP.md: domain/HTTPS/indexing, Search Console/GBP, IDs/flags, consent, вимкнення automatic matching/events і request-canary audit. Live accounts не налаштовано. |
 
+## Phase 7 — motion, responsive та accessibility polish
+
+- `src/lib/motion.ts`: shared `fadeUp`, `fadeIn`, `staggerContainer`,
+  `staggerItem`, `subtleScale` і `getMotionVariants(reducedMotion)`.
+  20 px translate, 0.6 s ease-out, stagger 0.08 s, scale 0.98 → 1, без bounce.
+  Motion 14.9.1 додано як exact dependency; інші версії не оновлювалися.
+- `components/motion/MotionProvider.tsx`: LazyMotion/domAnimation + lightweight
+  m components, global reducedMotion=user. `useReducedMotion.ts` через
+  useSyncExternalStore читає live OS preference, знімає listener і обирає
+  no-motion під час SSR/hydration. Reduced variants миттєві, без transform,
+  opacity hiding та child delays; CSS також вимикає transitions/smooth scroll.
+- `Reveal.tsx`: once-on-intersection для editorial headings/intro і Hero media;
+  SSR/offscreen content видимий до enhancement. Stagger тільки у чотирьох
+  methodology badges. CTA, goal buttons, FAQ controls та форма не загорнуті
+  у reveals, тому interaction не чекає завершення анімації.
+- Header: плавна зміна background/shadow після 16 px scroll, opacity-only
+  menu entrance, компактна навігація до 1280 px. Resize відкритого mobile menu
+  відновлює body scroll і фокусує перше desktop-посилання. Fixed backdrop
+  покриває viewport; backdrop-filter, який обмежував fixed descendants, прибрано.
+- `styles/globals.css` та sections: balanced headings, 1.06/1.12 line height,
+  line-length limit, mobile full-width CTA/actions, стабільний scrollbar gutter,
+  узгоджені відступи, перенос ціни/unit і природна рівна висота pricing cards.
+  Overflow E2E перевіряють scrollWidth <= clientWidth: reserved scrollbar space
+  не є overflow; перевищення ширини так само спричиняє failure.
+- Accessibility: native goal buttons підтримують Space/Enter, зберігають typed
+  goal/query/analytics і переносять фокус до #lead. Section targets focusable;
+  двокольоровий focus indicator, 44+ px label/button/link targets, 18 px
+  non-shrinking native radio/checkbox, два contact columns замість чотирьох.
+  Group/consent controls мають aria-invalid + конкретні error associations.
+  Telegram fallback button має контрастний відтінок. Goal matcher copy не
+  посилається на розташування «праворуч», яке не відповідає mobile layout.
+- Бренд: точні `#D32F2F` / `#1A1A1A` повторно звірено зі stroke/fill у
+  `public/brand/logo.svg`; hover red `#B52828` — похідний UI token.
+  SVG artwork не змінювався. Той самий файл у Header/Hero/Footer/favicon;
+  footer має білу підкладку, щоб чорна частина знака залишалася видимою.
+  Pricing/reach surfaces нейтральні: red лишається акцентом. Branded media
+  placeholder та hidden Teachers/Results/Reviews збережені без fake content.
+
+### Перевірки Phase 7
+
+```text
+npm ci             — passed; final lockfile також перевірено Linux CI
+npm run typecheck  — passed
+npm run lint       — passed, 0 warnings
+npm test           — passed, 112 tests / 16 files
+npm run build      — passed, UA/EN landing + privacy, sitemap/robots, dynamic API
+npm run e2e        — passed, 33 Chromium tests
+GitHub Quality     — success на 3293ad2, run 41996978261
+git diff --check   — passed
+```
+
+Нові behavioral regressions: instant reduced variants, live preference change
+та unsubscribe; group/consent error association; Space → goal/query → focus;
+mobile-to-desktop scroll unlock/focus; stagger повністю стає видимим; reduced
+motion не блокує Hero CTA. Pixel snapshots відсутні.
+
+Headed Chromium browser QA: обидві мови на 360/390/430/768/1024/1366/1920 px,
+усі major sections візуально переглянуто на mobile/tablet/desktop
+(360/768/1366). Окремо перевірено form steps 2–3 на тих самих семи ширинах,
+inline error/focus states, menu overlay, Escape, keyboard flow, FAQ та anchors.
+Немає horizontal overflow, обрізаного видимого UA/EN тексту, замалих
+інтерактивних targets, page/console errors чи first-party HTTP errors.
+Декоративні map roads навмисно обрізаються у media preview; sr-only progress
+labels не є видимим clipping. Axe WCAG 2/2.1 A/AA: 0 violations для locale
+pages, privacy, tested form/fallback flows і додатково form errors обох мов
+на 360/768/1366. Element screenshots можуть включати sticky header у середині
+довгого crop; viewport screenshot/DOM перевірка підтвердили, що unfocused
+skip link знаходиться вище viewport, а menu backdrop покриває екран.
+
+QA artifacts: ignored `output/playwright/phase-7/` (screenshots, section/form
+contact sheets, metrics); вони не входять у Git. API success/failure E2E
+мокають delivery; реальні Telegram/Turnstile/analytics не вмикалися.
+
+Motion API звірено з офіційними [LazyMotion docs](https://motion.dev/docs/react-lazy-motion)
+та [Motion accessibility docs](https://motion.dev/docs/react-motion-config).
+
 ## Security maintenance — 2026-11-05
+
+Історичний security Quality CI на `5109ba4` — success:
+[run 41931736105](https://github.com/VladSidun/SOVA/actions/runs/41931736105).
 
 Детальна таблиця версій, upstream sources, compatibility та reachability:
 [docs/SECURITY_DEPENDENCIES.md](docs/SECURITY_DEPENDENCIES.md).
@@ -158,21 +237,24 @@ mobile nav, lead success/validation/fallback checks лишилися green; API 
 | 4 | PR #7 merged як 8aa65d9; form/schema/attribution/client boundary. |
 | 5 | PR #8 merged як 6df575c, tip a7232a0; secure API/Telegram/fallback, LAN origin fix, Kyiv timestamps. Історичний gate: 52 tests і 24 E2E, real send не підтверджено. |
 | 6 | 3fc9fe3 SEO/JSON-LD/privacy route; 9164763 privacy/events/adapters; e227e9e PII/interaction tests; bc8c867 text width. PR #9 merged як 2aef9cd, tip 66a447b. |
-| Security maintenance | 5109ba4 dependency updates; PR #10 → develop, без merge/auto-merge. Production audit 4 → 0, full 32 → 24 moderate dev. |
+| Security maintenance | 5109ba4 dependency updates; PR #10 merged як de190a8, tip 0bb35c0. Production audit 4 → 0, full 32 → 24 moderate dev (історичний audit). |
+| 7 | 5a158c3 motion; a13add1 responsive/a11y; 3293ad2 brand. PR #11 відкрито в develop; 112 tests / 33 E2E та Quality CI success, без merge/auto-merge. |
 
-## Наступний дозволений scope
+## Наступний scope — лише після окремої авторизації
 
-Phase 7 не авторизовано. Перед наступною роботою дочекайтеся ручного merge
-security PR #10, fetch origin та перевірте актуальний develop/ancestry/CI.
-Сам звіт не дозволяє нову фазу, merge або deployment.
-Motion/final polish не реалізовувалися. Усі нинішні CTA, event annotations,
-формальні UA тексти, privacy links і disabled content flags потрібно зберегти.
+Phase 7 завершено; Phase 8 не починати автоматично. Після review та ручного
+merge PR #11 потрібно fetch origin і перевірити latest develop/ancestry/CI.
+Майбутні Lighthouse/preview deployment та launch gates потребують нового
+завдання; real media/teachers/reviews/results — реальних наданих матеріалів.
+Інтеграційні обмеження Phase 5–6 та security advisory нижче не знімаються
+візуальним polish. Зберігайте CTA/events, формальну UA мову, privacy links,
+server validation/Turnstile та hidden feature flags.
 
 ## Результати
 
-- ✅ Phase 6 merge перевірено live; security branch створено від актуального develop.
-- ✅ Production findings усунено: 4 → 0; відтворювані npm ci та всі локальні quality checks пройдено.
-- ✅ Phase 0–6 поведінка, ESLint rules, analytics PII/consent/no-op gates збережені; реальні заявки не надсилалися.
-- ✅ Security branch запушено, PR #10 відкрито у develop без merge та auto-merge.
-- ✅ GitHub Quality CI dependency commit 5109ba4 завершився success; усі кроки пройдено.
-- ❌ 24 moderate dev findings minimatch залишаються до підтримуваного upstream оновлення; це не повна remediation всіх залежностей.
+- ✅ Реалізовано лише Phase 7 від merged develop de190a8.
+- ✅ Motion, responsive/a11y та brand integration завершено; SVG не редизайнено.
+- ✅ 112 tests, 33 E2E, typecheck, lint, build, Axe, responsive/visual QA та diff check пройдено.
+- ✅ Гілку запушено, PR #11 відкрито в develop; code Quality CI success, merge/auto-merge не виконано.
+- ✅ Невирішених проблем у Phase 7 немає.
+- ❌ Успадковані 24 moderate dev findings minimatch залишаються за security report; Phase 7 їх не усуває.
