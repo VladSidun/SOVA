@@ -14,7 +14,7 @@ async function inspect(file, client = false) {
   if (client && /TELEGRAM_BOT_TOKEN|TELEGRAM_CHAT_ID|TURNSTILE_SECRET_KEY|api\.telegram\.org\/bot/.test(text)) failures.push(`server integration leaked to client: ${file}`);
 }
 const source = tracked.filter((file) => /^(src|public)\//.test(file));
-for (const file of tracked.filter((file) => !file.endsWith(".svg"))) await inspect(file);
+for (const file of tracked) await inspect(file);
 for (const file of source) {
   const text = await readFile(file, "utf8");
   // JSX object props also use {{...}}; scan copy files for unresolved template
