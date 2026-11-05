@@ -14,7 +14,7 @@ const reactFiles = ["**/*.{jsx,tsx}"];
 export default defineConfig([
   globalIgnores([
     ".next/**", "out/**", "coverage/**", "playwright-report/**",
-    "test-results/**", "next-env.d.ts",
+    "test-results/**", "output/playwright/**", "next-env.d.ts",
   ]),
   {
     files: codeFiles,

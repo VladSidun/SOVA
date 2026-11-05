@@ -19,17 +19,25 @@ export async function submitLeadToApi(payload: LeadPayload) {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(payload),
+    // Both upstream calls have an 8s server timeout; allow transport overhead,
+    // then release the pending UI into the existing contact fallback. No retry.
+    signal: AbortSignal.timeout(25_000),
   });
 
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    throw new LeadApiError();
+  }
+  const result = typeof body === "object" && body !== null ? body : {};
   if (!response.ok) {
-    let code: PublicLeadErrorCode | undefined;
-    try {
-      const body = (await response.json()) as { code?: unknown };
-      if (typeof body.code === "string") code = body.code as PublicLeadErrorCode;
-    } catch {
-      // The UI deliberately treats malformed or network-layer errors generically.
-    }
+    const code = "code" in result && typeof result.code === "string"
+      ? result.code as PublicLeadErrorCode : undefined;
     throw new LeadApiError(code);
+  }
+  if (!("ok" in result) || result.ok !== true) {
+    throw new LeadApiError();
   }
 }
 

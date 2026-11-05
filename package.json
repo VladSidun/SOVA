@@ -14,7 +14,10 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "qa:release": "node scripts/check-release.mjs",
+    "qa:seo": "node scripts/verify-seo.mjs",
+    "qa:lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -5,22 +5,69 @@
 
 ## Поточний стан
 
-- Phase 0–6 та security maintenance merged у `develop`. Перед Phase 7 виконано
-  fetch і ancestry: tips `66a447b` / `0bb35c0` входять у integration commit
-  `de190a8` (PR #9 та #10).
-- Реалізовано ТІЛЬКИ Phase 7 у `feature/phase-7-motion-polish`, від `de190a8`.
-  Checkout: `Sova_Project/SOVA-phase-7`; інші worktree і локальні зміни збережені.
-  `.env.local`, credentials та external integrations сюди не копіювалися.
-- Code commits: `5a158c3` motion; `a13add1` responsive/accessibility;
-  `3293ad2` brand integration та scrollbar-aware overflow assertions.
-- Гілку запушено; [PR #11](https://github.com/VladSidun/SOVA/pull/11) відкрито
-  у `develop`, без merge та auto-merge.
-- Quality CI на code head `3293ad2` — success 2026-11-05:
-  [run 41996978261](https://github.com/VladSidun/SOVA/actions/runs/41996978261).
-  Linux повторив npm ci, typecheck, lint, 112 tests, build, 33 E2E, diff check.
-  Наступний commit змінює лише цей handoff; latest head/CI перевіряйте у PR.
-- Це development preview. Phase 8–9, deployment, DB/Sova Hub, нові сторінки,
-  додаткові бізнес-фічі та real media/reviews/cases/teachers не реалізовувалися.
+- Phase 0–7 та security maintenance merged у `develop`. Phase 8 почато після
+  fetch/ancestry: `e24ff25` і `0bb35c0` входять у `fb2d5c7`, merge PR #11.
+  Integration Quality CI: [run 42023102224](https://github.com/VladSidun/SOVA/actions/runs/42023102224)
+  — success; live status повторно перевірений через GitHub API.
+- Реалізовано ТІЛЬКИ Phase 8 у `feature/phase-8-qa-preview`, від `fb2d5c7`.
+  Checkout: `Sova_Project/SOVA-phase-8`; інші worktree/локальні зміни збережені.
+  `.env.local` і credentials сюди не копіювалися.
+- `9f39db5` виправляє conversion defects; `9fdf3e9` розширює bilingual E2E,
+  accessibility/responsive/content/secret QA; `738726a` — audit tooling,
+  `5fbc198` — isolated corrected Lighthouse. Report commits наведено
+  в Git; цей handoff не може містити hash власного майбутнього commit.
+- Гілку запушено; [PR #12](https://github.com/VladSidun/SOVA/pull/12) відкрито
+  у `develop`, merge/auto-merge не виконано. Quality CI на report head запускається
+  після push; live result перевіряйте у PR (на момент запису ще не завершений).
+- Детальні результати, Lighthouse evidence, external setup і launch blockers:
+  [docs/RELEASE_READINESS.md](docs/RELEASE_READINESS.md).
+- Це локально перевірений development preview. Vercel auth/project link та
+  hosting integration відсутні, deployed preview URL немає; точні кроки
+  deployment записані у release report. Public launch не виконано.
+- Phase 9, нові бізнес-фічі/сторінки, DB/Sova Hub, real content і additional
+  delivery channels не реалізовувалися. Live Turnstile/Telegram не підтверджені.
+
+## Phase 8 — defects, QA та preview readiness
+
+- `LeadForm.tsx`: Enter перевіряє поточний крок і не може відправити раніше
+  збережені контакти зі step 1; Back заблокований під час запиту; success
+  переносить keyboard focus на confirmation heading.
+- `lead-client.ts`: тільки explicit JSON `{ok:true}` підтверджує success;
+  gateway HTML/неправильний body показує існуючий fallback. Timeout 25 s
+  звільняє pending UI, auto-retry відсутній. За timeout результат доставки
+  невідомий; DB/idempotency не додавалися.
+- Усі чотири regression E2E спочатку впали на baseline build, після fix green.
+  `tests/lead-client.test.ts` додав acknowledgement/error/timeout contracts.
+- `preview-qa.spec.ts` / `responsive-release.spec.ts`: UA/EN × сім ширин,
+  focus/validation/clipboard/network abort/retry, real unconfigured API 503,
+  WCAG 2.2 AA checks поряд з existing Axe suite, heading order/hidden modules.
+- `scripts/check-release.mjs`: tracked env/private files, secret patterns,
+  compiled client boundary, Lorem/templates/formal UA. `scripts/verify-seo.mjs`
+  звіряє 4 HTML routes та crawler outputs через HTTP або `--static`.
+- `scripts/lighthouse.mjs`: три реальні mobile audits для кожної мови; HTML/JSON
+  в ignored output. `docs/qa/phase-8-lighthouse.json` зберігає scores/settings,
+  timestamps і SHA-256 reports. Navigation INP не вимірює; TBT не є INP.
+- Фінальний mobile Lighthouse 13.6: UA 82/93/90 (median 90), EN 93/91/91
+  (median 91), accessibility/best-practices 100, SEO preview 63 через noindex.
+  LCP 0.915–0.932 s, CLS 0. Один performance run нижче 90 з TBT 755.5 ms;
+  не відкинутий, стабільний ≥90 кожного разу не заявляється. INP не виміряний.
+- Lighthouse запускається як окремий pinned `npm exec lighthouse@13.6.0`,
+  поза dependencies застосунку. 13.5 має виправлену в 13.6 похибку симуляції
+  text LCP-at-FCP; порівняння збережене в evidence. External audit tool має
+  відомий Sentry/bundler/glob advisory, описаний у release report. У самому
+  проєкті незмінний dependency lock: 24 moderate dev baseline, production 0.
+- Локально: clean npm ci (lockfile unchanged), typecheck, lint (0 warnings),
+  120 tests / 17 files, production build, 58 Chromium E2E, release/static SEO
+  checks, audit і diff check пройдені. Фінальний build — noindex без origin.
+- Візуально переглянуто Hero/goals/contact errors обох мов на
+  360/390/430/768/1024/1366/1920; headed menu/anchor/Tab/console/network QA.
+  Axe — 0 violations; overflow/heading/error-focus/reduced-motion checks green.
+  Native screen reader/physical devices/Firefox/WebKit не тестувалися.
+- Окремий configured static build із synthetic origin підтвердив точні
+  canonical/hreflang/OG/JSON-LD URL/@id, 4 sitemap loc/alternates і robots /api/.
+  Він не деплоївся, domain ownership не заявляється; preview build відновлено.
+  Старі локальні checkout мають Telegram/Turnstile key names, але validity і
+  придатність до preview hostname/test destination тут не підтверджені.
 
 ## Що вже працює
 
@@ -238,23 +285,23 @@ mobile nav, lead success/validation/fallback checks лишилися green; API 
 | 5 | PR #8 merged як 6df575c, tip a7232a0; secure API/Telegram/fallback, LAN origin fix, Kyiv timestamps. Історичний gate: 52 tests і 24 E2E, real send не підтверджено. |
 | 6 | 3fc9fe3 SEO/JSON-LD/privacy route; 9164763 privacy/events/adapters; e227e9e PII/interaction tests; bc8c867 text width. PR #9 merged як 2aef9cd, tip 66a447b. |
 | Security maintenance | 5109ba4 dependency updates; PR #10 merged як de190a8, tip 0bb35c0. Production audit 4 → 0, full 32 → 24 moderate dev (історичний audit). |
-| 7 | 5a158c3 motion; a13add1 responsive/a11y; 3293ad2 brand. PR #11 відкрито в develop; 112 tests / 33 E2E та Quality CI success, без merge/auto-merge. |
+| 7 | 5a158c3 motion; a13add1 responsive/a11y; 3293ad2 brand. PR #11 merged як fb2d5c7; історичний gate 112 tests / 33 E2E та Quality CI success. |
+| 8 | 9f39db5 conversion defects; 9fdf3e9 bilingual release QA; 120 tests / 58 E2E. Деталі та Lighthouse evidence у release report. |
 
 ## Наступний scope — лише після окремої авторизації
 
-Phase 7 завершено; Phase 8 не починати автоматично. Після review та ручного
-merge PR #11 потрібно fetch origin і перевірити latest develop/ancestry/CI.
-Майбутні Lighthouse/preview deployment та launch gates потребують нового
-завдання; real media/teachers/reviews/results — реальних наданих матеріалів.
-Інтеграційні обмеження Phase 5–6 та security advisory нижче не знімаються
-візуальним polish. Зберігайте CTA/events, формальну UA мову, privacy links,
-server validation/Turnstile та hidden feature flags.
+Phase 8 підготовлено для review/ручного merge у develop; merge/auto-merge не
+виконувати автоматично. Перед наступною фазою fetch latest develop і перевірити
+ancestry/CI. Phase 9 — лише після надання реальних media/teachers/reviews/cases
+та окремого дозволу користувача. Preview hosting потребує account/project access;
+public launch — закриття blockers із RELEASE_READINESS.md. Зберігайте CTA/events,
+формальну UA мову, privacy links, server validation/Turnstile та hidden flags.
 
 ## Результати
 
-- ✅ Реалізовано лише Phase 7 від merged develop de190a8.
-- ✅ Motion, responsive/a11y та brand integration завершено; SVG не редизайнено.
-- ✅ 112 tests, 33 E2E, typecheck, lint, build, Axe, responsive/visual QA та diff check пройдено.
-- ✅ Гілку запушено, PR #11 відкрито в develop; code Quality CI success, merge/auto-merge не виконано.
-- ✅ Невирішених проблем у Phase 7 немає.
-- ❌ Успадковані 24 moderate dev findings minimatch залишаються за security report; Phase 7 їх не усуває.
+- ✅ Реалізовано лише Phase 8 від merged develop fb2d5c7; regression defects виправлено.
+- ✅ 120 tests, 58 E2E, typecheck, lint, build, Axe, responsive/visual/SEO/content/secret QA пройдені.
+- ✅ Release report містить фактичне Lighthouse evidence, точні preview deploy steps і blockers.
+- ✅ Гілку запушено; PR #12 відкрито у develop, без merge/auto-merge.
+- ❌ Hosting preview/live integrations/INP та public launch поки не підтверджені; потрібні external/content gates із release report.
+- ❌ Успадковані 24 moderate dev findings minimatch залишаються; production audit 0.

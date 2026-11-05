@@ -1,0 +1,267 @@
+{
+  "applicationCommit": "9f39db5bfc62fe448af4cb7000899899fa1905c8",
+  "verificationToolsCommit": "5fbc19863adb6ed7327c51e0dd03783eabac0801",
+  "sourceTree": "e400d7ff2534e265abd9c3be927aebdece254fbb",
+  "build": "next build / next start on loopback; no credentials or site URL",
+  "baseURL": "http://127.0.0.1:3101",
+  "lighthouseVersion": "13.6.0",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+  "settings": {
+    "output": [
+      "json",
+      "html"
+    ],
+    "maxWaitForFcp": 30000,
+    "maxWaitForLoad": 45000,
+    "pauseAfterFcpMs": 1000,
+    "pauseAfterLoadMs": 1000,
+    "networkQuietThresholdMs": 1000,
+    "cpuQuietThresholdMs": 1000,
+    "formFactor": "mobile",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "throttlingMethod": "simulate",
+    "screenEmulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
+    "auditMode": false,
+    "gatherMode": false,
+    "clearStorageTypes": [
+      "file_systems",
+      "shader_cache",
+      "service_workers",
+      "cache_storage"
+    ],
+    "disableStorageReset": false,
+    "debugNavigation": false,
+    "channel": "cli",
+    "usePassiveGathering": false,
+    "disableFullPageScreenshot": false,
+    "skipAboutBlank": false,
+    "blankPage": "about:blank",
+    "ignoreStatusCode": false,
+    "locale": "en-US",
+    "blockedUrlPatterns": null,
+    "additionalTraceCategories": null,
+    "extraHeaders": null,
+    "precomputedLanternData": null,
+    "onlyAudits": null,
+    "onlyCategories": [
+      "performance",
+      "accessibility",
+      "best-practices",
+      "seo"
+    ],
+    "skipAudits": null
+  },
+  "inp": null,
+  "inpNote": "Navigation audits do not measure interaction INP. TBT is not INP.",
+  "results": [
+    {
+      "locale": "uk",
+      "run": 1,
+      "fetchedAt": "2026-11-05T12:45:02.896Z",
+      "scores": {
+        "performance": 82,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 931.6510000000001,
+      "observedLcpMs": 506,
+      "cls": 0,
+      "tbtMs": 755.4999999999995,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/uk-1.json",
+      "sha256": "cfb8cd53ad5cbfd88556c9b8e0d5f8bdd401c1f21cee0d387dcddb10d480c84c",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    },
+    {
+      "locale": "uk",
+      "run": 2,
+      "fetchedAt": "2026-11-05T12:45:19.355Z",
+      "scores": {
+        "performance": 93,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 916.646,
+      "observedLcpMs": 320,
+      "cls": 0,
+      "tbtMs": 328.6769999999997,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/uk-2.json",
+      "sha256": "d05e082f239fdec067029f5ddabfde7a99cf25b93ce1bcd6c2f0b2066af08564",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    },
+    {
+      "locale": "uk",
+      "run": 3,
+      "fetchedAt": "2026-11-05T12:45:35.860Z",
+      "scores": {
+        "performance": 90,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 918.106,
+      "observedLcpMs": 282,
+      "cls": 0,
+      "tbtMs": 414.9470000000001,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/uk-3.json",
+      "sha256": "1acfc040377465292c5973a687b01465bf13139b269cd5712f8bbb0498298b4c",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    },
+    {
+      "locale": "en",
+      "run": 1,
+      "fetchedAt": "2026-11-05T12:45:52.568Z",
+      "scores": {
+        "performance": 93,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 915.355,
+      "observedLcpMs": 333,
+      "cls": 0,
+      "tbtMs": 321.00000000000045,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/en-1.json",
+      "sha256": "caaef107b3d05d720dfed926a1ce87bc8cd35ccdb6ab0846c8c52096656bd580",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    },
+    {
+      "locale": "en",
+      "run": 2,
+      "fetchedAt": "2026-11-05T12:46:08.617Z",
+      "scores": {
+        "performance": 91,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 915.4839999999999,
+      "observedLcpMs": 279,
+      "cls": 0,
+      "tbtMs": 388.49999999999955,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/en-2.json",
+      "sha256": "05b244c0db7fe1ea797d5fc089b8313bc09f4521e950cae438c2a3fb7d55c38d",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    },
+    {
+      "locale": "en",
+      "run": 3,
+      "fetchedAt": "2026-11-05T12:46:24.559Z",
+      "scores": {
+        "performance": 91,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 63
+      },
+      "lcpMs": 916.5820000000001,
+      "observedLcpMs": 280,
+      "cls": 0,
+      "tbtMs": 384.0000000000001,
+      "warnings": [],
+      "rawReport": "output/playwright/phase-8/lighthouse/en-3.json",
+      "sha256": "baee59c1d5769485d7e266425fb4ec512546b2428cdabc81d340fa3455230af6",
+      "failingSeoAudits": [
+        "is-crawlable"
+      ]
+    }
+  ],
+  "simulationComparison13_5": [
+    {
+      "locale": "uk",
+      "run": 1,
+      "lighthouseVersion": "13.5.0",
+      "performance": 83,
+      "lcpMs": 3535.305,
+      "observedLcpMs": 460,
+      "observedFcpMs": 460,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/uk-1.json",
+      "sha256": "185dcebb17996d5f9f0ba5323bd8b24628909c975b757dd1f7969891e338f63f"
+    },
+    {
+      "locale": "uk",
+      "run": 2,
+      "lighthouseVersion": "13.5.0",
+      "performance": 83,
+      "lcpMs": 3514.329,
+      "observedLcpMs": 267,
+      "observedFcpMs": 267,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/uk-2.json",
+      "sha256": "2d723d4abb387736f8d5f0fe80c6c66071d47a17b41f548c96e4b1d1bc4c337c"
+    },
+    {
+      "locale": "uk",
+      "run": 3,
+      "lighthouseVersion": "13.5.0",
+      "performance": 81,
+      "lcpMs": 3513.1659999999997,
+      "observedLcpMs": 282,
+      "observedFcpMs": 282,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/uk-3.json",
+      "sha256": "d5082ec4e259d30cb9eee23bfb9301140b405d6b30ff4feca4074b9cdf2c6c88"
+    },
+    {
+      "locale": "en",
+      "run": 1,
+      "lighthouseVersion": "13.5.0",
+      "performance": 85,
+      "lcpMs": 3508.7934,
+      "observedLcpMs": 238,
+      "observedFcpMs": 238,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/en-1.json",
+      "sha256": "f9722c2cda2713d46ecf490901c936f013b0bade891387f6b42b90ec08682ff1"
+    },
+    {
+      "locale": "en",
+      "run": 2,
+      "lighthouseVersion": "13.5.0",
+      "performance": 81,
+      "lcpMs": 3508.8752,
+      "observedLcpMs": 267,
+      "observedFcpMs": 267,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/en-2.json",
+      "sha256": "6992cf4d5d1de7524795dc9c597f90526958f0a5bcb6cd4f4f622dd1275dc340"
+    },
+    {
+      "locale": "en",
+      "run": 3,
+      "lighthouseVersion": "13.5.0",
+      "performance": 84,
+      "lcpMs": 3507.4501,
+      "observedLcpMs": 252,
+      "observedFcpMs": 252,
+      "rawReport": "output/playwright/phase-8/lighthouse/simulation-13.5/en-3.json",
+      "sha256": "7ad8c60151de28ea7c403f2ba591312df91a3f42f487d4e52995ec032e62b91d"
+    }
+  ],
+  "simulationFixSource": "https://github.com/GoogleChrome/lighthouse/releases/tag/v13.6.0"
+}
