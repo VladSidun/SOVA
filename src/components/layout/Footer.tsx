@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { business, businessAddress } from "@/config/business";
 import { social } from "@/config/social";
@@ -17,7 +18,10 @@ export async function Footer({ locale }: FooterProps) {
       <Container>
         <div className="grid gap-10 md:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] md:items-start">
           <div className="max-w-xl">
-            <p className="font-heading text-2xl font-bold tracking-[0.12em]">{business.brandName}</p>
+            <a className="inline-flex min-h-11 items-center gap-3 rounded-xl" href={`/${locale}`} aria-label={business.brandName}>
+              <span className="rounded-full bg-white p-1"><Image src="/brand/logo.svg" width={56} height={56} alt="" aria-hidden="true" /></span>
+              <span className="font-heading text-2xl font-bold tracking-[0.12em]">{business.brandName}</span>
+            </a>
             <p className="mt-3 text-sm leading-6 text-white/70">{t("description")}</p>
           </div>
 

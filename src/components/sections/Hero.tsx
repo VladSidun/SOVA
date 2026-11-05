@@ -25,7 +25,7 @@ export function Hero() {
 
             <div className="hero-actions mt-8 flex flex-col gap-3 sm:items-start">
               <a
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand-red px-6 text-center text-sm font-semibold text-white shadow-[0_12px_28px_rgba(211,47,47,0.22)] transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-red sm:min-h-14 sm:text-base"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand-red px-6 text-center text-sm font-semibold text-white shadow-[0_12px_28px_rgba(211,47,47,0.22)] transition-colors hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-red sm:min-h-14 sm:text-base"
                 href={`#${sectionIds.lead}`}
                 data-analytics-event="cta_click"
                 data-analytics-source="hero"
@@ -50,28 +50,28 @@ export function Hero() {
           </div>
 
           <Reveal className="mx-auto w-full max-w-[32rem]" variant="subtleScale">
-          <div
-            aria-label={t("mediaLabel")}
-            className="relative mx-auto aspect-[4/5] w-full max-w-[32rem] overflow-hidden rounded-[2rem] border border-black/10 bg-[var(--surface-soft)] shadow-[0_26px_80px_rgba(26,26,26,0.12)]"
-            data-testid="hero-media-placeholder"
-            role="img"
-          >
-            <div className="absolute -right-[16%] -top-[5%] size-[66%] rounded-full bg-brand-red" />
-            <div className="absolute -bottom-[12%] -left-[28%] aspect-square w-[82%] rounded-full border-[3rem] border-brand-black sm:border-[4.5rem]" />
-            <div className="absolute inset-x-6 top-6 flex items-center justify-between sm:inset-x-8 sm:top-8">
-              <span className="rounded-full bg-white/90 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-brand-black shadow-sm">
-                {t("mediaBadge")}
-              </span>
-              <span className="rounded-full bg-brand-black px-3 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white">Mukachevo</span>
+            <div
+              aria-label={t("mediaLabel")}
+              className="relative mx-auto aspect-[4/5] w-full max-w-[32rem] overflow-hidden rounded-[2rem] border border-black/10 bg-[var(--surface-soft)] shadow-[0_26px_80px_rgba(26,26,26,0.12)]"
+              data-testid="hero-media-placeholder"
+              role="img"
+            >
+              <div className="absolute -right-[16%] -top-[5%] size-[66%] rounded-full bg-brand-red" />
+              <div className="absolute -bottom-[12%] -left-[28%] aspect-square w-[82%] rounded-full border-[3rem] border-brand-black sm:border-[4.5rem]" />
+              <div className="absolute inset-x-6 top-6 flex items-center justify-between sm:inset-x-8 sm:top-8">
+                <span className="rounded-full bg-white/90 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-brand-black shadow-sm">
+                  {t("mediaBadge")}
+                </span>
+                <span className="rounded-full bg-brand-black px-3 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white">Mukachevo</span>
+              </div>
+              <div className="absolute inset-x-6 bottom-6 rounded-[1.5rem] bg-white/95 p-6 shadow-lg backdrop-blur sm:inset-x-8 sm:bottom-8 sm:p-7">
+                <Image alt="" aria-hidden="true" height={64} src="/brand/logo.svg" width={64} />
+                <p className="mt-4 max-w-xs font-heading text-2xl font-bold leading-tight tracking-[-0.03em] text-brand-black sm:text-3xl">
+                  {t("mediaTitle")}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">{t("mediaNote")}</p>
+              </div>
             </div>
-            <div className="absolute inset-x-6 bottom-6 rounded-[1.5rem] bg-white/95 p-6 shadow-lg backdrop-blur sm:inset-x-8 sm:bottom-8 sm:p-7">
-              <Image alt="" aria-hidden="true" height={64} src="/brand/logo.svg" width={64} />
-              <p className="mt-4 max-w-xs font-heading text-2xl font-bold leading-tight tracking-[-0.03em] text-brand-black sm:text-3xl">
-                {t("mediaTitle")}
-              </p>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">{t("mediaNote")}</p>
-            </div>
-          </div>
           </Reveal>
         </div>
       </Container>

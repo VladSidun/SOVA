@@ -40,6 +40,7 @@ for (const width of [360, 390, 768, 1366, 1920]) {
       clientWidth: document.documentElement.clientWidth,
       scrollWidth: document.documentElement.scrollWidth,
     }));
-    expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
+    // A reserved scrollbar gutter can make scrollWidth smaller than clientWidth.
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
   });
 }

@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/Reveal";
 import { useTranslations } from "next-intl";
 import { Section } from "@/components/layout/Section";
 import { business } from "@/config/business";
@@ -9,7 +10,7 @@ export function WhySova() {
 
   return (
     <Section className="bg-[var(--surface-soft)] py-16 sm:py-20 lg:py-24" id={sectionIds.about}>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <Reveal className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
             {t("eyebrow")}
@@ -17,19 +18,19 @@ export function WhySova() {
           <h2 className="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-5xl">{t("title")}</h2>
         </div>
         <p className="max-w-xl text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
-      </div>
+      </Reveal>
 
       <div className="mt-10 grid gap-4 lg:grid-cols-12">
-        <article className="rounded-[1.75rem] bg-brand-red p-7 text-white sm:p-9 lg:col-span-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white">{t("reach.label")}</p>
+        <article className="rounded-[1.75rem] border border-black/10 bg-white p-7 text-brand-black sm:p-9 lg:col-span-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">{t("reach.label")}</p>
           <div className="mt-8 grid grid-cols-2 gap-6">
             <div>
-              <p className="font-heading text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.lifetimeStudents}</p>
-              <p className="mt-3 max-w-44 text-sm leading-6 text-white">{t("reach.lifetime")}</p>
+              <p className="font-heading text-brand-red text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.lifetimeStudents}</p>
+              <p className="mt-3 max-w-44 text-sm leading-6 text-[var(--text-muted)]">{t("reach.lifetime")}</p>
             </div>
-            <div className="border-l border-white/25 pl-6">
-              <p className="font-heading text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.currentStudents}</p>
-              <p className="mt-3 max-w-44 text-sm leading-6 text-white">{t("reach.current")}</p>
+            <div className="border-l border-black/10 pl-6">
+              <p className="font-heading text-brand-red text-4xl font-bold tracking-[-0.05em] sm:text-6xl">{business.currentStudents}</p>
+              <p className="mt-3 max-w-44 text-sm leading-6 text-[var(--text-muted)]">{t("reach.current")}</p>
             </div>
           </div>
         </article>
