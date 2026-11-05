@@ -22,7 +22,7 @@ export function Location() {
             <p className="mt-3 text-sm leading-6 text-white/65">{t("note")}</p>
           </address>
           <a
-            className="mt-8 inline-flex min-h-12 items-center justify-center self-start rounded-full bg-brand-red px-6 text-sm font-semibold text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="mt-8 inline-flex min-h-12 items-center justify-center self-start rounded-full bg-brand-red px-6 text-sm font-semibold text-white hover:bg-[var(--brand-red-hover)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             href={business.googleMaps}
             data-analytics-event="map_click"
             data-analytics-source="location"
@@ -48,7 +48,7 @@ export function Location() {
           <span aria-hidden="true" className="absolute -left-20 top-[38%] h-12 w-[130%] -rotate-6 rounded-full border-y border-white/20 bg-white/[0.04]" />
           <span aria-hidden="true" className="absolute left-[52%] top-[-12%] h-[130%] w-10 rotate-[24deg] rounded-full border-x border-white/15 bg-white/[0.03]" />
           <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-            <span aria-hidden="true" className="flex size-16 items-center justify-center rounded-full bg-brand-red shadow-[0_18px_45px_rgba(211,47,47,0.35)] transition-transform group-hover:-translate-y-1">
+            <span aria-hidden="true" className="flex size-16 items-center justify-center rounded-full bg-brand-red shadow-[0_18px_45px_rgba(211,47,47,0.35)] transition-transform motion-safe:group-hover:-translate-y-0.5">
               <span className="size-4 rounded-full border-4 border-white" />
             </span>
             <span className="mt-4 rounded-full bg-white px-4 py-2 text-center text-xs font-bold text-brand-black shadow-xl">

@@ -52,10 +52,10 @@ export default async function LocaleLayout({
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider>
           <MotionProvider>
-          <AnalyticsEvents />
-          <Header navigationItems={getNavigationItems()} />
-          {children}
-          <Footer locale={locale} />
+            <AnalyticsEvents />
+            <Header navigationItems={getNavigationItems()} />
+            {children}
+            <Footer locale={locale} />
           </MotionProvider>
         </NextIntlClientProvider>
       </body>

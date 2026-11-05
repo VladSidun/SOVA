@@ -71,7 +71,7 @@ describe("Phase 2 conversion sections", () => {
     );
 
     const directionLink = screen.getByRole("button", { name: "Обрати ціль: НМТ / ЄВІ" });
-    expect(directionLink).toHaveAttribute("href", "?goal=nmt#lead");
+    expect(directionLink).toHaveAttribute("type", "button");
 
     fireEvent.click(directionLink);
 

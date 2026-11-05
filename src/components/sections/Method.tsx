@@ -13,24 +13,24 @@ export function Method() {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-16">
         <div className="max-w-xl lg:sticky lg:top-28">
           <Reveal variant="fadeIn">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
-            {t("eyebrow")}
-          </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.035em] text-brand-black sm:text-5xl">
-            {t("title")}
-          </h2>
-          <p className="mt-5 text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
+              {t("eyebrow")}
+            </p>
+            <h2 className="mt-4 text-3xl font-bold tracking-[-0.035em] text-brand-black sm:text-5xl">
+              {t("title")}
+            </h2>
+            <p className="mt-5 text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
           </Reveal>
           <div aria-label={t("standardsLabel")}>
-          <Reveal className="mt-8 flex flex-wrap gap-2" variant="staggerContainer">
-            {["CEFR", "Cambridge", "Oxford", "Pearson"].map((standard) => (
-              <RevealItem key={standard}>
-              <span className="inline-flex rounded-full border border-black/10 bg-[var(--surface-soft)] px-4 py-2 text-sm font-semibold">
-                {standard}
-              </span>
-              </RevealItem>
-            ))}
-          </Reveal>
+            <Reveal className="mt-8 flex flex-wrap gap-2" variant="staggerContainer">
+              {["CEFR", "Cambridge", "Oxford", "Pearson"].map((standard) => (
+                <RevealItem key={standard}>
+                  <span className="inline-flex rounded-full border border-black/10 bg-[var(--surface-soft)] px-4 py-2 text-sm font-semibold">
+                    {standard}
+                  </span>
+                </RevealItem>
+              ))}
+            </Reveal>
           </div>
         </div>
 

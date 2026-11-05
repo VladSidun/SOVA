@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  /* Exact colors from the supplied SOVA_LOGO.svg. */
+  /* Exact colors from the public/brand/logo.svg (stroke/fill; original artwork unchanged). */
   --brand-red: #d32f2f;
+  --brand-red-hover: #b52828;
   --brand-black: #1a1a1a;
   --brand-white: #ffffff;
   --surface-soft: #f7f7f7;
@@ -21,6 +22,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
+  scrollbar-gutter: stable;
 }
 
 * {
@@ -38,6 +40,82 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-manrope), sans-serif;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+:where(a, button, input, textarea, summary):focus-visible {
+  outline: 2px solid var(--brand-black);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px var(--brand-white);
+}
+
+:where(button, a, summary, input, textarea) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, input, textarea) {
+  accent-color: var(--brand-red);
+}
+
+button:enabled, a[href] {
+  cursor: pointer;
+}
+
+.site-header {
+  transition: background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.site-header[data-scrolled="true"] {
+  background-color: var(--brand-white);
+  box-shadow: 0 6px 24px rgb(26 26 26 / 6%);
+}
+
+.site-header :where(a, button), .form-progress {
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.mobile-panel {
+  animation: menu-in 180ms ease-out;
+}
+
+@keyframes menu-in {
+  from { opacity: 0.8; }
+  to { opacity: 1; }
+}
+
+.section-shell :where(h2) {
+  max-width: 22ch;
+  line-height: 1.12;
+}
+
+.section-shell :where(p) {
+  overflow-wrap: break-word;
+}
+
+.lead-form label > span {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.lead-form input:is([type="radio"], [type="checkbox"]) {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.lead-form [aria-invalid="true"] {
+  border-color: var(--brand-red);
+}
+
+@media (max-width: 639px) {
+  .hero-actions a, .form-actions button {
+    width: 100%;
+  }
+
+  .hero-actions a {
+    padding-block: 0.875rem;
+  }
 }
 
 [id] {
@@ -47,5 +125,17 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-motion-reveal], [data-motion-reveal] > div {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
