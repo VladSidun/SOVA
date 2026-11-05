@@ -1,3 +1,4 @@
+import { Reveal, RevealItem } from "@/components/motion/Reveal";
 import { useTranslations } from "next-intl";
 import { Section } from "@/components/layout/Section";
 import { business } from "@/config/business";
@@ -11,6 +12,7 @@ export function Method() {
     <Section className="bg-white py-16 sm:py-20 lg:py-24" id="method">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start lg:gap-16">
         <div className="max-w-xl lg:sticky lg:top-28">
+          <Reveal variant="fadeIn">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
             {t("eyebrow")}
           </p>
@@ -18,15 +20,17 @@ export function Method() {
             {t("title")}
           </h2>
           <p className="mt-5 text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
-          <div className="mt-8 flex flex-wrap gap-2" aria-label={t("standardsLabel")}>
+          </Reveal>
+          <div aria-label={t("standardsLabel")}>
+          <Reveal className="mt-8 flex flex-wrap gap-2" variant="staggerContainer">
             {["CEFR", "Cambridge", "Oxford", "Pearson"].map((standard) => (
-              <span
-                className="rounded-full border border-black/10 bg-[var(--surface-soft)] px-4 py-2 text-sm font-semibold"
-                key={standard}
-              >
+              <RevealItem key={standard}>
+              <span className="inline-flex rounded-full border border-black/10 bg-[var(--surface-soft)] px-4 py-2 text-sm font-semibold">
                 {standard}
               </span>
+              </RevealItem>
             ))}
+          </Reveal>
           </div>
         </div>
 

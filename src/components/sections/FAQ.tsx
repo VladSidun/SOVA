@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/motion/Reveal";
 import { useLocale, useTranslations } from "next-intl";
 import { Section } from "@/components/layout/Section";
 import { faq } from "@/content/faq";
@@ -10,13 +11,13 @@ export function FAQ() {
   return (
     <Section className="bg-[var(--surface-soft)] py-16 sm:py-20 lg:py-24" id="faq">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
             {t("eyebrow")}
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-[-0.035em] sm:text-5xl">{t("title")}</h2>
           <p className="mt-5 text-base leading-7 text-[var(--text-muted)] sm:text-lg">{t("intro")}</p>
-        </div>
+        </Reveal>
 
         <div className="border-t border-black/10">
           {faq.map((item) => (

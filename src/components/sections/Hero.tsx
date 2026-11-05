@@ -3,26 +3,27 @@ import { useTranslations } from "next-intl";
 import { business } from "@/config/business";
 import { sectionIds } from "@/config/navigation";
 import { Container } from "@/components/layout/Container";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function Hero() {
   const t = useTranslations("Conversion.Hero");
 
   return (
-    <section className="overflow-hidden pb-12 pt-10 sm:pb-16 sm:pt-14 lg:pb-20 lg:pt-16">
+    <section className="hero-section pb-12 pt-10 sm:pb-16 sm:pt-14 lg:pb-20 lg:pt-16">
       <Container>
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] lg:gap-14">
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-red sm:text-sm">
               {t("eyebrow")}
             </p>
-            <h1 className="mt-5 text-[clamp(2.45rem,7vw,5.5rem)] font-bold leading-[0.96] tracking-[-0.045em] text-brand-black">
+            <h1 className="mt-5 text-[clamp(2.45rem,5.2vw,4.65rem)] font-bold leading-[1.06] tracking-[-0.045em] text-brand-black">
               {t("title")}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--text-muted)] sm:text-lg sm:leading-8">
               {t("body")}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="hero-actions mt-8 flex flex-col gap-3 sm:items-start">
               <a
                 className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand-red px-6 text-center text-sm font-semibold text-white shadow-[0_12px_28px_rgba(211,47,47,0.22)] transition-colors hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-red sm:min-h-14 sm:text-base"
                 href={`#${sectionIds.lead}`}
@@ -48,6 +49,7 @@ export function Hero() {
             </p>
           </div>
 
+          <Reveal className="mx-auto w-full max-w-[32rem]" variant="subtleScale">
           <div
             aria-label={t("mediaLabel")}
             className="relative mx-auto aspect-[4/5] w-full max-w-[32rem] overflow-hidden rounded-[2rem] border border-black/10 bg-[var(--surface-soft)] shadow-[0_26px_80px_rgba(26,26,26,0.12)]"
@@ -60,7 +62,7 @@ export function Hero() {
               <span className="rounded-full bg-white/90 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-brand-black shadow-sm">
                 {t("mediaBadge")}
               </span>
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white">Mukachevo</span>
+              <span className="rounded-full bg-brand-black px-3 py-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white">Mukachevo</span>
             </div>
             <div className="absolute inset-x-6 bottom-6 rounded-[1.5rem] bg-white/95 p-6 shadow-lg backdrop-blur sm:inset-x-8 sm:bottom-8 sm:p-7">
               <Image alt="" aria-hidden="true" height={64} src="/brand/logo.svg" width={64} />
@@ -70,6 +72,7 @@ export function Hero() {
               <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">{t("mediaNote")}</p>
             </div>
           </div>
+          </Reveal>
         </div>
       </Container>
     </section>

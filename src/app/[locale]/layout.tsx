@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { AnalyticsEvents } from "@/components/analytics/AnalyticsEvents";
 import { Header } from "@/components/layout/Header";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import { getNavigationItems } from "@/config/navigation";
 import { routing } from "@/i18n/routing";
 import "@/styles/globals.css";
@@ -50,10 +51,12 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <NextIntlClientProvider>
+          <MotionProvider>
           <AnalyticsEvents />
           <Header navigationItems={getNavigationItems()} />
           {children}
           <Footer locale={locale} />
+          </MotionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -23,7 +23,7 @@ describe("Phase 2 conversion sections", () => {
     window.history.replaceState({}, "", "/uk");
     Object.defineProperty(window, "matchMedia", {
       configurable: true,
-      value: vi.fn().mockReturnValue({ matches: true }),
+      value: vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
     });
     window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
