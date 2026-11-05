@@ -81,6 +81,7 @@ export function LeadForm({
   const [turnstileFailed, setTurnstileFailed] = useState(false);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const hasNavigatedRef = useRef(false);
   const hasStartedRef = useRef(false);
@@ -132,6 +133,10 @@ export function LeadForm({
     if (!hasNavigatedRef.current) return;
     stepHeadingRef.current?.focus();
   }, [step]);
+
+  useEffect(() => {
+    if (submitted) successHeadingRef.current?.focus();
+  }, [submitted]);
 
   const goToStep = (nextStep: Step) => {
     hasNavigatedRef.current = true;
@@ -218,7 +223,7 @@ export function LeadForm({
     return (
       <div className="rounded-[1.75rem] border border-emerald-700/20 bg-emerald-50 p-6 sm:p-8" role="status">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">{t("success.eyebrow")}</p>
-        <h3 className="mt-3 text-2xl font-bold tracking-[-0.025em] text-brand-black sm:text-3xl">
+        <h3 className="mt-3 text-2xl font-bold tracking-[-0.025em] text-brand-black sm:text-3xl" ref={successHeadingRef} tabIndex={-1}>
           {t("success.title")}
         </h3>
         <p className="mt-3 max-w-xl leading-7 text-[var(--text-muted)]">{t("success.body")}</p>
@@ -227,7 +232,13 @@ export function LeadForm({
   }
 
   return (
-    <form className="lead-form min-w-0 rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={onSubmit}
+    <form className="lead-form min-w-0 rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-[0_20px_70px_rgba(26,26,26,0.08)] sm:p-8" noValidate onSubmit={(event) => {
+      event.preventDefault();
+      if (isSubmitting) return;
+      if (step === 1) void continueFromStepOne();
+      else if (step === 2) void continueFromStepTwo();
+      else if (!waitingForTurnstile) void onSubmit(event);
+    }}
       onChangeCapture={(event) => {
         if (!hasStartedRef.current) {
           hasStartedRef.current = true;
@@ -436,7 +447,7 @@ export function LeadForm({
           ) : null}
 
           <div className="form-actions mt-8 flex flex-wrap justify-between gap-3">
-            <button className="min-h-12 rounded-full border border-black/20 px-6 py-3 font-semibold transition hover:bg-black/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" onClick={() => goToStep(2)} type="button">
+            <button className="min-h-12 rounded-full border border-black/20 px-6 py-3 font-semibold transition hover:bg-black/[0.04] disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting} onClick={() => goToStep(2)} type="button">
               {t("actions.back")}
             </button>
             <button className="min-h-12 rounded-full bg-brand-red px-7 py-3 font-semibold text-white transition enabled:hover:bg-[var(--brand-red-hover)] disabled:cursor-wait disabled:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red" disabled={isSubmitting || waitingForTurnstile} type="submit">

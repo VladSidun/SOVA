@@ -17,7 +17,7 @@ for (const viewport of [
     await page.route("**/api/leads", async (route) => {
       receivedPayload = route.request().postDataJSON() as LeadPayload;
       await requestGate;
-      await route.fulfill({ status: 200, contentType: "application/json", body: "{}" });
+      await route.fulfill({ status: 201, json: { ok: true } });
     });
 
     await page.goto("/uk?utm_source=google&utm_medium=cpc&utm_campaign=phase4");
